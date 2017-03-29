@@ -35,4 +35,76 @@ Sample entry
     <tileColor>Black</tileColor>
     <tileName>Crossed Spanners</tileName>
   </tile>
-</tiles>
+    <tile>
+    <id>4</id>
+    <entityName>PathCrossroads</entityName>
+    <tileColor>Brown</tileColor>
+    <tileName>Crossroads Dirt Path</tileName>
+  </tile>
+  <tile>
+    <id>5</id>
+    <entityName>PathNEElbow</entityName>
+    <tileColor>Brown</tileColor>
+    <tileName>North-East Dirt Path</tileName>
+  </tile>
+  <tile>
+    <id>6</id>
+    <entityName>PathNWElbow</entityName>
+    <tileColor>Brown</tileColor>
+    <tileName>North-West Dirt Path</tileName>
+  </tile>
+  <tile>
+    <id>7</id>
+    <entityName>PathSEElbow</entityName>
+    <tileColor>Brown</tileColor>
+    <tileName>South-East Dirt Path</tileName>
+  </tile>
+  <tile>
+    <id>8</id>
+    <entityName>PathSWElbow</entityName>
+    <tileColor>Brown</tileColor>
+    <tileName>South-West Dirt Path</tileName>
+  </tile>
+  <tile>
+    <id>9</id>
+    <entityName>PathLateral</entityName>
+    <tileColor>Brown</tileColor>
+    <tileName>East-West Dirt Path</tileName>
+  </tile>
+  <tile>
+    <id>10</id>
+    <entityName>PathVertical</entityName>
+    <tileColor>Brown</tileColor>
+    <tileName>North-South Dirt Path</tileName>
+  </tile>
+  <tile>
+    <id>11</id>
+    <entityName>PathT</entityName>
+    <tileColor>Brown</tileColor>
+    <tileName>T Shaped Dirt Path</tileName>
+  </tile>
+  <tile>
+    <id>12</id>
+    <entityName>PathT90</entityName>
+    <tileColor>Brown</tileColor>
+    <tileName>T Shaped Dirt Path</tileName>
+  </tile>
+  <tile>
+    <id>13</id>
+    <entityName>PathT180</entityName>
+    <tileColor>Brown</tileColor>
+    <tileName>T Shaped Dirt Path</tileName>
+  </tile>
+  <tile>
+    <id>14</id>
+    <entityName>PathT180</entityName>
+    <tileColor>Brown</tileColor>
+    <tileName>T Shaped Dirt Path</tileName>
+  </tile>
+  <tile>
+    <id>15</id>
+    <entityName>PathT270</entityName>
+    <tileColor>Brown</tileColor>
+    <tileName>T Shaped Dirt Path</tileName>
+  </tile>
+  </tiles>
