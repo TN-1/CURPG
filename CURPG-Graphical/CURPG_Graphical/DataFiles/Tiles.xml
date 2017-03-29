@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--
+Sample entry
+<tiles>
+  <tile> 
+    <id></id>//Sequential ID
+    <entityName></entityName> //This is the name of the graphics file. This must match file name for import purposes
+    <tileColor></tileColor> //What is the basic color of the tile? Will be used if import fails for whatever reason. Must match an XNA color: http://www.foszor.com/blog/xna-color-chart/
+    <tileName></tileName> //Human readable name of the tile
+  </tile>
+</tiles>
+-->
+<tiles>
+  <tile>
+    <id>0</id>
+    <entityName>Arrows</entityName>
+    <tileColor>White</tileColor>
+    <tileName>Inward Arrows</tileName>
+  </tile>
+  <tile>
+    <id>1</id>
+    <entityName>RedCross</entityName>
+    <tileColor>Red</tileColor>
+    <tileName>Red Cross</tileName>
+  </tile>
+  <tile>
+    <id>2</id>
+    <entityName>Shrubs</entityName>
+    <tileColor>Green</tileColor>
+    <tileName>Shrubs</tileName>
+  </tile>
+  <tile>
+    <id>3</id>
+    <entityName>Spanners</entityName>
+    <tileColor>Black</tileColor>
+    <tileName>Crossed Spanners</tileName>
+  </tile>
+</tiles>
