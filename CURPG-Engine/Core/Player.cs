@@ -35,14 +35,38 @@ namespace CURPG_Engine.Core
             weight = Weight;
         }
 
-        public void MovePlayer(int x, int y)
+        public void MovePlayer(int x, int y, World world)
         {
             var CurX = locationX;
             var CurY = locationY;
             var NewX = CurX + x;
             var NewY = CurY + y;
-            locationX = NewX;
-            locationY = NewY;
+            switch(world.Grid[NewX / world.TileSize, NewY / world.TileSize].TerrainModifier)
+            {
+                case 0:
+                    //Flat ground
+                    locationX = NewX;
+                    locationY = NewY;
+                    break;
+                case 1:
+                    //Trees
+                    return;
+                    break;
+                case 2:
+                    //Mountains
+                    return;
+                    break;
+                case 3:
+                    //Water
+                    return;
+                    break;
+                case 4:
+                    //Buildings
+                    return;
+                    break;
+
+            }
+            
         }
 
 

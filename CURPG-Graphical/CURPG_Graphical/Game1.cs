@@ -20,7 +20,6 @@ namespace CURPG_Graphical
         Dictionary<string, Texture2D> TileTextures = new Dictionary<string, Texture2D>();
         World world;
         List<Tile> TileSet;
-        int TileSize;
         Player player;
         private KeyboardState oldState;
 
@@ -42,10 +41,9 @@ namespace CURPG_Graphical
         /// </summary>
         protected override void Initialize()
         {
-            TileSize = 24;
             var tilesPath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"DataFiles\Tiles.xml");
             TileSet = WorldTools.TileSetBuilder(tilesPath);
-            world = WorldTools.GenerateWorld(0, 64, 32, TileSet, "World");
+            world = WorldTools.GenerateWorld(0, 64, 32, TileSet, "World", 24);
             player = PlayerTools.RandomPlayer();
 
             base.Initialize();
@@ -99,13 +97,13 @@ namespace CURPG_Graphical
 
             // handle the input
             if (oldState.IsKeyUp(Keys.Left) && newState.IsKeyDown(Keys.Left))
-                player.MovePlayer(-1 * TileSize, 0);
+                player.MovePlayer(-1 * world.TileSize, 0, world);
             if (oldState.IsKeyUp(Keys.Right) && newState.IsKeyDown(Keys.Right))
-                player.MovePlayer(1 * TileSize, 0);
+                player.MovePlayer(1 * world.TileSize, 0, world);
             if (oldState.IsKeyUp(Keys.Up) && newState.IsKeyDown(Keys.Up))
-                player.MovePlayer(0, -1 * TileSize);
+                player.MovePlayer(0, -1 * world.TileSize, world);
             if (oldState.IsKeyUp(Keys.Down) && newState.IsKeyDown(Keys.Down))
-                player.MovePlayer(0, 1 * TileSize);
+                player.MovePlayer(0, 1 * world.TileSize, world);
 
 
             oldState = newState;  // set the new state as the old state for next time
@@ -127,13 +125,13 @@ namespace CURPG_Graphical
             {
                 for (int j = 0; j < world.Grid.GetLength(1); j++)
                 {
-                    spriteBatch.Draw(TileTextures[world.Grid[i,j].EntityName], new Rectangle(i * TileSize, j * TileSize, TileSize, TileSize), Color.White);
+                    spriteBatch.Draw(TileTextures[world.Grid[i,j].EntityName], new Rectangle(i * world.TileSize, j * world.TileSize, world.TileSize, world.TileSize), Color.White);
                 }
             }
 
             Texture2D PlayerTexture = new Texture2D(graphics.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             PlayerTexture.SetData<Color>(new Color[] { Color.Red });
-            spriteBatch.Draw(PlayerTexture, new Rectangle(player.locationX, player.locationY, TileSize, TileSize), Color.Red);
+            spriteBatch.Draw(PlayerTexture, new Rectangle(player.locationX, player.locationY, world.TileSize, world.TileSize), Color.Red);
 
             spriteBatch.End();
             base.Draw(gameTime);

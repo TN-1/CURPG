@@ -12,13 +12,15 @@ namespace CURPG_Engine.Core
         public List<Tile> TileSet;
         public string Name;
         public int Day = 0;
+        public int TileSize;
 
-        public World(int WorldIndex, int GridX, int GridY, List<Tile> Set, string name)
+        public World(int WorldIndex, int GridX, int GridY, List<Tile> Set, string name, int tilesize)
         {
             Index = WorldIndex;
             Grid = new Tile[GridX, GridY];
             TileSet = Set;
             Name = name;
+            TileSize = tilesize;
         }
     }
 
@@ -28,23 +30,25 @@ namespace CURPG_Engine.Core
         public string EntityName;
         public Color TileColor;
         public string TileName;
+        public int TerrainModifier;
 
-        public Tile(int index, string entname, Color color, string tilename)
+        public Tile(int index, string entname, Color color, string tilename, int terrainmod)
         {
             Index = index;
             EntityName = entname;
             TileColor = color;
             TileName = tilename;
+            TerrainModifier = terrainmod;
         }
     }
 
 
     public class WorldTools
     {
-        static public World GenerateWorld(int WorldIndex, int GridX, int GridY, List<Tile> TileSet, string Name)
+        static public World GenerateWorld(int WorldIndex, int GridX, int GridY, List<Tile> TileSet, string Name, int tilesize)
         {
             float[,] noiseValues;
-            World world = new World(WorldIndex, GridX, GridY, TileSet, Name);
+            World world = new World(WorldIndex, GridX, GridY, TileSet, Name, tilesize);
 
             //Generate noise map
             start:
@@ -67,6 +71,7 @@ namespace CURPG_Engine.Core
             catch
             {
                 //Generation failed, Oops. Add debug and try again
+                noiseValues = null;
                 goto start;
             }
 
@@ -76,17 +81,17 @@ namespace CURPG_Engine.Core
                 for (int j = 0; j < world.Grid.GetLength(1); j++)
                 {
                     if (noiseValues[i, j] <= 25)
-                        world.Grid[i, j] = new Tile(20, "WaterDeep", ValidColor("Blue"), "Deep Water");
+                        world.Grid[i, j] = world.TileSet[20];
                     if (noiseValues[i, j] > 25 && noiseValues[i, j] <= 65)
-                        world.Grid[i, j] = new Tile(19, "WaterShallow", ValidColor("DarkTurquiose"), "Shallow Water");
+                        world.Grid[i, j] = world.TileSet[19];
                     if (noiseValues[i, j] > 65 && noiseValues[i, j] <= 100)
-                        world.Grid[i, j] = new Tile(17, "SandYellow", ValidColor("Yellow"), "Yellow Sand");
+                        world.Grid[i, j] = world.TileSet[17];
                     if (noiseValues[i, j] > 100 && noiseValues[i, j] <= 150)
-                        world.Grid[i, j] = new Tile(24, "Grass", ValidColor("Green"), "Grass");
+                        world.Grid[i, j] = world.TileSet[24];
                     if (noiseValues[i, j] > 150 && noiseValues[i, j] <= 200)
-                        world.Grid[i, j] = new Tile(25, "Trees", ValidColor("Green"), "Trees");
+                        world.Grid[i, j] = world.TileSet[25];
                     if (noiseValues[i, j] > 200)
-                        world.Grid[i, j] = new Tile(21, "Mountain1", ValidColor("Grey"), "Mountain1");
+                        world.Grid[i, j] = world.TileSet[21];
                 }
             }
             return world;
@@ -105,8 +110,9 @@ namespace CURPG_Engine.Core
                 var entityName = node.SelectSingleNode("entityName").InnerText;
                 var tileColor = node.SelectSingleNode("tileColor").InnerText;
                 var tileName = node.SelectSingleNode("tileName").InnerText;
+                var terrmod = Convert.ToInt32(node.SelectSingleNode("terrainMod").InnerText);
 
-                Tile tile = new Tile(index, entityName, ValidColor(tileColor), tileName);
+                Tile tile = new Tile(index, entityName, ValidColor(tileColor), tileName, terrmod);
                 tileset.Add(tile);
             }
             return tileset;
