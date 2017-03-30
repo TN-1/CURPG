@@ -18,7 +18,6 @@ namespace CURPG_Graphical
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Dictionary<string, Texture2D> TileTextures = new Dictionary<string, Texture2D>();
-        Texture2D TileMissing;
         World world;
         List<Tile> TileSet;
         int TileSize;
@@ -29,8 +28,8 @@ namespace CURPG_Graphical
         {
             graphics = new GraphicsDeviceManager(this);
             graphics.IsFullScreen = false;
-            graphics.PreferredBackBufferHeight = 384;
-            graphics.PreferredBackBufferWidth = 384;
+            graphics.PreferredBackBufferHeight = 768;
+            graphics.PreferredBackBufferWidth = 1536;
             Content.RootDirectory = "Content";
 
         }
@@ -45,10 +44,8 @@ namespace CURPG_Graphical
         {
             TileSize = 24;
             var tilesPath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"DataFiles\Tiles.xml");
-            XmlDocument tiles = new XmlDocument();
-            tiles.Load(tilesPath);
-            TileSet = WorldTools.TileSetBuilder(tiles);
-            world = WorldTools.GenerateWorld(0, 16, 16, TileSet, "World");
+            TileSet = WorldTools.TileSetBuilder(tilesPath);
+            world = WorldTools.GenerateWorld(0, 64, 32, TileSet, "World");
             player = PlayerTools.RandomPlayer();
 
             base.Initialize();
@@ -62,7 +59,6 @@ namespace CURPG_Graphical
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            TileMissing = Content.Load<Texture2D>("TileMissing");
             foreach (Tile tile in TileSet)
             {
                 try
@@ -72,8 +68,12 @@ namespace CURPG_Graphical
                 catch
                 {
                     //TODO: Add Debug to log
-                    TileTextures.Add(tile.EntityName, TileMissing);
-                }
+                    try
+                    {
+                        TileTextures.Add(tile.EntityName, Content.Load<Texture2D>("TileMissing"));
+                    }
+                    catch { }
+                 }
             }
             
             // TODO: use this.Content to load your game content here
@@ -140,7 +140,3 @@ namespace CURPG_Graphical
         }
     }
 }
-
-//Texture2D texture = new Texture2D(graphics.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-//#texture.SetData<Color>(new Color[] { world.Grid[i, j].TileColor });
-//spriteBatch.Draw(texture, new Rectangle(i* TileSize, j* TileSize, TileSize, TileSize), world.Grid[i, j].TileColor);

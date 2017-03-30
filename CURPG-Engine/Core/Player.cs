@@ -1,6 +1,5 @@
 ﻿using System;
-using CURPG_Engine.Inventory;
-
+using CURPG_Engine.Core;
 namespace CURPG_Engine.Core
 {
     /// <summary>
