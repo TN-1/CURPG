@@ -107,4 +107,70 @@ Sample entry
     <tileColor>Brown</tileColor>
     <tileName>T Shaped Dirt Path</tileName>
   </tile>
-  </tiles>
+  <tile>
+    <id>16</id>
+    <entityName>Snow</entityName>
+    <tileColor>White</tileColor>
+    <tileName>Snow</tileName>
+  </tile>
+  <tile>
+    <id>17</id>
+    <entityName>SandYellow</entityName>
+    <tileColor>Yellow</tileColor>
+    <tileName>Yellow Sand</tileName>
+  </tile>
+  <tile>
+    <id>18</id>
+    <entityName>SandRed</entityName>
+    <tileColor>Red</tileColor>
+    <tileName>Red Sand</tileName>
+  </tile>
+  <tile>
+    <id>19</id>
+    <entityName>WaterShallow</entityName>
+    <tileColor>DarkTurquoise</tileColor>
+    <tileName>Shallow Water</tileName>
+  </tile>
+  <tile>
+    <id>20</id>
+    <entityName>WaterDeep</entityName>
+    <tileColor>Blue</tileColor>
+    <tileName>Deep Water</tileName>
+  </tile>
+  <tile>
+    <id>21</id>
+    <entityName>Mountain1</entityName>
+    <tileColor>Grey</tileColor>
+    <tileName>Mountain1</tileName>
+  </tile>
+  <tile>
+    <id>22</id>
+    <entityName>Mountain2</entityName>
+    <tileColor>Grey</tileColor>
+    <tileName>Mountain2</tileName>
+  </tile>
+  <tile>
+    <id>23</id>
+    <entityName>Mountain3</entityName>
+    <tileColor>Grey</tileColor>
+    <tileName>Mountain3</tileName>
+  </tile>
+  <tile>
+    <id>24</id>
+    <entityName>Grass</entityName>
+    <tileColor>Green</tileColor>
+    <tileName>Grass</tileName>
+  </tile>
+  <tile>
+    <id>25</id>
+    <entityName>Trees</entityName>
+    <tileColor>Green</tileColor>
+    <tileName>Trees</tileName>
+  </tile>
+  <tile>
+    <id>26</id>
+    <entityName>TreesSnow</entityName>
+    <tileColor>Green</tileColor>
+    <tileName>Snowy Trees</tileName>
+  </tile>
+</tiles>
