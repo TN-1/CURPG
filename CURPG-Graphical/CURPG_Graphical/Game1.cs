@@ -22,13 +22,20 @@ namespace CURPG_Graphical
         List<Tile> TileSet;
         Player player;
         private KeyboardState oldState;
+        System.Drawing.Rectangle ScreenArea;
+        System.Drawing.Rectangle MapArea;
+        Camera Camera;
 
         public CURPG()
         {
+            var pt = new System.Drawing.Point(0, 0);
+            ScreenArea = System.Windows.Forms.Screen.GetWorkingArea(pt);
             graphics = new GraphicsDeviceManager(this);
             graphics.IsFullScreen = false;
-            graphics.PreferredBackBufferHeight = 768;
-            graphics.PreferredBackBufferWidth = 1536;
+            graphics.PreferredBackBufferHeight = ScreenArea.Height;
+            graphics.PreferredBackBufferWidth = ScreenArea.Width;
+            MapArea.Height = (int)Math.Ceiling((ScreenArea.Height * .7) / 24);
+            MapArea.Width = (int)Math.Ceiling((ScreenArea.Width * .5) / 24);
             Content.RootDirectory = "Content";
 
         }
@@ -43,9 +50,10 @@ namespace CURPG_Graphical
         {
             var tilesPath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"DataFiles\Tiles.xml");
             TileSet = WorldTools.TileSetBuilder(tilesPath);
-            world = WorldTools.GenerateWorld(0, 64, 32, TileSet, "World", 24);
-            player = PlayerTools.RandomPlayer();
-
+            world = WorldTools.GenerateWorld(0, 128, 128, TileSet, "World", 24);
+            var pt = PlayerTools.GetSpawn(world, MapArea.Width / 2, MapArea.Height / 2);
+            player = PlayerTools.RandomPlayer(pt.X, pt.Y);
+            Camera = new Camera(0, 0, MapArea, world, player);
             base.Initialize();
         }
 
@@ -97,13 +105,13 @@ namespace CURPG_Graphical
 
             // handle the input
             if (oldState.IsKeyUp(Keys.Left) && newState.IsKeyDown(Keys.Left))
-                player.MovePlayer(-1 * world.TileSize, 0, world);
+                player.MovePlayer(-1, 0, world);
             if (oldState.IsKeyUp(Keys.Right) && newState.IsKeyDown(Keys.Right))
-                player.MovePlayer(1 * world.TileSize, 0, world);
+                player.MovePlayer(1, 0, world);
             if (oldState.IsKeyUp(Keys.Up) && newState.IsKeyDown(Keys.Up))
-                player.MovePlayer(0, -1 * world.TileSize, world);
+                player.MovePlayer(0, -1, world);
             if (oldState.IsKeyUp(Keys.Down) && newState.IsKeyDown(Keys.Down))
-                player.MovePlayer(0, 1 * world.TileSize, world);
+                player.MovePlayer(0, 1, world);
 
 
             oldState = newState;  // set the new state as the old state for next time
@@ -118,20 +126,24 @@ namespace CURPG_Graphical
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.White);
+            World DrawArea = Camera.GetDrawArea();
 
             spriteBatch.Begin();
 
-            for (int i = 0; i < world.Grid.GetLength(0); i++)
+            for (int i = 0; i < MapArea.Width; i++)
             {
-                for (int j = 0; j < world.Grid.GetLength(1); j++)
+                for (int j = 0; j < MapArea.Height; j++)
                 {
-                    spriteBatch.Draw(TileTextures[world.Grid[i,j].EntityName], new Rectangle(i * world.TileSize, j * world.TileSize, world.TileSize, world.TileSize), Color.White);
+                    spriteBatch.Draw(TileTextures[DrawArea.Grid[i,j].EntityName], new Rectangle(i * world.TileSize, j * world.TileSize, world.TileSize, world.TileSize), Color.White);
                 }
             }
 
             Texture2D PlayerTexture = new Texture2D(graphics.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             PlayerTexture.SetData<Color>(new Color[] { Color.Red });
-            spriteBatch.Draw(PlayerTexture, new Rectangle(player.locationX, player.locationY, world.TileSize, world.TileSize), Color.Red);
+            spriteBatch.Draw(PlayerTexture, new Rectangle((MapArea.Width / 2) * world.TileSize, (MapArea.Height / 2) * world.TileSize, world.TileSize, world.TileSize), Color.Red);
+//            Texture2D PlayerTexture = new Texture2D(graphics.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+//            PlayerTexture.SetData<Color>(new Color[] { Color.Red });
+//            spriteBatch.Draw(PlayerTexture, new Rectangle(player.locationX * world.TileSize, player.locationY * world.TileSize, world.TileSize, world.TileSize), Color.Red);
 
             spriteBatch.End();
             base.Draw(gameTime);

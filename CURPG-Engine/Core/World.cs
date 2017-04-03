@@ -128,14 +128,3 @@ namespace CURPG_Engine.Core
         }
     }
 }
-
-
-//        for (int i = 0; i<world.Grid.GetLength(0); i++)
-//            {
-//                for(int j = 0; j<world.Grid.GetLength(1); j++)
-//                {
-//                    var k = r.Next(0, world.TileSet.Count);
-//Tile tile = new Tile(world.TileSet[k].Index, world.TileSet[k].EntityName, world.TileSet[k].TileColor, world.TileSet[k].TileName);
-//world.Grid[i, j] = tile;
-//                }
-//            }

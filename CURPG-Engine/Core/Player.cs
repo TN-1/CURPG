@@ -1,5 +1,5 @@
 ﻿using System;
-using CURPG_Engine.Core;
+
 namespace CURPG_Engine.Core
 {
     /// <summary>
@@ -9,8 +9,8 @@ namespace CURPG_Engine.Core
     {
         //Values our player needs
         public string name;
-        public int locationX = 0;
-        public int locationY = 0;
+        public int locationX;
+        public int locationY;
         public char gender;
         public int age;
         public int weight;
@@ -26,13 +26,15 @@ namespace CURPG_Engine.Core
         /// <param name="height"></param>
         /// <param name="weight"></param>
         /// <returns></returns>
-        public Player(string Name, char Gender, int Age, int Height, int Weight)
+        public Player(string Name, char Gender, int Age, int Height, int Weight, int x, int y)
         {
             name = Name;
             gender = Gender;
             age = Age;
             height = Height;
             weight = Weight;
+            locationX = x;
+            locationY = y;
         }
 
         public void MovePlayer(int x, int y, World world)
@@ -41,32 +43,39 @@ namespace CURPG_Engine.Core
             var CurY = locationY;
             var NewX = CurX + x;
             var NewY = CurY + y;
-            switch(world.Grid[NewX / world.TileSize, NewY / world.TileSize].TerrainModifier)
-            {
-                case 0:
-                    //Flat ground
-                    locationX = NewX;
-                    locationY = NewY;
-                    break;
-                case 1:
-                    //Trees
-                    return;
-                    break;
-                case 2:
-                    //Mountains
-                    return;
-                    break;
-                case 3:
-                    //Water
-                    return;
-                    break;
-                case 4:
-                    //Buildings
-                    return;
-                    break;
 
+            if (NewX < 0 || NewY < 0)
+            {
+                return;
             }
-            
+            else
+            {
+                switch (world.Grid[NewX, NewY].TerrainModifier)
+                {
+                    case 0:
+                        //Flat ground
+                        locationX = NewX;
+                        locationY = NewY;
+                        break;
+                    case 1:
+                        //Trees
+                        return;
+                        break;
+                    case 2:
+                        //Mountains
+                        return;
+                        break;
+                    case 3:
+                        //Water
+                        return;
+                        break;
+                    case 4:
+                        //Buildings
+                        return;
+                        break;
+                }
+            }
+
         }
 
 
@@ -80,7 +89,7 @@ namespace CURPG_Engine.Core
         /// Generates a random player character
         /// </summary>
         /// <returns>Returns a randomised player class</returns>
-        static public Player RandomPlayer()
+        static public Player RandomPlayer(int x, int y)
         {
             Random r = new Random();
             string[] MaleNames = new string[10] { "Arron", "Anthony", "Bob", "Billy", "Charlie", "Scott", "Virgil", "Alan", "Gordon", "John" };
@@ -122,8 +131,31 @@ namespace CURPG_Engine.Core
             n = r.Next(100, 250);
             height = n;
 
-            Player player = new Player(name, gender, age, height, weight);
+            Player player = new Player(name, gender, age, height, weight, x, y);
             return player;
+        }
+
+        static public System.Drawing.Point GetSpawn(World world, int X, int Y)
+        {
+            System.Drawing.Point pt;
+            for (int i = X + 5; i >= (X - 5); i--)
+            {
+                if (world.Grid[i, Y].TerrainModifier == 0)
+                {
+                    pt = new System.Drawing.Point(i, Y);
+                    return pt;
+                }
+            }
+            for (int i = Y + 5; i >= (Y - 5); i--)
+            {
+                if (world.Grid[X, i].TerrainModifier == 0)
+                {
+                    pt = new System.Drawing.Point(X, i);
+                    return pt;
+                }
+            }
+            pt = new System.Drawing.Point(0, 0);
+            return pt;
         }
     }
 }

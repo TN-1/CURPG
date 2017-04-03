@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Camera.cs" />
     <Compile Include="Core\Persistence.cs" />
     <Compile Include="Core\Player.cs" />
     <Compile Include="Core\World.cs" />
