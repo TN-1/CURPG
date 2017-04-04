@@ -1,4 +1,5 @@
-﻿using System;
+﻿//#define TESTING //Uncomment to disable terrain modifiers, Comment to enable.
+using System;
 
 namespace CURPG_Engine.Core
 {
@@ -44,12 +45,17 @@ namespace CURPG_Engine.Core
             var NewX = CurX + x;
             var NewY = CurY + y;
 
-            if (NewX < 0 || NewY < 0)
+            if (NewX < 0 || NewY < 0 || NewX > world.Grid.GetLength(0) - 1 || NewY > world.Grid.GetLength(1) - 1)
             {
                 return;
             }
             else
             {
+#if TESTING
+                locationX = NewX;
+                locationY = NewY;
+/*
+#endif
                 switch (world.Grid[NewX, NewY].TerrainModifier)
                 {
                     case 0:
@@ -60,25 +66,21 @@ namespace CURPG_Engine.Core
                     case 1:
                         //Trees
                         return;
-                        break;
                     case 2:
                         //Mountains
                         return;
-                        break;
                     case 3:
                         //Water
                         return;
-                        break;
                     case 4:
                         //Buildings
                         return;
-                        break;
                 }
+#if TESTING
+*/
+#endif
             }
-
         }
-
-
     }
     /// <summary>
     /// PlayerTools class. Includes the basic tools we need to interact with our player class.

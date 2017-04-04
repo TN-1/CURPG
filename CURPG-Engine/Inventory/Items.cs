@@ -2,9 +2,9 @@
 {
     class Item
     {
-        public int ID;
-        public string Name;
-        public int Weight;
+        //public int ID;
+        //public string Name;
+        //public int Weight;
     }
 
     class Weapons : Item

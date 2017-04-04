@@ -22,6 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <RunCodeAnalysis>true</RunCodeAnalysis>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -47,7 +48,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Camera.cs" />
-    <Compile Include="Core\Persistence.cs" />
     <Compile Include="Core\Player.cs" />
     <Compile Include="Core\World.cs" />
     <Compile Include="Inventory\Items.cs" />

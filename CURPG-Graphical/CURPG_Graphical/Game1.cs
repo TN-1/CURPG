@@ -79,9 +79,9 @@ namespace CURPG_Graphical
                         TileTextures.Add(tile.EntityName, Content.Load<Texture2D>("TileMissing"));
                     }
                     catch { }
-                 }
+                }
             }
-            
+
             // TODO: use this.Content to load your game content here
         }
 
@@ -127,6 +127,7 @@ namespace CURPG_Graphical
         {
             GraphicsDevice.Clear(Color.White);
             World DrawArea = Camera.GetDrawArea();
+            System.Drawing.Point pt = Camera.playerCoord;
 
             spriteBatch.Begin();
 
@@ -134,16 +135,13 @@ namespace CURPG_Graphical
             {
                 for (int j = 0; j < MapArea.Height; j++)
                 {
-                    spriteBatch.Draw(TileTextures[DrawArea.Grid[i,j].EntityName], new Rectangle(i * world.TileSize, j * world.TileSize, world.TileSize, world.TileSize), Color.White);
+                    spriteBatch.Draw(TileTextures[DrawArea.Grid[i, j].EntityName], new Rectangle(i * world.TileSize, j * world.TileSize, world.TileSize, world.TileSize), Color.White);
                 }
             }
 
             Texture2D PlayerTexture = new Texture2D(graphics.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             PlayerTexture.SetData<Color>(new Color[] { Color.Red });
-            spriteBatch.Draw(PlayerTexture, new Rectangle((MapArea.Width / 2) * world.TileSize, (MapArea.Height / 2) * world.TileSize, world.TileSize, world.TileSize), Color.Red);
-//            Texture2D PlayerTexture = new Texture2D(graphics.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-//            PlayerTexture.SetData<Color>(new Color[] { Color.Red });
-//            spriteBatch.Draw(PlayerTexture, new Rectangle(player.locationX * world.TileSize, player.locationY * world.TileSize, world.TileSize, world.TileSize), Color.Red);
+            spriteBatch.Draw(PlayerTexture, new Rectangle(pt.X * world.TileSize, pt.Y * world.TileSize, world.TileSize, world.TileSize), Color.Red);
 
             spriteBatch.End();
             base.Draw(gameTime);
