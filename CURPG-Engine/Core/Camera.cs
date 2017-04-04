@@ -28,7 +28,33 @@
             Y = Player.locationY - (ViewPort.Height / 2);
             var maxX = Player.locationX + (ViewPort.Width / 2);
             var maxY = Player.locationY + (ViewPort.Height / 2);
+            //Are we trying to draw outside the lower bounds of the map?
+            if (X <= 0)
+            {
+                X = 0;
+                maxX = ViewPort.Width;
+            }
+            if(Y <= 0)
+            {
+                Y = 0;
+                //Y Is height dummy, Not width. CHECK YO VARIABLES FOOL!
+                maxY = ViewPort.Height;
+            } 
+            //Are we trying to draw outside the upper bounds of the map?
+            if(X >= World.Grid.GetLength(0) - ViewPort.Width)
+            {
+                maxX = World.Grid.GetLength(0) - 1;
+                X = (World.Grid.GetLength(0) - 1)- ViewPort.Width;
+            }
+            if (Y >= World.Grid.GetLength(1) - ViewPort.Height)
+            {
+                maxY = World.Grid.GetLength(1) - 1;
+                Y = (World.Grid.GetLength(1) - 1) - ViewPort.Height;
+            }
+            
+            //Now we gotta pipe a signal to Draw() to allow the player character to move around these extreme bounds
 
+            //Work out what to draw
             for (int x = X; x <= maxX; x++)
             {
                 for(int y = Y; y <= maxY; y++)
