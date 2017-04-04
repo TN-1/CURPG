@@ -5,6 +5,7 @@ using System.Xml;
 
 namespace CURPG_Engine.Core
 {
+    [Serializable]
     public class World
     {
         public int Index;
@@ -23,7 +24,7 @@ namespace CURPG_Engine.Core
             TileSize = tilesize;
         }
     }
-
+    [Serializable]
     public class Tile
     {
         public int Index;

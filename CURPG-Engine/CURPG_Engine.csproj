@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Camera.cs" />
+    <Compile Include="Core\Persistance.cs" />
     <Compile Include="Core\Player.cs" />
     <Compile Include="Core\World.cs" />
     <Compile Include="Inventory\Items.cs" />

@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using CURPG_Engine.Core;
 using System;
-using System.Xml;
 using System.IO;
 using System.Reflection;
 
@@ -39,11 +38,21 @@ namespace CURPG_Graphical
 
         protected override void Initialize()
         {
-            var tilesPath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"DataFiles\Tiles.xml");
-            TileSet = WorldTools.TileSetBuilder(tilesPath);
-            world = WorldTools.GenerateWorld(0, 128, 128, TileSet, "World", 24);
-            var pt = PlayerTools.GetSpawn(world, MapArea.Width / 2, MapArea.Height / 2);
-            player = PlayerTools.RandomPlayer(pt.X, pt.Y);
+            if (Persistance.CanLoad())
+            {
+                world = Persistance.LoadWorld();
+                player = Persistance.LoadPlayer();
+                TileSet = world.TileSet;
+            }
+            else
+            {
+                var tilesPath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"DataFiles\Tiles.xml");
+                TileSet = WorldTools.TileSetBuilder(tilesPath);
+                world = WorldTools.GenerateWorld(0, 128, 128, TileSet, "World", 24);
+                var pt = PlayerTools.GetSpawn(world, MapArea.Width / 2, MapArea.Height / 2);
+                player = PlayerTools.RandomPlayer(pt.X, pt.Y);
+            }
+
             Camera = new Camera(0, 0, MapArea, world, player);
             base.Initialize();
         }
@@ -114,5 +123,16 @@ namespace CURPG_Graphical
             spriteBatch.End();
             base.Draw(gameTime);
         }
+
+        protected override void OnExiting(Object sender, EventArgs args)
+        {
+            base.OnExiting(sender, args);
+            var status = Persistance.SaveGame(world, player);
+            if(status == 0)
+            {
+                System.Windows.Forms.MessageBox.Show("Save Failed. Do you want to close?", "Error", System.Windows.Forms.MessageBoxButtons.RetryCancel);
+            }
+        }
+
     }
 }

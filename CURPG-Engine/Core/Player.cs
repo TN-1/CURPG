@@ -6,6 +6,7 @@ namespace CURPG_Engine.Core
     /// <summary>
     /// Our player class. Includes all the properties we need to create a player character
     /// </summary>
+    [Serializable]
     public class Player
     {
         //Values our player needs
