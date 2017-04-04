@@ -48,6 +48,7 @@ namespace CURPG_Engine.Core
         static public World GenerateWorld(int WorldIndex, int GridX, int GridY, List<Tile> TileSet, string Name, int tilesize)
         {
             float[,] noiseValues;
+            int a = 0;
             World world = new World(WorldIndex, GridX, GridY, TileSet, Name, tilesize);
 
             //Generate noise map
@@ -56,8 +57,8 @@ namespace CURPG_Engine.Core
             {
                 Random r = new Random();
                 Simplex.Noise.Seed = r.Next(0, 999999999);
-                noiseValues = Simplex.Noise.Calc2D(GridX * 100, GridY * 100, 0.065f);
-                var Point = r.Next(0, GridX * 80);
+                noiseValues = Simplex.Noise.Calc2D(GridX * 10, GridY * 10, 0.065f);
+                var Point = r.Next(0, GridX * 8);
                 float[,] noise = new float[GridX, GridY];
 
                 for (int i = Point; i < (GridX + Point); i++)
@@ -68,10 +69,12 @@ namespace CURPG_Engine.Core
                     }
                 }
             }
-            catch
+            catch(Exception e)
             {
-                //Generation failed, Oops. Add debug and try again
+                System.Diagnostics.Debug.WriteLine("World Generation failed. Attempt #" + a);
+                System.Diagnostics.Debug.WriteLine("Exception: " + e);
                 noiseValues = null;
+                a++;
                 goto start;
             }
 
@@ -94,6 +97,7 @@ namespace CURPG_Engine.Core
                         world.Grid[i, j] = world.TileSet[21];
                 }
             }
+            noiseValues = null;
             return world;
         }
 
