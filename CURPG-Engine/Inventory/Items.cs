@@ -1,19 +1,24 @@
 ﻿namespace CURPG_Engine.Inventory
 {
-    class Item
+    public class Item
     {
-        //public int ID;
-        //public string Name;
-        //public int Weight;
+        public int ID;
+        public string Name;
+        public int Weight;
     }
 
-    class Weapons : Item
+    public class Weapon : Item
     {
         //Add combat modifyers 
     }
 
-    class Armor : Item
+    public class Armor : Item
     {
         //Add combat modifyers 
+    }
+
+    public class Tool : Item
+    {
+        public int TerrainMod;
     }
 }

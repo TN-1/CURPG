@@ -43,6 +43,15 @@ namespace CURPG_Graphical
                 world = Persistance.LoadWorld();
                 player = Persistance.LoadPlayer();
                 TileSet = world.TileSet;
+
+                if (world == null || player == null)
+                {
+                    var tilesPath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"DataFiles\Tiles.xml");
+                    TileSet = WorldTools.TileSetBuilder(tilesPath);
+                    world = WorldTools.GenerateWorld(0, 128, 128, TileSet, "World", 24);
+                    var pt = PlayerTools.GetSpawn(world, MapArea.Width / 2, MapArea.Height / 2);
+                    player = PlayerTools.RandomPlayer(pt.X, pt.Y);
+                }
             }
             else
             {
@@ -52,7 +61,6 @@ namespace CURPG_Graphical
                 var pt = PlayerTools.GetSpawn(world, MapArea.Width / 2, MapArea.Height / 2);
                 player = PlayerTools.RandomPlayer(pt.X, pt.Y);
             }
-
             Camera = new Camera(0, 0, MapArea, world, player);
             base.Initialize();
         }
@@ -133,6 +141,5 @@ namespace CURPG_Graphical
                 System.Windows.Forms.MessageBox.Show("Save Failed. Do you want to close?", "Error", System.Windows.Forms.MessageBoxButtons.RetryCancel);
             }
         }
-
     }
 }

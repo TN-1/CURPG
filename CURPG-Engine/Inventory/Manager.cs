@@ -1,8 +1,13 @@
-﻿namespace CURPG_Engine.Inventory
+﻿using System;
+using System.Collections.Generic;
+using System.Xml;
+
+namespace CURPG_Engine.Inventory
 {
-    class Inventory
+    public class Inventory
     {
         public Item[] Items;
+        List<Item> ItemDB;
         public int Capacity;
         public Inventory(int capacity)
         {
@@ -22,7 +27,7 @@
             }
         }
 
-        public int FirstAvailSlot()
+        int FirstAvailSlot()
         {
             if (Items != null)
             {
@@ -38,6 +43,19 @@
         public void AddItem(Item item)
         {
             Items[FirstAvailSlot()] = item;
+        }
+
+        public void BuildDatabase(string path)
+        {
+            XmlDocument items = new XmlDocument();
+            List<Item> itemDB = new List<Item>();
+            items.Load(path);
+            XmlNodeList nodes = items.DocumentElement.SelectNodes("/items/item");
+
+            foreach (XmlNode node in nodes)
+            {
+            }
+            ItemDB = itemDB;
         }
     }
 }

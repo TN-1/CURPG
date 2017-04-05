@@ -18,6 +18,7 @@ namespace CURPG_Engine.Core
         public int weight;
         public int height;
         public int health = 100;
+        public Inventory.Inventory Inventory;
 
         /// <summary>
         /// Constructs a player from user assigned values
@@ -37,6 +38,7 @@ namespace CURPG_Engine.Core
             weight = Weight;
             locationX = x;
             locationY = y;
+            Inventory = new Inventory.Inventory(64);
         }
 
         public void MovePlayer(int x, int y, World world)
