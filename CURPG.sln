@@ -5,9 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CURPG_Engine", "CURPG-Engine\CURPG_Engine.csproj", "{B63EB4B1-B5B6-488A-905C-8B65234A5484}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CURPG_Graphical", "CURPG-Graphical\CURPG_Graphical\CURPG_Graphical.csproj", "{3FFFEDCC-6DF9-49AB-A0EE-0462022339DE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CURPG_GraphicalContent", "CURPG-Graphical\CURPG_GraphicalContent\CURPG_GraphicalContent.contentproj", "{CDA4107B-7C05-451A-895E-FD38BF7D0660}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CURPG_Graphical_MonoGame_Windows", "CURPG_Graphical_MonoGame_Windows\CURPG_Graphical_MonoGame_Windows.csproj", "{8869AA7E-A0AB-40DE-B4FF-9E173D9DA19A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,17 +23,13 @@ Global
 		{B63EB4B1-B5B6-488A-905C-8B65234A5484}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B63EB4B1-B5B6-488A-905C-8B65234A5484}.Release|x86.ActiveCfg = Release|Any CPU
 		{B63EB4B1-B5B6-488A-905C-8B65234A5484}.Release|x86.Build.0 = Release|Any CPU
-		{3FFFEDCC-6DF9-49AB-A0EE-0462022339DE}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{3FFFEDCC-6DF9-49AB-A0EE-0462022339DE}.Debug|Any CPU.Build.0 = Debug|x86
-		{3FFFEDCC-6DF9-49AB-A0EE-0462022339DE}.Debug|x86.ActiveCfg = Debug|x86
-		{3FFFEDCC-6DF9-49AB-A0EE-0462022339DE}.Debug|x86.Build.0 = Debug|x86
-		{3FFFEDCC-6DF9-49AB-A0EE-0462022339DE}.Release|Any CPU.ActiveCfg = Release|x86
-		{3FFFEDCC-6DF9-49AB-A0EE-0462022339DE}.Release|x86.ActiveCfg = Release|x86
-		{3FFFEDCC-6DF9-49AB-A0EE-0462022339DE}.Release|x86.Build.0 = Release|x86
-		{CDA4107B-7C05-451A-895E-FD38BF7D0660}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{CDA4107B-7C05-451A-895E-FD38BF7D0660}.Debug|x86.ActiveCfg = Debug|x86
-		{CDA4107B-7C05-451A-895E-FD38BF7D0660}.Release|Any CPU.ActiveCfg = Release|x86
-		{CDA4107B-7C05-451A-895E-FD38BF7D0660}.Release|x86.ActiveCfg = Release|x86
+		{8869AA7E-A0AB-40DE-B4FF-9E173D9DA19A}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{8869AA7E-A0AB-40DE-B4FF-9E173D9DA19A}.Debug|Any CPU.Build.0 = Debug|x86
+		{8869AA7E-A0AB-40DE-B4FF-9E173D9DA19A}.Debug|x86.ActiveCfg = Debug|x86
+		{8869AA7E-A0AB-40DE-B4FF-9E173D9DA19A}.Debug|x86.Build.0 = Debug|x86
+		{8869AA7E-A0AB-40DE-B4FF-9E173D9DA19A}.Release|Any CPU.ActiveCfg = Release|x86
+		{8869AA7E-A0AB-40DE-B4FF-9E173D9DA19A}.Release|x86.ActiveCfg = Release|x86
+		{8869AA7E-A0AB-40DE-B4FF-9E173D9DA19A}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

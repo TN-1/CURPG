@@ -4,6 +4,7 @@ using System.Xml;
 
 namespace CURPG_Engine.Inventory
 {
+    [Serializable]
     public class Inventory
     {
         public Item[] Items;

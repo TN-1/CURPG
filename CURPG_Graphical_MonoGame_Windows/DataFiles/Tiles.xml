@@ -1,0 +1,204 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--
+Sample entry
+<tiles>
+  <tile> 
+    <id></id>//Sequential ID
+    <entityName></entityName> //This is the name of the graphics file. This must match file name for import purposes
+    <tileColor></tileColor> //What is the basic color of the tile? Will be used if import fails for whatever reason. Must match an XNA color: http://www.foszor.com/blog/xna-color-chart/
+    <tileName></tileName> //Human readable name of the tile
+    <terrainMod></terrainMod> //Int value representing the terrain. 0 = Flat, 1 = Trees, 2= Moutains, 3 = Water, 4 = Building
+  </tile>
+</tiles>
+-->
+<tiles>
+  <tile>
+    <id>0</id>
+    <entityName>Arrows</entityName>
+    <tileColor>White</tileColor>
+    <tileName>Inward Arrows</tileName>
+    <terrainMod>4</terrainMod>
+  </tile>
+  <tile>
+    <id>1</id>
+    <entityName>RedCross</entityName>
+    <tileColor>Red</tileColor>
+    <tileName>Red Cross</tileName>
+    <terrainMod>4</terrainMod>
+  </tile>
+  <tile>
+    <id>2</id>
+    <entityName>Shrubs</entityName>
+    <tileColor>Green</tileColor>
+    <tileName>Shrubs</tileName>
+    <terrainMod>4</terrainMod>
+  </tile>
+  <tile>
+    <id>3</id>
+    <entityName>Spanners</entityName>
+    <tileColor>Black</tileColor>
+    <tileName>Crossed Spanners</tileName>
+    <terrainMod>4</terrainMod>
+  </tile>
+    <tile>
+    <id>4</id>
+    <entityName>PathCrossroads</entityName>
+    <tileColor>Brown</tileColor>
+    <tileName>Crossroads Dirt Path</tileName>
+      <terrainMod>0</terrainMod>
+  </tile>
+  <tile>
+    <id>5</id>
+    <entityName>PathNEElbow</entityName>
+    <tileColor>Brown</tileColor>
+    <tileName>North-East Dirt Path</tileName>
+    <terrainMod>0</terrainMod>
+  </tile>
+  <tile>
+    <id>6</id>
+    <entityName>PathNWElbow</entityName>
+    <tileColor>Brown</tileColor>
+    <tileName>North-West Dirt Path</tileName>
+    <terrainMod>0</terrainMod>
+  </tile>
+  <tile>
+    <id>7</id>
+    <entityName>PathSEElbow</entityName>
+    <tileColor>Brown</tileColor>
+    <tileName>South-East Dirt Path</tileName>
+    <terrainMod>0</terrainMod>
+  </tile>
+  <tile>
+    <id>8</id>
+    <entityName>PathSWElbow</entityName>
+    <tileColor>Brown</tileColor>
+    <tileName>South-West Dirt Path</tileName>
+    <terrainMod>0</terrainMod>
+  </tile>
+  <tile>
+    <id>9</id>
+    <entityName>PathLateral</entityName>
+    <tileColor>Brown</tileColor>
+    <tileName>East-West Dirt Path</tileName>
+    <terrainMod>0</terrainMod>
+  </tile>
+  <tile>
+    <id>10</id>
+    <entityName>PathVertical</entityName>
+    <tileColor>Brown</tileColor>
+    <tileName>North-South Dirt Path</tileName>
+    <terrainMod>0</terrainMod>
+  </tile>
+  <tile>
+    <id>11</id>
+    <entityName>PathT</entityName>
+    <tileColor>Brown</tileColor>
+    <tileName>T Shaped Dirt Path</tileName>
+    <terrainMod>0</terrainMod>
+  </tile>
+  <tile>
+    <id>12</id>
+    <entityName>PathT90</entityName>
+    <tileColor>Brown</tileColor>
+    <tileName>T Shaped Dirt Path</tileName>
+    <terrainMod>0</terrainMod>
+  </tile>
+  <tile>
+    <id>13</id>
+    <entityName>PathT180</entityName>
+    <tileColor>Brown</tileColor>
+    <tileName>T Shaped Dirt Path</tileName>
+    <terrainMod>0</terrainMod>
+  </tile>
+  <tile>
+    <id>14</id>
+    <entityName>PathT180</entityName>
+    <tileColor>Brown</tileColor>
+    <tileName>T Shaped Dirt Path</tileName>
+    <terrainMod>0</terrainMod>
+  </tile>
+  <tile>
+    <id>15</id>
+    <entityName>PathT270</entityName>
+    <tileColor>Brown</tileColor>
+    <tileName>T Shaped Dirt Path</tileName>
+    <terrainMod>0</terrainMod>
+  </tile>
+  <tile>
+    <id>16</id>
+    <entityName>Snow</entityName>
+    <tileColor>White</tileColor>
+    <tileName>Snow</tileName>
+    <terrainMod>0</terrainMod>
+  </tile>
+  <tile>
+    <id>17</id>
+    <entityName>SandYellow</entityName>
+    <tileColor>Yellow</tileColor>
+    <tileName>Yellow Sand</tileName>
+    <terrainMod>0</terrainMod>
+  </tile>
+  <tile>
+    <id>18</id>
+    <entityName>SandRed</entityName>
+    <tileColor>Red</tileColor>
+    <tileName>Red Sand</tileName>
+    <terrainMod>0</terrainMod>
+  </tile>
+  <tile>
+    <id>19</id>
+    <entityName>WaterShallow</entityName>
+    <tileColor>DarkTurquoise</tileColor>
+    <tileName>Shallow Water</tileName>
+    <terrainMod>3</terrainMod>
+  </tile>
+  <tile>
+    <id>20</id>
+    <entityName>WaterDeep</entityName>
+    <tileColor>Blue</tileColor>
+    <tileName>Deep Water</tileName>
+    <terrainMod>3</terrainMod>
+  </tile>
+  <tile>
+    <id>21</id>
+    <entityName>Mountain1</entityName>
+    <tileColor>Grey</tileColor>
+    <tileName>Mountain1</tileName>
+    <terrainMod>2</terrainMod>
+  </tile>
+  <tile>
+    <id>22</id>
+    <entityName>Mountain2</entityName>
+    <tileColor>Grey</tileColor>
+    <tileName>Mountain2</tileName>
+    <terrainMod>2</terrainMod>
+  </tile>
+  <tile>
+    <id>23</id>
+    <entityName>Mountain3</entityName>
+    <tileColor>Grey</tileColor>
+    <tileName>Mountain3</tileName>
+    <terrainMod>2</terrainMod>
+  </tile>
+  <tile>
+    <id>24</id>
+    <entityName>Grass</entityName>
+    <tileColor>Green</tileColor>
+    <tileName>Grass</tileName>
+    <terrainMod>0</terrainMod>
+  </tile>
+  <tile>
+    <id>25</id>
+    <entityName>Trees</entityName>
+    <tileColor>Green</tileColor>
+    <tileName>Trees</tileName>
+    <terrainMod>1</terrainMod>
+  </tile>
+  <tile>
+    <id>26</id>
+    <entityName>TreesSnow</entityName>
+    <tileColor>Green</tileColor>
+    <tileName>Snowy Trees</tileName>
+    <terrainMod>1</terrainMod>
+  </tile>
+</tiles>
