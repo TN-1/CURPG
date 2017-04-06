@@ -24,12 +24,13 @@ namespace CURPG_Engine.Core
             TileSize = tilesize;
         }
     }
+
     [Serializable]
     public class Tile
     {
         public int Index;
         public string EntityName;
-        public Color TileColor;
+        [NonSerialized] public Color TileColor;
         public string TileName;
         public int TerrainModifier;
 

@@ -6,6 +6,7 @@ using CURPG_Engine.Core;
 using System;
 using System.IO;
 using System.Reflection;
+using MonoGameConsole;
 
 namespace CURPG_Graphical
 {
@@ -21,6 +22,8 @@ namespace CURPG_Graphical
         System.Drawing.Rectangle ScreenArea;
         System.Drawing.Rectangle MapArea;
         Camera Camera;
+        GameConsole Console;
+        bool PlayerLoc;
 
         public CURPG()
         {
@@ -61,13 +64,42 @@ namespace CURPG_Graphical
                 var pt = PlayerTools.GetSpawn(world, MapArea.Width / 2, MapArea.Height / 2);
                 player = PlayerTools.RandomPlayer(pt.X, pt.Y);
             }
+
             Camera = new Camera(0, 0, MapArea, world, player);
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+            Console = new GameConsole(this, spriteBatch, new GameConsoleOptions
+            {
+                ToggleKey = 192,
+                Font = Content.Load<SpriteFont>("DevConsoleFont"),
+                FontColor = Color.LawnGreen,
+                Prompt = "~>",
+                PromptColor = Color.Crimson,
+                CursorColor = Color.OrangeRed,
+                BackgroundColor = new Color(Color.Black, 150),
+                PastCommandOutputColor = Color.Aqua,
+                BufferColor = Color.Gold
+            });
+
+            Console.AddCommand("PlayerLoc", a =>
+            {
+                if (!PlayerLoc)
+                    PlayerLoc = true;
+                else
+                    PlayerLoc = false;
+                return "PlayerLoc = " + PlayerLoc.ToString();
+            }, "Enables/Disables player location");
+            Console.AddCommand("Teleport", a =>
+            {
+                player.locationX = Convert.ToInt32(a[0]);
+                player.locationY = Convert.ToInt32(a[1]);
+                return "Teleported to " + a[0] + "," + a[1];
+            }, "Teleport player to location");
+
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
-            spriteBatch = new SpriteBatch(GraphicsDevice);
             foreach (Tile tile in TileSet)
             {
                 try
@@ -94,13 +126,31 @@ namespace CURPG_Graphical
 
             // handle the input
             if (oldState.IsKeyUp(Keys.Left) && newState.IsKeyDown(Keys.Left))
+            {
                 player.MovePlayer(-1, 0, world);
+                if (PlayerLoc)
+                    Console.WriteLine("X: " + player.locationX + ", Y: " + player.locationY);
+            }
+
             if (oldState.IsKeyUp(Keys.Right) && newState.IsKeyDown(Keys.Right))
+            {
                 player.MovePlayer(1, 0, world);
+                if (PlayerLoc)
+                    Console.WriteLine("X: " + player.locationX + ", Y: " + player.locationY);
+
+            }
             if (oldState.IsKeyUp(Keys.Up) && newState.IsKeyDown(Keys.Up))
+            {
                 player.MovePlayer(0, -1, world);
+                if (PlayerLoc)
+                    Console.WriteLine("X: " + player.locationX + ", Y: " + player.locationY);
+            }
             if (oldState.IsKeyUp(Keys.Down) && newState.IsKeyDown(Keys.Down))
+            {
                 player.MovePlayer(0, 1, world);
+                if (PlayerLoc)
+                    Console.WriteLine("X: " + player.locationX + ", Y: " + player.locationY);
+            }
 
 
             oldState = newState;  // set the new state as the old state for next time
