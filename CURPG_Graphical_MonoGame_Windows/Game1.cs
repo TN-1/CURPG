@@ -8,7 +8,7 @@ using System.IO;
 using System.Reflection;
 using GeonBit.UI;
 using GeonBit.UI.Entities;
-
+using QuakeConsole;
 
 namespace CURPG_Graphical
 {
@@ -24,6 +24,8 @@ namespace CURPG_Graphical
         System.Drawing.Rectangle ScreenArea;
         System.Drawing.Rectangle MapArea;
         Camera Camera;
+        ConsoleComponent console;
+        PythonInterpreter interpreter;
         bool PlayerLoc;
 
         public CURPG()
@@ -38,6 +40,15 @@ namespace CURPG_Graphical
             MapArea.Width = (int)Math.Ceiling((ScreenArea.Width * .5) / 24);
             Content.RootDirectory = "Content";
             Window.Title = "CURPG";
+            Window.AllowUserResizing = false;
+            var form = (System.Windows.Forms.Form)System.Windows.Forms.Form.FromHandle(Window.Handle);
+            form.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+
+            //Setup the console
+            console = new ConsoleComponent(this);
+            Components.Add(console);
+            interpreter = new PythonInterpreter();
+            console.Interpreter = interpreter;
         }
 
         protected override void Initialize()
@@ -70,7 +81,24 @@ namespace CURPG_Graphical
             spriteBatch = new SpriteBatch(GraphicsDevice);
             
             UserInterface.Initialize(Content, BuiltinThemes.hd);
+            //Draw UI here
+            //Right Panel
+            Panel rightPanel = new Panel(new Vector2(Convert.ToInt32((ScreenArea.Width * .5) - 16 ), Convert.ToInt32(ScreenArea.Height)), PanelSkin.Default, Anchor.TopRight);
+            UserInterface.AddEntity(rightPanel);
+            rightPanel.AddChild(new Header("Example Panel"));
+            rightPanel.AddChild(new HorizontalLine());
+            rightPanel.AddChild(new Paragraph("This is a simple panel with a button."));
+            rightPanel.AddChild(new Button("Click Me!", ButtonSkin.Default, Anchor.BottomCenter));
+            //Bottom Panel
+            Panel bottomPanel = new Panel(new Vector2(Convert.ToInt32((ScreenArea.Width * .5) + 16), Convert.ToInt32((ScreenArea.Height * .3) - 16)), PanelSkin.Default, Anchor.BottomLeft);
+            UserInterface.AddEntity(bottomPanel);
+            bottomPanel.AddChild(new Header("Example Panel"));
+            bottomPanel.AddChild(new HorizontalLine());
+            bottomPanel.AddChild(new Paragraph("This is a simple panel with a button."));
+            bottomPanel.AddChild(new Button("Click Me!", ButtonSkin.Default, Anchor.BottomCenter));
 
+            //Add console commands here
+            interpreter.AddVariable("player", player);
             base.Initialize();
         }
 
@@ -128,6 +156,10 @@ namespace CURPG_Graphical
                     Console.WriteLine("X: " + player.locationX + ", Y: " + player.locationY);
             }
 
+            if (oldState.IsKeyUp(Keys.OemTilde) && newState.IsKeyDown(Keys.OemTilde))
+                console.ToggleOpenClose();
+
+
             oldState = newState;  // set the new state as the old state for next time
 
             UserInterface.Update(gameTime);
@@ -142,7 +174,7 @@ namespace CURPG_Graphical
             System.Drawing.Point pt = Camera.playerCoord;
 
             spriteBatch.Begin();
-
+            
             for (int i = 0; i < MapArea.Width; i++)
             {
                 for (int j = 0; j < MapArea.Height; j++)

@@ -84,6 +84,13 @@ namespace CURPG_Engine.Core
 #endif
             }
         }
+
+        public void Teleport(int x, int y)
+        {
+            this.locationX = x;
+            this.locationY = y;
+            return;
+        }
     }
     /// <summary>
     /// PlayerTools class. Includes the basic tools we need to interact with our player class.
