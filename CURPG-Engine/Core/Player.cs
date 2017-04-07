@@ -91,6 +91,12 @@ namespace CURPG_Engine.Core
             this.locationY = y;
             return;
         }
+
+        public string Location()
+        {
+            var s = locationX + "," + locationY;
+            return s;
+        }
     }
     /// <summary>
     /// PlayerTools class. Includes the basic tools we need to interact with our player class.

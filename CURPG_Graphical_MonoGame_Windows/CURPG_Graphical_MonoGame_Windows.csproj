@@ -492,7 +492,9 @@
   </ItemGroup>
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
-    <None Include="app.manifest" />
+    <None Include="app.manifest">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Content\GeonBit.UI\themes\hd\fonts\Bold.spritefont" />
     <None Include="Content\GeonBit.UI\themes\hd\fonts\Italic.spritefont" />
     <None Include="Content\GeonBit.UI\themes\hd\fonts\Regular.spritefont" />

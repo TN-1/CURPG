@@ -23,6 +23,14 @@ namespace CURPG_Engine.Core
             Name = name;
             TileSize = tilesize;
         }
+
+        public void ChangeTile(string s, int index)
+        {
+            string[] t = s.Split(',');
+            var x = Convert.ToInt32(t[0]);
+            var y = Convert.ToInt32(t[1]);
+            this.Grid[x, y] = TileSet[index];
+        }
     }
 
     [Serializable]

@@ -99,6 +99,7 @@ namespace CURPG_Graphical
 
             //Add console commands here
             interpreter.AddVariable("player", player);
+            interpreter.AddVariable("world", world);
             base.Initialize();
         }
 
