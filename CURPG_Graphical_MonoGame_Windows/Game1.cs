@@ -6,7 +6,9 @@ using CURPG_Engine.Core;
 using System;
 using System.IO;
 using System.Reflection;
-using MonoGameConsole;
+using GeonBit.UI;
+using GeonBit.UI.Entities;
+
 
 namespace CURPG_Graphical
 {
@@ -22,7 +24,6 @@ namespace CURPG_Graphical
         System.Drawing.Rectangle ScreenArea;
         System.Drawing.Rectangle MapArea;
         Camera Camera;
-        GameConsole Console;
         bool PlayerLoc;
 
         public CURPG()
@@ -36,7 +37,7 @@ namespace CURPG_Graphical
             MapArea.Height = (int)Math.Ceiling((ScreenArea.Height * .7) / 24);
             MapArea.Width = (int)Math.Ceiling((ScreenArea.Width * .5) / 24);
             Content.RootDirectory = "Content";
-
+            Window.Title = "CURPG";
         }
 
         protected override void Initialize()
@@ -67,33 +68,8 @@ namespace CURPG_Graphical
 
             Camera = new Camera(0, 0, MapArea, world, player);
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            Console = new GameConsole(this, spriteBatch, new GameConsoleOptions
-            {
-                ToggleKey = 192,
-                Font = Content.Load<SpriteFont>("DevConsoleFont"),
-                FontColor = Color.LawnGreen,
-                Prompt = "~>",
-                PromptColor = Color.Crimson,
-                CursorColor = Color.OrangeRed,
-                BackgroundColor = new Color(Color.Black, 150),
-                PastCommandOutputColor = Color.Aqua,
-                BufferColor = Color.Gold
-            });
-
-            Console.AddCommand("PlayerLoc", a =>
-            {
-                if (!PlayerLoc)
-                    PlayerLoc = true;
-                else
-                    PlayerLoc = false;
-                return "PlayerLoc = " + PlayerLoc.ToString();
-            }, "Enables/Disables player location");
-            Console.AddCommand("Teleport", a =>
-            {
-                player.locationX = Convert.ToInt32(a[0]);
-                player.locationY = Convert.ToInt32(a[1]);
-                return "Teleported to " + a[0] + "," + a[1];
-            }, "Teleport player to location");
+            
+            UserInterface.Initialize(Content, BuiltinThemes.hd);
 
             base.Initialize();
         }
@@ -152,8 +128,9 @@ namespace CURPG_Graphical
                     Console.WriteLine("X: " + player.locationX + ", Y: " + player.locationY);
             }
 
-
             oldState = newState;  // set the new state as the old state for next time
+
+            UserInterface.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -179,6 +156,9 @@ namespace CURPG_Graphical
             spriteBatch.Draw(PlayerTexture, new Rectangle(pt.X * world.TileSize, pt.Y * world.TileSize, world.TileSize, world.TileSize), Color.Red);
 
             spriteBatch.End();
+
+            UserInterface.Draw(spriteBatch);
+
             base.Draw(gameTime);
         }
 
