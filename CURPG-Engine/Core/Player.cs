@@ -87,8 +87,8 @@ namespace CURPG_Engine.Core
 
         public void Teleport(int x, int y)
         {
-            this.locationX = x;
-            this.locationY = y;
+            locationX = x;
+            locationY = y;
             return;
         }
 

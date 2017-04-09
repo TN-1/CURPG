@@ -15,18 +15,6 @@ namespace CURPG_Engine.Inventory
             Capacity = capacity;
             Items = new Item[Capacity];
         }
-        
-        public void Clear()
-        {
-            if (Items != null)
-            {
-                for (int i = 0; i < Capacity; i++)
-                {
-                    if (Items[i] != null)
-                        Items[i] = null;
-                }
-            }
-        }
 
         int FirstAvailSlot()
         {
@@ -39,6 +27,18 @@ namespace CURPG_Engine.Inventory
                 }
             }
             return -1;
+        }
+
+        public void Clear()
+        {
+            if (Items != null)
+            {
+                for (int i = 0; i < Capacity; i++)
+                {
+                    if (Items[i] != null)
+                        Items[i] = null;
+                }
+            }
         }
 
         public void AddItem(Item item)
@@ -57,6 +57,19 @@ namespace CURPG_Engine.Inventory
             {
             }
             ItemDB = itemDB;
+        }
+
+        public string ListInventory()
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+            foreach(Item item in Items)
+            {
+                if(item != null)
+                    sb.Append(item.Name + ", ");
+            }
+
+            return sb.ToString();
         }
     }
 }

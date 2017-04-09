@@ -26,5 +26,13 @@ namespace CURPG_Engine.Inventory
     public class Tool : Item
     {
         public int TerrainMod;
+
+        public Tool(int id, string name, int weight, int terrmod)
+        {
+            ID = id;
+            Name = name;
+            Weight = weight;
+            TerrainMod = terrmod;
+        }
     }
 }

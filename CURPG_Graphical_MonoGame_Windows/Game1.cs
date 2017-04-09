@@ -47,6 +47,7 @@ namespace CURPG_Graphical
             //Setup the console
             console = new ConsoleComponent(this);
             Components.Add(console);
+            console.FontColor = Color.Black;
             interpreter = new PythonInterpreter();
             console.Interpreter = interpreter;
         }
@@ -79,18 +80,18 @@ namespace CURPG_Graphical
 
             Camera = new Camera(0, 0, MapArea, world, player);
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            
+
             UserInterface.Initialize(Content, BuiltinThemes.hd);
             //Draw UI here
             //Right Panel
-            Panel rightPanel = new Panel(new Vector2(Convert.ToInt32((ScreenArea.Width * .5) - 16 ), Convert.ToInt32(ScreenArea.Height)), PanelSkin.Default, Anchor.TopRight);
+            Panel rightPanel = new Panel(new Vector2(Convert.ToInt32((ScreenArea.Width * .5) - 16), Convert.ToInt32(ScreenArea.Height)), PanelSkin.Default, Anchor.TopRight);
             UserInterface.AddEntity(rightPanel);
             rightPanel.AddChild(new Header("Example Panel"));
             rightPanel.AddChild(new HorizontalLine());
             rightPanel.AddChild(new Paragraph("This is a simple panel with a button."));
             rightPanel.AddChild(new Button("Click Me!", ButtonSkin.Default, Anchor.BottomCenter));
             //Bottom Panel
-            Panel bottomPanel = new Panel(new Vector2(Convert.ToInt32((ScreenArea.Width * .5) + 16), Convert.ToInt32((ScreenArea.Height * .3) - 16)), PanelSkin.Default, Anchor.BottomLeft);
+            Panel bottomPanel = new Panel(new Vector2(Convert.ToInt32((ScreenArea.Width * .5) + (16 - Convert.ToInt32((ScreenArea.Height * .3) - 16))), Convert.ToInt32((ScreenArea.Height * .3) - 16)), PanelSkin.Default, Anchor.BottomRight, new Vector2(Convert.ToInt32((ScreenArea.Width * .5) - 16), 0));
             UserInterface.AddEntity(bottomPanel);
             bottomPanel.AddChild(new Header("Example Panel"));
             bottomPanel.AddChild(new HorizontalLine());
@@ -99,7 +100,9 @@ namespace CURPG_Graphical
 
             //Add console commands here
             interpreter.AddVariable("player", player);
+            interpreter.AddVariable("inventory", player.Inventory);
             interpreter.AddVariable("world", world);
+            interpreter.AddVariable("this", this);
             base.Initialize();
         }
 
@@ -123,7 +126,7 @@ namespace CURPG_Graphical
             }
         }
 
-        protected override void UnloadContent(){}
+        protected override void UnloadContent() { }
 
         protected override void Update(GameTime gameTime)
         {
@@ -175,7 +178,7 @@ namespace CURPG_Graphical
             System.Drawing.Point pt = Camera.playerCoord;
 
             spriteBatch.Begin();
-            
+
             for (int i = 0; i < MapArea.Width; i++)
             {
                 for (int j = 0; j < MapArea.Height; j++)
@@ -188,6 +191,8 @@ namespace CURPG_Graphical
             PlayerTexture.SetData<Color>(new Color[] { Color.Red });
             spriteBatch.Draw(PlayerTexture, new Rectangle(pt.X * world.TileSize, pt.Y * world.TileSize, world.TileSize, world.TileSize), Color.Red);
 
+            spriteBatch.DrawString(Content.Load<SpriteFont>("DevConsoleFont"), "Minimap goes here :)", new Vector2(20, ScreenArea.Height - 100), Color.Black);
+
             spriteBatch.End();
 
             UserInterface.Draw(spriteBatch);
@@ -199,10 +204,32 @@ namespace CURPG_Graphical
         {
             base.OnExiting(sender, args);
             var status = Persistance.SaveGame(world, player);
-            if(status == 0)
+            if (status == 0)
             {
                 System.Windows.Forms.MessageBox.Show("Save Failed. Do you want to close?", "Error", System.Windows.Forms.MessageBoxButtons.RetryCancel);
             }
+        }
+
+        public void Clear()
+        {
+            console.Clear();
+        }
+
+        public void Quit()
+        {
+            Exit();
+        }
+
+        public CURPG_Engine.Inventory.Item NewItem(string s, int id, string name, int weight, string[] args = null)
+        {
+            switch(s)
+            {
+                case "tool":
+                    CURPG_Engine.Inventory.Tool tool = new CURPG_Engine.Inventory.Tool(id, name, weight, Convert.ToInt32(args[0]));
+                    return tool;
+            }
+
+            return null;
         }
     }
 }
