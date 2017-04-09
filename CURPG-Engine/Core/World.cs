@@ -5,6 +5,9 @@ using System.Xml;
 
 namespace CURPG_Engine.Core
 {
+    /// <summary>
+    /// This is our world class!
+    /// </summary>
     [Serializable]
     public class World
     {
@@ -14,7 +17,16 @@ namespace CURPG_Engine.Core
         public string Name;
         public int Day = 0;
         public int TileSize;
-
+        
+        /// <summary>
+        /// Builds our world
+        /// </summary>
+        /// <param name="WorldIndex">Index for our world</param>
+        /// <param name="GridX">Total world size X</param>
+        /// <param name="GridY">Total world size Y</param>
+        /// <param name="Set">Tileset for our world</param>
+        /// <param name="name">World name</param>
+        /// <param name="tilesize">World tilesize</param>
         public World(int WorldIndex, int GridX, int GridY, List<Tile> Set, string name, int tilesize)
         {
             Index = WorldIndex;
@@ -24,6 +36,11 @@ namespace CURPG_Engine.Core
             TileSize = tilesize;
         }
 
+        /// <summary>
+        /// Changes our tile
+        /// </summary>
+        /// <param name="s">Coords to change, Expects String(x,y)</param>
+        /// <param name="index">Index of new tile</param>
         public void ChangeTile(string s, int index)
         {
             string[] t = s.Split(',');
@@ -33,6 +50,9 @@ namespace CURPG_Engine.Core
         }
     }
 
+    /// <summary>
+    /// These are our tiles that build our world
+    /// </summary>
     [Serializable]
     public class Tile
     {
@@ -42,6 +62,14 @@ namespace CURPG_Engine.Core
         public string TileName;
         public int TerrainModifier;
 
+        /// <summary>
+        /// Builds our tile objects
+        /// </summary>
+        /// <param name="index">Tile index</param>
+        /// <param name="entname">Name of tile graphic</param>
+        /// <param name="color">Basic tile color for minimap</param>
+        /// <param name="tilename">Human reabable name of tile</param>
+        /// <param name="terrainmod">Terrain modifyer for player movement and combat</param>
         public Tile(int index, string entname, Color color, string tilename, int terrainmod)
         {
             Index = index;
@@ -52,9 +80,21 @@ namespace CURPG_Engine.Core
         }
     }
 
-
+    /// <summary>
+    /// Just some misc tools to use with our world
+    /// </summary>
     public class WorldTools
     {
+        /// <summary>
+        /// Generates a random world
+        /// </summary>
+        /// <param name="WorldIndex">World index</param>
+        /// <param name="GridX">Map size X</param>
+        /// <param name="GridY">Map size Y</param>
+        /// <param name="TileSet">Tileset for our map</param>
+        /// <param name="Name">World name</param>
+        /// <param name="tilesize">Tilesize</param>
+        /// <returns></returns>
         static public World GenerateWorld(int WorldIndex, int GridX, int GridY, List<Tile> TileSet, string Name, int tilesize)
         {
             float[,] noiseValues;
@@ -111,6 +151,11 @@ namespace CURPG_Engine.Core
             return world;
         }
 
+        /// <summary>
+        /// Build our tileset from an XML definition
+        /// </summary>
+        /// <param name="tilepath">Path to XML</param>
+        /// <returns>A list of tiles</returns>
         static public List<Tile> TileSetBuilder(string tilepath)
         {
             XmlDocument tiles = new XmlDocument();
@@ -132,6 +177,11 @@ namespace CURPG_Engine.Core
             return tileset;
         }
 
+        /// <summary>
+        /// Comverts a string to a valid color
+        /// </summary>
+        /// <param name="nameOfColor">String of color</param>
+        /// <returns>A usable color</returns>
         static Color ValidColor(string nameOfColor)
         {
             var prop = typeof(Color).GetProperty(nameOfColor);

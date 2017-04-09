@@ -1,5 +1,8 @@
 ﻿namespace CURPG_Engine.Core
 {
+    /// <summary>
+    /// Camera allows for the drawing of a subset of the World class based on usbale screen area. TODO: Support minimap
+    /// </summary>
     public class Camera
     {
         int X;
@@ -13,6 +16,14 @@
 
         public System.Drawing.Point playerCoord { get { return PlayerCoord; } }
 
+        /// <summary>
+        /// Constructs a camera object
+        /// </summary>
+        /// <param name="x">Set to 0</param>
+        /// <param name="y">Set to 0</param>
+        /// <param name="viewPort">Size of area to draw</param>
+        /// <param name="world">World object to draw</param>
+        /// <param name="player">Player object to use</param>
         public Camera(int x, int y, System.Drawing.Rectangle viewPort, World world, Player player)
         {
             X = x;
@@ -23,6 +34,11 @@
             MaxX = World.Grid.GetLength(0) - ViewPort.Width;
             MaxY = World.Grid.GetLength(1) - ViewPort.Height;
         }
+
+        /// <summary>
+        /// Gets the current area to draw based on player location
+        /// </summary>
+        /// <returns>World object with subset to draw</returns>
         public World GetDrawArea()
         {
             World DrawArea = new World(1, ViewPort.Width + 1, ViewPort.Height + 1, World.TileSet, "DrawArea", World.TileSize);

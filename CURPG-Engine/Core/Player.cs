@@ -41,6 +41,12 @@ namespace CURPG_Engine.Core
             Inventory = new Inventory.Inventory(64);
         }
 
+        /// <summary>
+        /// Moves the player
+        /// </summary>
+        /// <param name="x">New X Coord</param>
+        /// <param name="y">New Y Coord</param>
+        /// <param name="world">Active world object</param>
         public void MovePlayer(int x, int y, World world)
         {
             var CurX = locationX;
@@ -85,6 +91,11 @@ namespace CURPG_Engine.Core
             }
         }
 
+        /// <summary>
+        /// Teleports the player to a location
+        /// </summary>
+        /// <param name="x">Destination X Coord</param>
+        /// <param name="y">Desintation Y Coord</param>
         public void Teleport(int x, int y)
         {
             locationX = x;
@@ -92,12 +103,17 @@ namespace CURPG_Engine.Core
             return;
         }
 
+        /// <summary>
+        /// Getd a nice string with the players current location
+        /// </summary>
+        /// <returns>x,y</returns>
         public string Location()
         {
             var s = locationX + "," + locationY;
             return s;
         }
     }
+
     /// <summary>
     /// PlayerTools class. Includes the basic tools we need to interact with our player class.
     /// </summary>
@@ -153,6 +169,13 @@ namespace CURPG_Engine.Core
             return player;
         }
 
+        /// <summary>
+        /// Finds a safe place to spawn our player
+        /// </summary>
+        /// <param name="world">Current world object</param>
+        /// <param name="X">Initial spawn X</param>
+        /// <param name="Y">Initial spawn Y</param>
+        /// <returns></returns>
         static public System.Drawing.Point GetSpawn(World world, int X, int Y)
         {
             System.Drawing.Point pt;

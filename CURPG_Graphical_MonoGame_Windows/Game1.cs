@@ -116,12 +116,7 @@ namespace CURPG_Graphical
                 }
                 catch
                 {
-                    //TODO: Add Debug to log
-                    try
-                    {
-                        TileTextures.Add(tile.EntityName, Content.Load<Texture2D>("TileMissing"));
-                    }
-                    catch { }
+                    TileTextures.Add(tile.EntityName, Content.Load<Texture2D>("TileMissing"));
                 }
             }
         }
@@ -200,6 +195,11 @@ namespace CURPG_Graphical
             base.Draw(gameTime);
         }
 
+        /// <summary>
+        /// Hooks into the OnExiting event to save the game.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         protected override void OnExiting(Object sender, EventArgs args)
         {
             base.OnExiting(sender, args);
@@ -210,16 +210,31 @@ namespace CURPG_Graphical
             }
         }
 
+        /// <summary>
+        /// Clears the console
+        /// </summary>
         public void Clear()
         {
             console.Clear();
         }
 
+        /// <summary>
+        /// Quits the game
+        /// </summary>
         public void Quit()
         {
             Exit();
         }
 
+        /// <summary>
+        /// Creates a new item
+        /// </summary>
+        /// <param name="s">Type of item</param>
+        /// <param name="id">Item ID</param>
+        /// <param name="name">Item name</param>
+        /// <param name="weight">Item weight</param>
+        /// <param name="args">Optional parameters as needed by classes</param>
+        /// <returns></returns>
         public CURPG_Engine.Inventory.Item NewItem(string s, int id, string name, int weight, string[] args = null)
         {
             switch(s)
