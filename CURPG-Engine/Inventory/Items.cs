@@ -2,6 +2,10 @@
 
 namespace CURPG_Engine.Inventory
 {
+    /// <summary>
+    /// Defines our Item classes
+    /// Items are divide into seperate classes for ease of use
+    /// </summary>
     [Serializable]
     public class Item
     {
@@ -35,6 +39,39 @@ namespace CURPG_Engine.Inventory
             Weight = weight;
             TerrainMod = terrmod;
             EntityName = entname;
+        }
+    }
+
+    public class Craftable : Item
+    {
+        public int StackHeight;
+        public int MaxStackHeight;
+
+        public Craftable(int id, string name, string entname, int weight, int quantity, int maxStack)
+        {
+            ID = id;
+            Name = name;
+            EntityName = entname;
+            Weight = weight;
+            StackHeight = quantity;
+            MaxStackHeight = maxStack;
+        }
+
+        public void AddQuantity(int quantity)
+        {
+            if ((StackHeight + quantity) > MaxStackHeight)
+            {
+                //Start another stack
+            }
+            else
+            {
+                StackHeight = +quantity;
+            }
+        }
+
+        public int HowManyMore()
+        {
+            return MaxStackHeight - StackHeight;
         }
     }
 }

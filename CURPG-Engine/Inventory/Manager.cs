@@ -4,6 +4,10 @@ using System.Xml;
 
 namespace CURPG_Engine.Inventory
 {
+    /// <summary>
+    /// This is where the magic happens. We all need the shiney!
+    /// All inventory related methods live in here to keep them centered
+    /// </summary>
     [Serializable]
     public class Inventory
     {
@@ -16,6 +20,10 @@ namespace CURPG_Engine.Inventory
             Items = new Item[Capacity];
         }
 
+        /// <summary>
+        /// Finds the index of the first available slot
+        /// </summary>
+        /// <returns>Index of first avail slot</returns>
         int FirstAvailSlot()
         {
             if (Items != null)
@@ -29,6 +37,9 @@ namespace CURPG_Engine.Inventory
             return -1;
         }
 
+        /// <summary>
+        /// Clears the inventory. USE WITH CAUTION, THIS IS IRREVESIBLE
+        /// </summary>
         public void Clear()
         {
             if (Items != null)
@@ -41,11 +52,30 @@ namespace CURPG_Engine.Inventory
             }
         }
 
+        /// <summary>
+        /// Adds item to the inventory
+        /// </summary>
+        /// <param name="item">Item class of item to add</param>
         public void AddItem(Item item)
         {
             Items[FirstAvailSlot()] = item;
         }
 
+        /// <summary>
+        /// Adds item to the inventory
+        /// </summary>
+        /// <param name="i">Item ID to add to inventory</param>
+        public void AddItem(int i)
+        {
+            foreach(Item item in ItemDB)
+                if(item.ID == i)
+                    Items[FirstAvailSlot()] = item;
+        }
+
+        /// <summary>
+        /// Builds our Items database from the XML decleration file
+        /// </summary>
+        /// <param name="path">Path to items.xml</param>
         public void BuildDatabase(string path)
         {
             XmlDocument items = new XmlDocument();
@@ -66,6 +96,10 @@ namespace CURPG_Engine.Inventory
             ItemDB = itemDB;
         }
 
+        /// <summary>
+        /// Lists the contents of the inventory by name
+        /// </summary>
+        /// <returns>String of item names</returns>
         public string ListInventory()
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
@@ -78,5 +112,27 @@ namespace CURPG_Engine.Inventory
 
             return sb.ToString();
         }
+
+        /// <summary>
+        /// Creates a new item
+        /// </summary>
+        /// <param name="s">Type of item</param>
+        /// <param name="id">Item ID</param>
+        /// <param name="name">Item name</param>
+        /// <param name="weight">Item weight</param>
+        /// <param name="args">Optional parameters as needed by classes</param>
+        /// <returns></returns>
+        public Item NewItem(string s, int id, string name, int weight, string[] args = null)
+        {
+            switch (s)
+            {
+                case "tool":
+                    CURPG_Engine.Inventory.Tool tool = new CURPG_Engine.Inventory.Tool(id, name, weight, Convert.ToInt32(args[0]), args[1]);
+                    return tool;
+            }
+
+            return null;
+        }
+
     }
 }

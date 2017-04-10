@@ -237,27 +237,6 @@ namespace CURPG_Graphical
         }
 
         /// <summary>
-        /// Creates a new item
-        /// </summary>
-        /// <param name="s">Type of item</param>
-        /// <param name="id">Item ID</param>
-        /// <param name="name">Item name</param>
-        /// <param name="weight">Item weight</param>
-        /// <param name="args">Optional parameters as needed by classes</param>
-        /// <returns></returns>
-        public CURPG_Engine.Inventory.Item NewItem(string s, int id, string name, int weight, string[] args = null)
-        {
-            switch(s)
-            {
-                case "tool":
-                    CURPG_Engine.Inventory.Tool tool = new CURPG_Engine.Inventory.Tool(id, name, weight, Convert.ToInt32(args[0]));
-                    return tool;
-            }
-
-            return null;
-        }
-
-        /// <summary>
         /// Sets our testing flag
         /// </summary>
         public void Testing()
