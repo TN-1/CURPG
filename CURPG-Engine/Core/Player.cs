@@ -89,7 +89,7 @@ namespace CURPG_Engine.Core
                                         world.ChangeTile(locationX, locationY, 24);
                                         Craftable logs = null;
                                         foreach(Item _item in Inventory.ItemDB)
-                                            if (item.ID == 1)
+                                            if (_item.ID == 1)
                                                 logs = (Craftable)_item;
                                         logs.StackHeight = r.Next(1, 5);
                                         if (Inventory.Contains(1))

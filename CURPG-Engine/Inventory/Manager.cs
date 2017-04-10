@@ -95,7 +95,7 @@ namespace CURPG_Engine.Inventory
                 var entname = node.SelectSingleNode("EntityName").InnerText;
                 var terrmod = Convert.ToInt32(node.SelectSingleNode("TerrainMod").InnerText);
                 Tool tool = new Tool(id, name, weight, terrmod, entname);
-                ItemDB.Add(tool);
+                itemDB.Add(tool);
             }
             nodes = null; //Gotta null this shit for some sweet GC action BB!
 
@@ -108,7 +108,7 @@ namespace CURPG_Engine.Inventory
                 var entname = node.SelectSingleNode("EntityName").InnerText;
                 var maxStack = Convert.ToInt32(node.SelectSingleNode("MaxStackHeight").InnerText);
                 Craftable craftable = new Craftable(id, name, entname, weight, maxStack);
-                ItemDB.Add(craftable);
+                itemDB.Add(craftable);
             }
             nodes = null;
 

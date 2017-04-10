@@ -42,6 +42,7 @@ namespace CURPG_Engine.Inventory
         }
     }
 
+    [Serializable]
     public class Craftable : Item
     {
         public int StackHeight;
@@ -66,7 +67,7 @@ namespace CURPG_Engine.Inventory
             }
             else
             {
-                StackHeight = +quantity;
+                StackHeight =+ quantity;
             }
         }
 
