@@ -47,14 +47,15 @@ namespace CURPG_Engine.Inventory
         public int StackHeight;
         public int MaxStackHeight;
 
-        public Craftable(int id, string name, string entname, int weight, int quantity, int maxStack)
+        public Craftable(int id, string name, string entname, int weight, int maxStack, int quantity = 0)
         {
             ID = id;
             Name = name;
             EntityName = entname;
             Weight = weight;
-            StackHeight = quantity;
             MaxStackHeight = maxStack;
+            if (quantity != 0)
+                StackHeight = quantity;
         }
 
         public void AddQuantity(int quantity)

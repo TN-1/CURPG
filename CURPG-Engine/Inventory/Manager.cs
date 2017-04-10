@@ -80,9 +80,13 @@ namespace CURPG_Engine.Inventory
         {
             XmlDocument items = new XmlDocument();
             List<Item> itemDB = new List<Item>();
+            XmlNodeList nodes;
             items.Load(path);
 
-            XmlNodeList nodes = items.DocumentElement.SelectNodes("/items/tools/item");
+            //Go throught the XML file iterating through each of the nodes to make our items, Add them to a temp list
+            //Then return the list to populate our actual itemDB.
+
+            nodes = items.DocumentElement.SelectNodes("/items/tools/item");
             foreach (XmlNode node in nodes)
             {
                 var id = Convert.ToInt32(node.Attributes.GetNamedItem("id").InnerText);
@@ -93,6 +97,21 @@ namespace CURPG_Engine.Inventory
                 Tool tool = new Tool(id, name, weight, terrmod, entname);
                 ItemDB.Add(tool);
             }
+            nodes = null; //Gotta null this shit for some sweet GC action BB!
+
+            nodes = items.DocumentElement.SelectNodes("/items/craftable/item");
+            foreach (XmlNode node in nodes)
+            {
+                var id = Convert.ToInt32(node.Attributes.GetNamedItem("id").InnerText);
+                var name = node.SelectSingleNode("Name").InnerText;
+                var weight = Convert.ToInt32(node.SelectSingleNode("Weight").InnerText);
+                var entname = node.SelectSingleNode("EntityName").InnerText;
+                var maxStack = Convert.ToInt32(node.SelectSingleNode("MaxStackHeight").InnerText);
+                Craftable craftable = new Craftable(id, name, entname, weight, maxStack);
+                ItemDB.Add(craftable);
+            }
+            nodes = null;
+
             ItemDB = itemDB;
         }
 

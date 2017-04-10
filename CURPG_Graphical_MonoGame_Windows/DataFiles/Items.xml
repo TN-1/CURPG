@@ -20,6 +20,14 @@
       <TerrainMod>1</TerrainMod>
     </item>
   </tools>
+  <craftable>
+    <item id ="1">
+      <Name>Log</Name>
+      <Weight>1</Weight>
+      <EntityName>log</EntityName>
+      <MaxStackHeight>32</MaxStackHeight>
+    </item>
+  </craftable>
   <armor>
     
   </armor>
