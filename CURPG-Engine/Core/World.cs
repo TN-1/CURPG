@@ -48,6 +48,17 @@ namespace CURPG_Engine.Core
             var y = Convert.ToInt32(t[1]);
             this.Grid[x, y] = TileSet[index];
         }
+
+        /// <summary>
+        /// Changes our tile
+        /// </summary>
+        /// <param name="x">X coord of tile to change</param>
+        /// <param name="y">Y coord of tile to change</param>
+        /// <param name="index">Index of new tile</param>
+        public void ChangeTile(int x, int y, int index)
+        {
+            this.Grid[x, y] = TileSet[index];
+        }
     }
 
     /// <summary>

@@ -1,4 +1,4 @@
-﻿//#define TESTING //Uncomment to disable terrain modifiers, Comment to enable.
+﻿using CURPG_Engine.Inventory;
 using System;
 
 namespace CURPG_Engine.Core
@@ -19,6 +19,7 @@ namespace CURPG_Engine.Core
         public int height;
         public int health = 100;
         public Inventory.Inventory Inventory;
+        public bool Testing;
 
         /// <summary>
         /// Constructs a player from user assigned values
@@ -39,6 +40,7 @@ namespace CURPG_Engine.Core
             locationX = x;
             locationY = y;
             Inventory = new Inventory.Inventory(64);
+            Testing = false;
         }
 
         /// <summary>
@@ -60,34 +62,47 @@ namespace CURPG_Engine.Core
             }
             else
             {
-#if TESTING
-                locationX = NewX;
-                locationY = NewY;
-/*
-#endif
-                switch (world.Grid[NewX, NewY].TerrainModifier)
+                if (Testing == true)
                 {
-                    case 0:
-                        //Flat ground
-                        locationX = NewX;
-                        locationY = NewY;
-                        break;
-                    case 1:
-                        //Trees
-                        return;
-                    case 2:
-                        //Mountains
-                        return;
-                    case 3:
-                        //Water
-                        return;
-                    case 4:
-                        //Buildings
-                        return;
+                    locationX = NewX;
+                    locationY = NewY;
                 }
-#if TESTING
-*/
-#endif
+                else
+                {
+                    switch (world.Grid[NewX, NewY].TerrainModifier)
+                    {
+                        case 0:
+                            //Flat ground
+                            locationX = NewX;
+                            locationY = NewY;
+                            break;
+                        case 1:
+                            foreach (Item item in Inventory.Items)
+                            {
+                                if (item is Tool)
+                                {
+                                    Tool tool = (Tool)item;
+                                    if (tool.TerrainMod == 1)
+                                    {
+                                        locationX = NewX;
+                                        locationY = NewY;
+                                        world.ChangeTile(locationX, locationY, 24);
+                                        //TODO: Add wood to inventory
+                                    }
+                                }
+                            }
+                            return;
+                        case 2:
+                            //Mountains
+                            return;
+                        case 3:
+                            //Water
+                            return;
+                        case 4:
+                            //Buildings
+                            return;
+                    }
+                }
             }
         }
 

@@ -47,7 +47,9 @@ namespace CURPG_Graphical
             //Setup the console
             console = new ConsoleComponent(this);
             Components.Add(console);
-            console.FontColor = Color.Black;
+            console.FontColor = Color.Aqua;
+            console.InputPrefixColor = Color.Aqua;
+            console.InputPrefix = ">";
             interpreter = new PythonInterpreter();
             console.Interpreter = interpreter;
         }
@@ -116,7 +118,11 @@ namespace CURPG_Graphical
                 }
                 catch
                 {
-                    TileTextures.Add(tile.EntityName, Content.Load<Texture2D>("TileMissing"));
+                    try
+                    {
+                        TileTextures.Add(tile.EntityName, Content.Load<Texture2D>("TileMissing"));
+                    }
+                    catch { }
                 }
             }
         }
@@ -245,6 +251,17 @@ namespace CURPG_Graphical
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Sets our testing flag
+        /// </summary>
+        public void Testing()
+        {
+            if (!player.Testing)
+                player.Testing = true;
+            else if (player.Testing)
+                player.Testing = false;
         }
     }
 }
