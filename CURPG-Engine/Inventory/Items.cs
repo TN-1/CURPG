@@ -8,6 +8,7 @@ namespace CURPG_Engine.Inventory
         public int ID;
         public string Name;
         public int Weight;
+        public string EntityName;
     }
 
     [Serializable]
@@ -27,12 +28,13 @@ namespace CURPG_Engine.Inventory
     {
         public int TerrainMod;
 
-        public Tool(int id, string name, int weight, int terrmod)
+        public Tool(int id, string name, int weight, int terrmod, string entname)
         {
             ID = id;
             Name = name;
             Weight = weight;
             TerrainMod = terrmod;
+            EntityName = entname;
         }
     }
 }

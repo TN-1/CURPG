@@ -65,19 +65,23 @@ namespace CURPG_Graphical
                 if (world == null || player == null)
                 {
                     var tilesPath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"DataFiles\Tiles.xml");
+                    var itemsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"DataFiles\Items.xml");
                     TileSet = WorldTools.TileSetBuilder(tilesPath);
                     world = WorldTools.GenerateWorld(0, 128, 128, TileSet, "World", 24);
                     var pt = PlayerTools.GetSpawn(world, MapArea.Width / 2, MapArea.Height / 2);
                     player = PlayerTools.RandomPlayer(pt.X, pt.Y);
+                    player.Inventory.BuildDatabase(itemsPath);
                 }
             }
             else
             {
                 var tilesPath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"DataFiles\Tiles.xml");
+                var itemsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"DataFiles\Items.xml");
                 TileSet = WorldTools.TileSetBuilder(tilesPath);
                 world = WorldTools.GenerateWorld(0, 128, 128, TileSet, "World", 24);
                 var pt = PlayerTools.GetSpawn(world, MapArea.Width / 2, MapArea.Height / 2);
                 player = PlayerTools.RandomPlayer(pt.X, pt.Y);
+                player.Inventory.BuildDatabase(itemsPath);
             }
 
             Camera = new Camera(0, 0, MapArea, world, player);

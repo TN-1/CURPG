@@ -51,10 +51,17 @@ namespace CURPG_Engine.Inventory
             XmlDocument items = new XmlDocument();
             List<Item> itemDB = new List<Item>();
             items.Load(path);
-            XmlNodeList nodes = items.DocumentElement.SelectNodes("/items/item");
 
+            XmlNodeList nodes = items.DocumentElement.SelectNodes("/items/tools/item");
             foreach (XmlNode node in nodes)
             {
+                var id = Convert.ToInt32(node.Attributes.GetNamedItem("id").InnerText);
+                var name = node.SelectSingleNode("Name").InnerText;
+                var weight = Convert.ToInt32(node.SelectSingleNode("Weight").InnerText);
+                var entname = node.SelectSingleNode("EntityName").InnerText;
+                var terrmod = Convert.ToInt32(node.SelectSingleNode("TerrainMod").InnerText);
+                Tool tool = new Tool(id, name, weight, terrmod, entname);
+                ItemDB.Add(tool);
             }
             ItemDB = itemDB;
         }

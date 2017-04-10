@@ -1,5 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--
 <items>
-  <item>
-  </item>
+  <tools> //Item class
+    <item id =""> //Unique item ID, Not nessercillary sequential
+      <name></name> //Hooman readable item name
+      <weight></weight> //Weight of item (NOT YET IMPLEMENTED)
+      <EntityName></EntityName> //Spritename
+      <TerrainMod></TerrainMod> //For tools, The terrain modifyer.
+    </item>
+  </tools>
+</items>
+-->
+<items>
+  <tools>
+    <item id ="0">
+      <Name>Axe</Name>
+      <Weight>1</Weight>
+      <EntityName>axe</EntityName>
+      <TerrainMod>1</TerrainMod>
+    </item>
+  </tools>
+  <armor>
+    
+  </armor>
+  <weapons>
+  
+  </weapons>
 </items>
