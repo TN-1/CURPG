@@ -51,6 +51,7 @@ namespace CURPG_Engine.Core
         /// <param name="world">Active world object</param>
         public void MovePlayer(int x, int y, World world)
         {
+            Random r = new Random();
             var CurX = locationX;
             var CurY = locationY;
             var NewX = CurX + x;
@@ -87,7 +88,22 @@ namespace CURPG_Engine.Core
                                         locationX = NewX;
                                         locationY = NewY;
                                         world.ChangeTile(locationX, locationY, 24);
-                                        //TODO: Add wood to inventory
+                                        Craftable logs = null;
+                                        foreach(Item _item in Inventory.ItemDB)
+                                            if (item.ID == 1)
+                                                logs = (Craftable)_item;
+                                        logs.StackHeight = r.Next(1, 5);
+                                        if (Inventory.Contains(1))
+                                        {
+                                            foreach (Item log in Inventory.Items)
+                                                if (log.ID == 1)
+                                                {
+                                                    Craftable exists = (Craftable)log;
+                                                    exists.AddQuantity(logs.StackHeight);
+                                                }
+                                        }
+                                        else
+                                            Inventory.AddItem(logs);
                                     }
                                 }
                             }

@@ -12,7 +12,7 @@ namespace CURPG_Engine.Inventory
     public class Inventory
     {
         public Item[] Items;
-        List<Item> ItemDB;
+        public List<Item> ItemDB;
         public int Capacity;
         public Inventory(int capacity)
         {
@@ -126,7 +126,7 @@ namespace CURPG_Engine.Inventory
             foreach(Item item in Items)
             {
                 if(item != null)
-                    sb.Append(item.Name + ", ");
+                    sb.Append(", " + item.Name);
             }
 
             return sb.ToString();
@@ -146,11 +146,21 @@ namespace CURPG_Engine.Inventory
             switch (s)
             {
                 case "tool":
-                    CURPG_Engine.Inventory.Tool tool = new CURPG_Engine.Inventory.Tool(id, name, weight, Convert.ToInt32(args[0]), args[1]);
+                    Tool tool = new Tool(id, name, weight, Convert.ToInt32(args[0]), args[1]);
                     return tool;
             }
 
             return null;
+        }
+
+        public bool Contains(int id)
+        {
+            foreach(Item item in Items)
+                if (item.ID == id)
+                    return true;
+                else
+                    return false;
+            return false;
         }
 
     }
