@@ -80,9 +80,8 @@ namespace CURPG_Engine.Core
                         case 1:
                             foreach (Item item in Inventory.Items)
                             {
-                                if (item is Tool)
+                                if (item is Tool tool)
                                 {
-                                    Tool tool = (Tool)item;
                                     if (tool.TerrainMod == 1)
                                     {
                                         locationX = NewX;

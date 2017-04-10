@@ -5,7 +5,7 @@ Sample entry
   <tile> 
     <id></id>//Sequential ID
     <entityName></entityName> //This is the name of the graphics file. This must match file name for import purposes
-    <tileColor></tileColor> //What is the basic color of the tile? Will be used if import fails for whatever reason. Must match an XNA color: http://www.foszor.com/blog/xna-color-chart/
+    <tileColor></tileColor> //What is the basic color of the tile? Used to draw the minimap. Must match an XNA color: http://www.foszor.com/blog/xna-color-chart/
     <tileName></tileName> //Human readable name of the tile
     <terrainMod></terrainMod> //Int value representing the terrain. 0 = Flat, 1 = Trees, 2= Moutains, 3 = Water, 4 = Building
   </tile>
