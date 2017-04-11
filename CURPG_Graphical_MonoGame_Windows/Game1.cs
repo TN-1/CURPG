@@ -27,6 +27,8 @@ namespace CURPG_Graphical
         ConsoleComponent console;
         PythonInterpreter interpreter;
         bool PlayerLoc;
+        Panel bottomPanel;
+        Panel rightPanel;
 
         public CURPG()
         {
@@ -90,19 +92,18 @@ namespace CURPG_Graphical
             UserInterface.Initialize(Content, BuiltinThemes.hd);
             //Draw UI here
             //Right Panel
-            Panel rightPanel = new Panel(new Vector2(Convert.ToInt32((ScreenArea.Width * .5) - 16), Convert.ToInt32(ScreenArea.Height)), PanelSkin.Default, Anchor.TopRight);
+            rightPanel = new Panel(new Vector2(Convert.ToInt32((ScreenArea.Width * .5) - 16), Convert.ToInt32(ScreenArea.Height)), PanelSkin.Default, Anchor.TopRight);
+            PanelTabs tabs = new PanelTabs();
+            PanelTabs.TabData invTab = tabs.AddTab("Inventory");
+            PanelTabs.TabData statTab = tabs.AddTab("Skills");
+            invTab.panel.AddChild(new Header("Hello inventory!"));
+            statTab.panel.AddChild(new Header("Hello stats!"));
+            rightPanel.AddChild(tabs);
             UserInterface.AddEntity(rightPanel);
-            rightPanel.AddChild(new Header("Example Panel"));
-            rightPanel.AddChild(new HorizontalLine());
-            rightPanel.AddChild(new Paragraph("This is a simple panel with a button."));
-            rightPanel.AddChild(new Button("Click Me!", ButtonSkin.Default, Anchor.BottomCenter));
+
             //Bottom Panel
-            Panel bottomPanel = new Panel(new Vector2(Convert.ToInt32((ScreenArea.Width * .5) + (16 - Convert.ToInt32((ScreenArea.Height * .3) - 16))), Convert.ToInt32((ScreenArea.Height * .3) - 16)), PanelSkin.Default, Anchor.BottomRight, new Vector2(Convert.ToInt32((ScreenArea.Width * .5) - 16), 0));
+            bottomPanel = new Panel(new Vector2(Convert.ToInt32((ScreenArea.Width * .5) + (16 - Convert.ToInt32((ScreenArea.Height * .3) - 16))), Convert.ToInt32((ScreenArea.Height * .3) - 16)), PanelSkin.Default, Anchor.BottomRight, new Vector2(Convert.ToInt32((ScreenArea.Width * .5) - 16), 0));
             UserInterface.AddEntity(bottomPanel);
-            bottomPanel.AddChild(new Header("Example Panel"));
-            bottomPanel.AddChild(new HorizontalLine());
-            bottomPanel.AddChild(new Paragraph("This is a simple panel with a button."));
-            bottomPanel.AddChild(new Button("Click Me!", ButtonSkin.Default, Anchor.BottomCenter));
 
             //Add console commands here
             interpreter.AddVariable("player", player);
@@ -245,6 +246,16 @@ namespace CURPG_Graphical
                 player.Testing = true;
             else if (player.Testing)
                 player.Testing = false;
+        }
+
+        public void PrintStory(string[] s)
+        {
+            bottomPanel.ClearChildren();
+            foreach (string S in s)
+            {
+                Paragraph p = new Paragraph(S);
+                bottomPanel.AddChild(p);
+            }
         }
     }
 }
