@@ -1,13 +1,7 @@
-﻿using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using CURPG_Engine.Core;
-using System;
-using System.IO;
+﻿using System;
 using System.Reflection;
-using GeonBit.UI;
 using GeonBit.UI.Entities;
+using System.IO;
 
 namespace CURPG_Graphical_MonoGame_Windows.Screens
 {
@@ -38,7 +32,7 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
         /// <param name="s">Strings[]</param>
         public void PrintStory(string[] s)
         {
-            foreach (string S in s)
+            foreach (String S in s)
             {
                 Paragraph p = new Paragraph(S);
                 bottomPanel.AddChild(p);
@@ -80,5 +74,24 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
             return button;
         }
 
+        /// <summary>
+        /// Run a lua script
+        /// </summary>
+        /// <param name="name">Name of script inc .lua in Scripts folder</param>
+        /// <returns>Indicator of success</returns>
+        public string RunScript(string name)
+        {
+            if (!File.Exists(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"Scripts\" + name)))
+                return ("File doesnt exist");
+            try
+            {
+                lua.DoFile(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"Scripts\" + name));
+            }
+            catch (Exception e)
+            {
+                return ("Failed: " + e);
+            }
+            return ("Success");
+        }
     }
 }

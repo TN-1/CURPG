@@ -20,6 +20,7 @@ namespace CURPG_Graphical_MonoGame_Windows
         public static ConsoleComponent console;
         public static PythonInterpreter interpreter;
         public static System.Drawing.Rectangle ScreenArea;
+        static Dictionary<string, GameScreen> Screens;
 
 
         public ScreenManager()
@@ -30,7 +31,7 @@ namespace CURPG_Graphical_MonoGame_Windows
             GraphicsDeviceMgr.IsFullScreen = true;
             GraphicsDeviceMgr.PreferredBackBufferHeight = ScreenArea.Height;
             GraphicsDeviceMgr.PreferredBackBufferWidth = ScreenArea.Width;
-            GraphicsDeviceMgr.IsFullScreen = true;
+            GraphicsDeviceMgr.IsFullScreen = false;
             Window.Title = "CURPG";
             Window.AllowUserResizing = false;
 
@@ -45,6 +46,11 @@ namespace CURPG_Graphical_MonoGame_Windows
             interpreter = new PythonInterpreter();
             console.Interpreter = interpreter;
 
+            interpreter.AddVariable("base", this);
+
+            Screens = new Dictionary<string, GameScreen>();
+            Screens.Add("Menu", new MenuScreen());
+            Screens.Add("Play", new PlayScreen());
         }
 
         protected override void Initialize()
@@ -62,7 +68,7 @@ namespace CURPG_Graphical_MonoGame_Windows
 
             // Load any full game assets here
 
-            AddScreen(new PlayScreen());
+            AddScreen(Screens["Play"]);
         }
 
         protected override void UnloadContent()
@@ -180,16 +186,30 @@ namespace CURPG_Graphical_MonoGame_Windows
 
         public static void RemoveScreen(GameScreen gameScreen)
         {
+            if (gameScreen is PlayScreen play)
+            {
+                var status = CURPG_Engine.Core.Persistance.SaveGame(play.world, play.player);
+                if (status == 0)
+                {
+                    System.Windows.Forms.MessageBox.Show("Save Failed. Do you want to close?", "Error", System.Windows.Forms.MessageBoxButtons.RetryCancel);
+                }
+            }
+
             gameScreen.UnloadAssets();
             ScreenList.Remove(gameScreen);
-            if (ScreenList.Count < 1)
-                AddScreen(new GameScreen()); // Default screen
         }
 
         public static void ChangeScreens(GameScreen currentScreen, GameScreen targetScreen)
         {
             RemoveScreen(currentScreen);
             AddScreen(targetScreen);
+            return;
+        }
+
+        public static void ChangeScreens(string currentScreen, string targetScreen)
+        {
+            RemoveScreen(Screens[currentScreen]);
+            AddScreen(Screens[targetScreen]);
         }
 
         /// <summary>

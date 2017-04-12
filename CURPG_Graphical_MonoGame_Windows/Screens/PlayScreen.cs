@@ -8,6 +8,7 @@ using System.IO;
 using System.Reflection;
 using GeonBit.UI;
 using GeonBit.UI.Entities;
+using NLua;
 
 namespace CURPG_Graphical_MonoGame_Windows.Screens
 {
@@ -23,6 +24,8 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
         bool PlayerLoc;
         Panel bottomPanel;
         Panel rightPanel;
+        Lua lua = new Lua();
+        public new Color BackgroundColor = Color.White;
 
         public override void Initialize()
         {
@@ -70,16 +73,20 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
             statTab.panel.AddChild(new Header("Hello stats!"));
             rightPanel.AddChild(tabs);
             UserInterface.AddEntity(rightPanel);
-
             //Bottom Panel
             bottomPanel = new Panel(new Vector2(Convert.ToInt32((ScreenManager.ScreenArea.Width * .5) + (16 - Convert.ToInt32((ScreenManager.ScreenArea.Height * .3) - 16))), Convert.ToInt32((ScreenManager.ScreenArea.Height * .3) - 16)), PanelSkin.Default, Anchor.BottomRight, new Vector2(Convert.ToInt32((ScreenManager.ScreenArea.Width * .5) - 16), 0));
             UserInterface.AddEntity(bottomPanel);
 
+            //Add console functions
             ScreenManager.interpreter.AddVariable("player", player);
             ScreenManager.interpreter.AddVariable("inventory", player.Inventory);
             ScreenManager.interpreter.AddVariable("world", world);
             ScreenManager.interpreter.AddVariable("this", this);
 
+            //Setup lua
+            lua.LoadCLRPackage();
+            lua["this"] = this;
+            
             base.Initialize();
         }
 
@@ -169,7 +176,6 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
             ScreenManager.Sprites.DrawString(ScreenManager.ContentMgr.Load<SpriteFont>("DevConsoleFont"), "Minimap goes here :)", new Vector2(20, ScreenManager.ScreenArea.Height - 100), Color.Black);
 
             ScreenManager.Sprites.End();
-
             UserInterface.Draw(ScreenManager.Sprites);
 
             base.Draw(gameTime);
