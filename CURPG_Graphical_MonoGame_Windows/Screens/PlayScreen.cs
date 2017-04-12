@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -8,56 +8,27 @@ using System.IO;
 using System.Reflection;
 using GeonBit.UI;
 using GeonBit.UI.Entities;
-using QuakeConsole;
 
-namespace CURPG_Graphical
+namespace CURPG_Graphical_MonoGame_Windows.Screens
 {
-    public class CURPG : Game
+    public class PlayScreen : GameScreen
     {
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
         Dictionary<string, Texture2D> TileTextures = new Dictionary<string, Texture2D>();
-        World world;
+        public World world;
         List<Tile> TileSet;
-        Player player;
+        public Player player;
         private KeyboardState oldState;
-        System.Drawing.Rectangle ScreenArea;
         System.Drawing.Rectangle MapArea;
         Camera Camera;
-        ConsoleComponent console;
-        PythonInterpreter interpreter;
         bool PlayerLoc;
         Panel bottomPanel;
         Panel rightPanel;
 
-        public CURPG()
+        public override void Initialize()
         {
-            var pt = new System.Drawing.Point(0, 0);
-            ScreenArea = System.Windows.Forms.Screen.GetWorkingArea(pt);
-            graphics = new GraphicsDeviceManager(this);
-            graphics.IsFullScreen = false;
-            graphics.PreferredBackBufferHeight = ScreenArea.Height;
-            graphics.PreferredBackBufferWidth = ScreenArea.Width;
-            MapArea.Height = (int)Math.Ceiling((ScreenArea.Height * .7) / 24);
-            MapArea.Width = (int)Math.Ceiling((ScreenArea.Width * .5) / 24);
-            Content.RootDirectory = "Content";
-            Window.Title = "CURPG";
-            Window.AllowUserResizing = false;
-            var form = (System.Windows.Forms.Form)System.Windows.Forms.Form.FromHandle(Window.Handle);
-            form.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            MapArea.Height = (int)Math.Ceiling((ScreenManager.ScreenArea.Height * .7) / 24);
+            MapArea.Width = (int)Math.Ceiling((ScreenManager.ScreenArea.Width * .5) / 24);
 
-            //Setup the console
-            console = new ConsoleComponent(this);
-            Components.Add(console);
-            console.FontColor = Color.Aqua;
-            console.InputPrefixColor = Color.Aqua;
-            console.InputPrefix = ">";
-            interpreter = new PythonInterpreter();
-            console.Interpreter = interpreter;
-        }
-
-        protected override void Initialize()
-        {
             if (Persistance.CanLoad())
             {
                 world = Persistance.LoadWorld();
@@ -87,12 +58,11 @@ namespace CURPG_Graphical
             }
 
             Camera = new Camera(0, 0, MapArea, world, player);
-            spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            UserInterface.Initialize(Content, BuiltinThemes.hd);
+            UserInterface.Initialize(ScreenManager.ContentMgr, BuiltinThemes.hd);
             //Draw UI here
             //Right Panel
-            rightPanel = new Panel(new Vector2(Convert.ToInt32((ScreenArea.Width * .5) - 16), Convert.ToInt32(ScreenArea.Height)), PanelSkin.Default, Anchor.TopRight);
+            rightPanel = new Panel(new Vector2(Convert.ToInt32((ScreenManager.ScreenArea.Width * .5) - 16), Convert.ToInt32(ScreenManager.ScreenArea.Height)), PanelSkin.Default, Anchor.TopRight, offset: new Vector2(0, 70));
             PanelTabs tabs = new PanelTabs();
             PanelTabs.TabData invTab = tabs.AddTab("Inventory");
             PanelTabs.TabData statTab = tabs.AddTab("Skills");
@@ -102,39 +72,39 @@ namespace CURPG_Graphical
             UserInterface.AddEntity(rightPanel);
 
             //Bottom Panel
-            bottomPanel = new Panel(new Vector2(Convert.ToInt32((ScreenArea.Width * .5) + (16 - Convert.ToInt32((ScreenArea.Height * .3) - 16))), Convert.ToInt32((ScreenArea.Height * .3) - 16)), PanelSkin.Default, Anchor.BottomRight, new Vector2(Convert.ToInt32((ScreenArea.Width * .5) - 16), 0));
+            bottomPanel = new Panel(new Vector2(Convert.ToInt32((ScreenManager.ScreenArea.Width * .5) + (16 - Convert.ToInt32((ScreenManager.ScreenArea.Height * .3) - 16))), Convert.ToInt32((ScreenManager.ScreenArea.Height * .3) - 16)), PanelSkin.Default, Anchor.BottomRight, new Vector2(Convert.ToInt32((ScreenManager.ScreenArea.Width * .5) - 16), 0));
             UserInterface.AddEntity(bottomPanel);
 
-            //Add console commands here
-            interpreter.AddVariable("player", player);
-            interpreter.AddVariable("inventory", player.Inventory);
-            interpreter.AddVariable("world", world);
-            interpreter.AddVariable("this", this);
+            ScreenManager.interpreter.AddVariable("player", player);
+            ScreenManager.interpreter.AddVariable("inventory", player.Inventory);
+            ScreenManager.interpreter.AddVariable("world", world);
+            ScreenManager.interpreter.AddVariable("this", this);
+
             base.Initialize();
         }
 
-        protected override void LoadContent()
+        public override void LoadAssets()
         {
             foreach (Tile tile in TileSet)
             {
                 try
                 {
-                    TileTextures.Add(tile.EntityName, Content.Load<Texture2D>(tile.EntityName));
+                    TileTextures.Add(tile.EntityName, ScreenManager.ContentMgr.Load<Texture2D>(tile.EntityName));
                 }
                 catch
                 {
                     try
                     {
-                        TileTextures.Add(tile.EntityName, Content.Load<Texture2D>("TileMissing"));
+                        TileTextures.Add(tile.EntityName, ScreenManager.ContentMgr.Load<Texture2D>("TileMissing"));
                     }
                     catch { }
                 }
             }
+
+            base.LoadAssets();
         }
 
-        protected override void UnloadContent() { }
-
-        protected override void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
             KeyboardState newState = Keyboard.GetState();  // get the newest state
 
@@ -167,7 +137,7 @@ namespace CURPG_Graphical
             }
 
             if (oldState.IsKeyUp(Keys.OemTilde) && newState.IsKeyDown(Keys.OemTilde))
-                console.ToggleOpenClose();
+                ScreenManager.console.ToggleOpenClose();
 
 
             oldState = newState;  // set the new state as the old state for next time
@@ -177,48 +147,32 @@ namespace CURPG_Graphical
             base.Update(gameTime);
         }
 
-        protected override void Draw(GameTime gameTime)
+        public override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.White);
             World DrawArea = Camera.GetDrawArea();
             System.Drawing.Point pt = Camera.playerCoord;
 
-            spriteBatch.Begin();
+            ScreenManager.Sprites.Begin();
 
             for (int i = 0; i < MapArea.Width; i++)
             {
                 for (int j = 0; j < MapArea.Height; j++)
                 {
-                    spriteBatch.Draw(TileTextures[DrawArea.Grid[i, j].EntityName], new Rectangle(i * world.TileSize, j * world.TileSize, world.TileSize, world.TileSize), Color.White);
+                    ScreenManager.Sprites.Draw(TileTextures[DrawArea.Grid[i, j].EntityName], new Rectangle(i * world.TileSize, j * world.TileSize, world.TileSize, world.TileSize), Color.White);
                 }
             }
 
-            Texture2D PlayerTexture = new Texture2D(graphics.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+            Texture2D PlayerTexture = new Texture2D(ScreenManager.GraphicsDeviceMgr.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             PlayerTexture.SetData<Color>(new Color[] { Color.Red });
-            spriteBatch.Draw(PlayerTexture, new Rectangle(pt.X * world.TileSize, pt.Y * world.TileSize, world.TileSize, world.TileSize), Color.Red);
+            ScreenManager.Sprites.Draw(PlayerTexture, new Rectangle(pt.X * world.TileSize, pt.Y * world.TileSize, world.TileSize, world.TileSize), Color.Red);
 
-            spriteBatch.DrawString(Content.Load<SpriteFont>("DevConsoleFont"), "Minimap goes here :)", new Vector2(20, ScreenArea.Height - 100), Color.Black);
+            ScreenManager.Sprites.DrawString(ScreenManager.ContentMgr.Load<SpriteFont>("DevConsoleFont"), "Minimap goes here :)", new Vector2(20, ScreenManager.ScreenArea.Height - 100), Color.Black);
 
-            spriteBatch.End();
+            ScreenManager.Sprites.End();
 
-            UserInterface.Draw(spriteBatch);
+            UserInterface.Draw(ScreenManager.Sprites);
 
             base.Draw(gameTime);
-        }
-
-        /// <summary>
-        /// Hooks into the OnExiting event to save the game.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
-        protected override void OnExiting(Object sender, EventArgs args)
-        {
-            base.OnExiting(sender, args);
-            var status = Persistance.SaveGame(world, player);
-            if (status == 0)
-            {
-                System.Windows.Forms.MessageBox.Show("Save Failed. Do you want to close?", "Error", System.Windows.Forms.MessageBoxButtons.RetryCancel);
-            }
         }
 
         /// <summary>
@@ -226,15 +180,7 @@ namespace CURPG_Graphical
         /// </summary>
         public void Clear()
         {
-            console.Clear();
-        }
-
-        /// <summary>
-        /// Quits the game
-        /// </summary>
-        public void Quit()
-        {
-            Exit();
+            ScreenManager.console.Clear();
         }
 
         /// <summary>

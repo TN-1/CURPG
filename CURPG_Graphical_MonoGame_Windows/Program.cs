@@ -1,3 +1,4 @@
+using CURPG_Graphical_MonoGame_Windows;
 using System;
 using System.IO;
 using System.Reflection;
@@ -27,9 +28,9 @@ namespace CURPG_Graphical
                 return;
             }
             //Well thats a good sign, isnt it? Now we can enter the game
-            using (CURPG game = new CURPG())
+            using (ScreenManager manager = new ScreenManager())
             {
-                game.Run();
+                manager.Run();
             }
         }
 
@@ -37,4 +38,3 @@ namespace CURPG_Graphical
     }
 #endif
 }
-
