@@ -46,6 +46,7 @@
     <Compile Include="ScreenManager.cs" />
     <Compile Include="Screens\GameScreen.cs" />
     <Compile Include="Screens\PlayScreen.cs" />
+    <Compile Include="Screens\PlayScreen_ConsoleCommands.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="DataTypes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">

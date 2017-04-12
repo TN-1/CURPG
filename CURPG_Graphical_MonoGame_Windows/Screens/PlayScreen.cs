@@ -11,7 +11,7 @@ using GeonBit.UI.Entities;
 
 namespace CURPG_Graphical_MonoGame_Windows.Screens
 {
-    public class PlayScreen : GameScreen
+    public partial class PlayScreen : GameScreen
     {
         Dictionary<string, Texture2D> TileTextures = new Dictionary<string, Texture2D>();
         public World world;
@@ -62,7 +62,7 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
             UserInterface.Initialize(ScreenManager.ContentMgr, BuiltinThemes.hd);
             //Draw UI here
             //Right Panel
-            rightPanel = new Panel(new Vector2(Convert.ToInt32((ScreenManager.ScreenArea.Width * .5) - 16), Convert.ToInt32(ScreenManager.ScreenArea.Height)), PanelSkin.Default, Anchor.TopRight, offset: new Vector2(0, 70));
+            rightPanel = new Panel(new Vector2(Convert.ToInt32((ScreenManager.ScreenArea.Width * .5) - 16), Convert.ToInt32(ScreenManager.ScreenArea.Height - 70)), PanelSkin.Default, Anchor.TopRight, offset: new Vector2(0, 70));
             PanelTabs tabs = new PanelTabs();
             PanelTabs.TabData invTab = tabs.AddTab("Inventory");
             PanelTabs.TabData statTab = tabs.AddTab("Skills");
@@ -173,35 +173,6 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
             UserInterface.Draw(ScreenManager.Sprites);
 
             base.Draw(gameTime);
-        }
-
-        /// <summary>
-        /// Clears the console
-        /// </summary>
-        public void Clear()
-        {
-            ScreenManager.console.Clear();
-        }
-
-        /// <summary>
-        /// Sets our testing flag
-        /// </summary>
-        public void Testing()
-        {
-            if (!player.Testing)
-                player.Testing = true;
-            else if (player.Testing)
-                player.Testing = false;
-        }
-
-        public void PrintStory(string[] s)
-        {
-            bottomPanel.ClearChildren();
-            foreach (string S in s)
-            {
-                Paragraph p = new Paragraph(S);
-                bottomPanel.AddChild(p);
-            }
         }
     }
 }

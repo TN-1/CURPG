@@ -30,7 +30,7 @@ namespace CURPG_Graphical_MonoGame_Windows
             GraphicsDeviceMgr.IsFullScreen = true;
             GraphicsDeviceMgr.PreferredBackBufferHeight = ScreenArea.Height;
             GraphicsDeviceMgr.PreferredBackBufferWidth = ScreenArea.Width;
-            GraphicsDeviceMgr.IsFullScreen = false;
+            GraphicsDeviceMgr.IsFullScreen = true;
             Window.Title = "CURPG";
             Window.AllowUserResizing = false;
 
