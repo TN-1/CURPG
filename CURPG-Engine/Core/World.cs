@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using System.Xml;
+// ReSharper disable NotAccessedField.Local
+// ReSharper disable UnusedMember.Global
 
 namespace CURPG_Engine.Core
 {
@@ -11,28 +14,28 @@ namespace CURPG_Engine.Core
     [Serializable]
     public class World
     {
-        public int Index;
-        public Tile[,] Grid;
-        public List<Tile> TileSet;
-        public string Name;
-        public int Day = 0;
-        public int TileSize;
+        public readonly int Index;
+        public readonly Tile[,] Grid;
+        public readonly List<Tile> TileSet;
+        // ReSharper disable once NotAccessedField.Global
+        private string _name;
+        public readonly int TileSize;
         
         /// <summary>
         /// Builds our world
         /// </summary>
-        /// <param name="WorldIndex">Index for our world</param>
-        /// <param name="GridX">Total world size X</param>
-        /// <param name="GridY">Total world size Y</param>
-        /// <param name="Set">Tileset for our world</param>
+        /// <param name="worldIndex">Index for our world</param>
+        /// <param name="gridX">Total world size X</param>
+        /// <param name="gridY">Total world size Y</param>
+        /// <param name="set">Tileset for our world</param>
         /// <param name="name">World name</param>
         /// <param name="tilesize">World tilesize</param>
-        public World(int WorldIndex, int GridX, int GridY, List<Tile> Set, string name, int tilesize)
+        public World(int worldIndex, int gridX, int gridY, List<Tile> set, string name, int tilesize)
         {
-            Index = WorldIndex;
-            Grid = new Tile[GridX, GridY];
-            TileSet = Set;
-            Name = name;
+            Index = worldIndex;
+            Grid = new Tile[gridX, gridY];
+            TileSet = set;
+            _name = name;
             TileSize = tilesize;
         }
 
@@ -43,10 +46,10 @@ namespace CURPG_Engine.Core
         /// <param name="index">Index of new tile</param>
         public void ChangeTile(string s, int index)
         {
-            string[] t = s.Split(',');
+            var t = s.Split(',');
             var x = Convert.ToInt32(t[0]);
             var y = Convert.ToInt32(t[1]);
-            this.Grid[x, y] = TileSet[index];
+            Grid[x, y] = TileSet[index];
         }
 
         /// <summary>
@@ -57,7 +60,7 @@ namespace CURPG_Engine.Core
         /// <param name="index">Index of new tile</param>
         public void ChangeTile(int x, int y, int index)
         {
-            this.Grid[x, y] = TileSet[index];
+            Grid[x, y] = TileSet[index];
         }
     }
 
@@ -67,11 +70,11 @@ namespace CURPG_Engine.Core
     [Serializable]
     public class Tile
     {
-        public int Index;
-        public string EntityName;
-        [NonSerialized] public Color TileColor;
-        public string TileName;
-        public int TerrainModifier;
+        private int _index;
+        public readonly string EntityName;
+        [NonSerialized] private Color _tileColor;
+        private string _tileName;
+        public readonly int TerrainModifier;
 
         /// <summary>
         /// Builds our tile objects
@@ -83,10 +86,10 @@ namespace CURPG_Engine.Core
         /// <param name="terrainmod">Terrain modifyer for player movement and combat</param>
         public Tile(int index, string entname, Color color, string tilename, int terrainmod)
         {
-            Index = index;
+            _index = index;
             EntityName = entname;
-            TileColor = color;
-            TileName = tilename;
+            _tileColor = color;
+            _tileName = tilename;
             TerrainModifier = terrainmod;
         }
     }
@@ -94,55 +97,54 @@ namespace CURPG_Engine.Core
     /// <summary>
     /// Just some misc tools to use with our world
     /// </summary>
-    public class WorldTools
+    public static class WorldTools
     {
         /// <summary>
         /// Generates a random world
         /// </summary>
-        /// <param name="WorldIndex">World index</param>
-        /// <param name="GridX">Map size X</param>
-        /// <param name="GridY">Map size Y</param>
-        /// <param name="TileSet">Tileset for our map</param>
-        /// <param name="Name">World name</param>
+        /// <param name="worldIndex">World index</param>
+        /// <param name="gridX">Map size X</param>
+        /// <param name="gridY">Map size Y</param>
+        /// <param name="tileSet">Tileset for our map</param>
+        /// <param name="name">World name</param>
         /// <param name="tilesize">Tilesize</param>
         /// <returns></returns>
-        static public World GenerateWorld(int WorldIndex, int GridX, int GridY, List<Tile> TileSet, string Name, int tilesize)
+        public static World GenerateWorld(int worldIndex, int gridX, int gridY, List<Tile> tileSet, string name, int tilesize)
         {
             float[,] noiseValues;
-            int a = 0;
-            World world = new World(WorldIndex, GridX, GridY, TileSet, Name, tilesize);
+            var a = 0;
+            var world = new World(worldIndex, gridX, gridY, tileSet, name, tilesize);
 
             //Generate noise map
             start:
             try
             {
-                Random r = new Random();
+                var r = new Random();
                 Simplex.Noise.Seed = r.Next(0, 999999999);
-                noiseValues = Simplex.Noise.Calc2D(GridX * 10, GridY * 10, 0.065f);
-                var Point = r.Next(0, GridX * 8);
-                float[,] noise = new float[GridX, GridY];
+                noiseValues = Simplex.Noise.Calc2D(gridX * 10, gridY * 10, 0.065f);
+                var point = r.Next(0, gridX * 8);
+                var noise = new float[gridX, gridY];
 
-                for (int i = Point; i < (GridX + Point); i++)
+                for (var i = point; i < (gridX + point); i++)
                 {
-                    for (int j = Point; j < (GridY + Point); j++)
+                    for (var j = point; j < (gridY + point); j++)
                     {
-                        noise[(i - Point), (j - Point)] = noiseValues[i, j];
+                        noise[(i - point), (j - point)] = noiseValues[i, j];
                     }
                 }
             }
             catch(Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("World Generation failed. Attempt #" + a);
-                System.Diagnostics.Debug.WriteLine("Exception: " + e);
-                noiseValues = null;
+                Debug.WriteLine("World Generation failed. Attempt #" + a);
+                Debug.WriteLine("Exception: " + e);
                 a++;
                 goto start;
             }
 
             //Process noise map into game map
-            for (int i = 0; i < world.Grid.GetLength(0); i++)
+            for (var i = 0; i < world.Grid.GetLength(0); i++)
             {
-                for (int j = 0; j < world.Grid.GetLength(1); j++)
+                for (var j = 0; j < world.Grid.GetLength(1); j++)
                 {
                     if (noiseValues[i, j] <= 25)
                         world.Grid[i, j] = world.TileSet[20];
@@ -158,7 +160,6 @@ namespace CURPG_Engine.Core
                         world.Grid[i, j] = world.TileSet[21];
                 }
             }
-            noiseValues = null;
             return world;
         }
 
@@ -167,22 +168,34 @@ namespace CURPG_Engine.Core
         /// </summary>
         /// <param name="tilepath">Path to XML</param>
         /// <returns>A list of tiles</returns>
-        static public List<Tile> TileSetBuilder(string tilepath)
+        public static List<Tile> TileSetBuilder(string tilepath)
         {
-            XmlDocument tiles = new XmlDocument();
+            var tiles = new XmlDocument();
             tiles.Load(tilepath);
-            List<Tile> tileset = new List<Tile>();
-            XmlNodeList nodes = tiles.DocumentElement.SelectNodes("/tiles/tile");
+            var tileset = new List<Tile>();
+            Debug.Assert(tiles.DocumentElement != null, "tiles.DocumentElement != null");
+            var nodes = tiles.DocumentElement.SelectNodes("/tiles/tile");
 
+            Debug.Assert(nodes != null, "nodes != null");
             foreach(XmlNode node in nodes)
             {
-                var index = Convert.ToInt32(node.SelectSingleNode("id").InnerText);
-                var entityName = node.SelectSingleNode("entityName").InnerText;
-                var tileColor = node.SelectSingleNode("tileColor").InnerText;
-                var tileName = node.SelectSingleNode("tileName").InnerText;
-                var terrmod = Convert.ToInt32(node.SelectSingleNode("terrainMod").InnerText);
+                var idNode = node.SelectSingleNode("id");
+                if (idNode == null) continue;
+                var index = Convert.ToInt32(idNode.InnerText);
+                var entityNameNode = node.SelectSingleNode("entityName");
+                if (entityNameNode == null) continue;
+                var entityName = entityNameNode.InnerText;
+                var tileColorNode = node.SelectSingleNode("tileColor");
+                if (tileColorNode == null) continue;
+                var tileColor = tileColorNode.InnerText;
+                var tileNameNode = node.SelectSingleNode("tileName");
+                if (tileNameNode == null) continue;
+                var tileName = tileNameNode.InnerText;
+                var terrModNode = node.SelectSingleNode("terrainMod");
+                if (terrModNode == null) continue;
+                var terrmod = Convert.ToInt32(terrModNode.InnerText);
 
-                Tile tile = new Tile(index, entityName, ValidColor(tileColor), tileName, terrmod);
+                var tile = new Tile(index, entityName, ValidColor(tileColor), tileName, terrmod);
                 tileset.Add(tile);
             }
             return tileset;
@@ -193,7 +206,7 @@ namespace CURPG_Engine.Core
         /// </summary>
         /// <param name="nameOfColor">String of color</param>
         /// <returns>A usable color</returns>
-        static Color ValidColor(string nameOfColor)
+        private static Color ValidColor(string nameOfColor)
         {
             var prop = typeof(Color).GetProperty(nameOfColor);
             if (prop != null)

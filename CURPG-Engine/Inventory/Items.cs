@@ -1,4 +1,7 @@
 ﻿using System;
+// ReSharper disable MemberCanBeProtected.Global
+// ReSharper disable UnusedMember.Global
+// ReSharper disable NotAccessedField.Global
 
 namespace CURPG_Engine.Inventory
 {
@@ -9,7 +12,7 @@ namespace CURPG_Engine.Inventory
     [Serializable]
     public class Item
     {
-        public int ID;
+        public int Id;
         public string Name;
         public int Weight;
         public string EntityName;
@@ -30,11 +33,11 @@ namespace CURPG_Engine.Inventory
     [Serializable]
     public class Tool : Item
     {
-        public int TerrainMod;
+        public readonly int TerrainMod;
 
         public Tool(int id, string name, int weight, int terrmod, string entname)
         {
-            ID = id;
+            Id = id;
             Name = name;
             Weight = weight;
             TerrainMod = terrmod;
@@ -46,22 +49,22 @@ namespace CURPG_Engine.Inventory
     public class Craftable : Item
     {
         public int StackHeight;
-        public int MaxStackHeight;
+        private readonly int _maxStackHeight;
 
         public Craftable(int id, string name, string entname, int weight, int maxStack, int quantity = 0)
         {
-            ID = id;
+            Id = id;
             Name = name;
             EntityName = entname;
             Weight = weight;
-            MaxStackHeight = maxStack;
+            _maxStackHeight = maxStack;
             if (quantity != 0)
                 StackHeight = quantity;
         }
 
         public void AddQuantity(int quantity)
         {
-            if ((StackHeight + quantity) > MaxStackHeight)
+            if ((StackHeight + quantity) > _maxStackHeight)
             {
                 //Start another stack
             }
@@ -73,7 +76,7 @@ namespace CURPG_Engine.Inventory
 
         public int HowManyMore()
         {
-            return MaxStackHeight - StackHeight;
+            return _maxStackHeight - StackHeight;
         }
     }
 }

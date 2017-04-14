@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using QuakeConsole;
+// ReSharper disable UnusedMember.Global
 
 namespace CURPG_Graphical_MonoGame_Windows
 {
@@ -13,24 +14,26 @@ namespace CURPG_Graphical_MonoGame_Windows
     {
         public static GraphicsDeviceManager GraphicsDeviceMgr;
         public static SpriteBatch Sprites;
-        public static Dictionary<string, Texture2D> Textures2D;
-        public static Dictionary<string, SpriteFont> Fonts;
-        public static List<GameScreen> ScreenList;
+        private static Dictionary<string, Texture2D> _textures2D;
+        private static Dictionary<string, SpriteFont> _fonts;
+        private static List<GameScreen> _screenList;
         public static ContentManager ContentMgr;
-        public static ConsoleComponent console;
-        public static PythonInterpreter interpreter;
+        public static ConsoleComponent Console;
+        public static PythonInterpreter Interpreter;
         public static System.Drawing.Rectangle ScreenArea;
-        static Dictionary<string, GameScreen> Screens;
+        private static Dictionary<string, GameScreen> _screens;
 
 
         public ScreenManager()
         {
             var pt = new System.Drawing.Point(0, 0);
             ScreenArea = System.Windows.Forms.Screen.GetWorkingArea(pt);
-            GraphicsDeviceMgr = new GraphicsDeviceManager(this);
-            GraphicsDeviceMgr.IsFullScreen = true;
-            GraphicsDeviceMgr.PreferredBackBufferHeight = ScreenArea.Height;
-            GraphicsDeviceMgr.PreferredBackBufferWidth = ScreenArea.Width;
+            GraphicsDeviceMgr = new GraphicsDeviceManager(this)
+            {
+                IsFullScreen = true,
+                PreferredBackBufferHeight = ScreenArea.Height,
+                PreferredBackBufferWidth = ScreenArea.Width
+            };
             GraphicsDeviceMgr.IsFullScreen = false;
             Window.Title = "CURPG";
             Window.AllowUserResizing = false;
@@ -38,25 +41,23 @@ namespace CURPG_Graphical_MonoGame_Windows
             Content.RootDirectory = "Content";
 
             //Setup console
-            console = new ConsoleComponent(this);
-            Components.Add(console);
-            console.FontColor = Color.Aqua;
-            console.InputPrefixColor = Color.Aqua;
-            console.InputPrefix = ">";
-            interpreter = new PythonInterpreter();
-            console.Interpreter = interpreter;
+            Console = new ConsoleComponent(this);
+            Components.Add(Console);
+            Console.FontColor = Color.Aqua;
+            Console.InputPrefixColor = Color.Aqua;
+            Console.InputPrefix = ">";
+            Interpreter = new PythonInterpreter();
+            Console.Interpreter = Interpreter;
 
-            interpreter.AddVariable("base", this);
+            Interpreter.AddVariable("base", this);
 
-            Screens = new Dictionary<string, GameScreen>();
-            Screens.Add("Menu", new MenuScreen());
-            Screens.Add("Play", new PlayScreen());
+            _screens = new Dictionary<string, GameScreen> {{"Menu", new MenuScreen()}, {"Play", new PlayScreen()}};
         }
 
         protected override void Initialize()
         {
-            Textures2D = new Dictionary<string, Texture2D>();
-            Fonts = new Dictionary<string, SpriteFont>();
+            _textures2D = new Dictionary<string, Texture2D>();
+            _fonts = new Dictionary<string, SpriteFont>();
 
             base.Initialize();
         }
@@ -68,18 +69,18 @@ namespace CURPG_Graphical_MonoGame_Windows
 
             // Load any full game assets here
 
-            AddScreen(Screens["Play"]);
+            AddScreen(_screens["Play"]);
         }
 
         protected override void UnloadContent()
         {
-            foreach (var screen in ScreenList)
+            foreach (var screen in _screenList)
             {
                 screen.UnloadAssets();
             }
-            Textures2D.Clear();
-            Fonts.Clear();
-            ScreenList.Clear();
+            _textures2D.Clear();
+            _fonts.Clear();
+            _screenList.Clear();
             Content.Unload();
         }
 
@@ -93,20 +94,15 @@ namespace CURPG_Graphical_MonoGame_Windows
                     Exit();
                 }
 
-                var startIndex = ScreenList.Count - 1;
-                while (ScreenList[startIndex].IsPopup && ScreenList[startIndex].IsActive)
+                var startIndex = _screenList.Count - 1;
+                while (GameScreen.IsPopup && GameScreen.IsActive)
                 {
                     startIndex--;
                 }
-                for (var i = startIndex; i < ScreenList.Count; i++)
+                for (var i = startIndex; i < _screenList.Count; i++)
                 {
-                    ScreenList[i].Update(gameTime);
+                    _screenList[i].Update(gameTime);
                 }
-            }
-            catch (Exception ex)
-            {
-                // ErrorLog.AddError(ex);
-                throw ex;
             }
             finally
             {
@@ -116,18 +112,18 @@ namespace CURPG_Graphical_MonoGame_Windows
 
         protected override void Draw(GameTime gameTime)
         {
-            var startIndex = ScreenList.Count - 1;
-            while (ScreenList[startIndex].IsPopup)
+            var startIndex = _screenList.Count - 1;
+            while (GameScreen.IsPopup)
             {
                 startIndex--;
             }
 
-            GraphicsDevice.Clear(ScreenList[startIndex].BackgroundColor);
-            GraphicsDeviceMgr.GraphicsDevice.Clear(ScreenList[startIndex].BackgroundColor);
+            GraphicsDevice.Clear(_screenList[startIndex].BackgroundColor);
+            GraphicsDeviceMgr.GraphicsDevice.Clear(_screenList[startIndex].BackgroundColor);
 
-            for (var i = startIndex; i < ScreenList.Count; i++)
+            for (var i = startIndex; i < _screenList.Count; i++)
             {
-                ScreenList[i].Draw(gameTime);
+                _screenList[i].Draw(gameTime);
             }
 
             base.Draw(gameTime);
@@ -135,60 +131,60 @@ namespace CURPG_Graphical_MonoGame_Windows
 
         public static void AddFont(string fontName)
         {
-            if (Fonts == null)
+            if (_fonts == null)
             {
-                Fonts = new Dictionary<string, SpriteFont>();
+                _fonts = new Dictionary<string, SpriteFont>();
             }
-            if (!Fonts.ContainsKey(fontName))
+            if (!_fonts.ContainsKey(fontName))
             {
-                Fonts.Add(fontName, ContentMgr.Load<SpriteFont>(fontName));
+                _fonts.Add(fontName, ContentMgr.Load<SpriteFont>(fontName));
             }
         }
 
         public static void RemoveFont(string fontName)
         {
-            if (Fonts.ContainsKey(fontName))
+            if (_fonts.ContainsKey(fontName))
             {
-                Fonts.Remove(fontName);
+                _fonts.Remove(fontName);
             }
         }
 
         public static void AddTexture2D(string textureName)
         {
-            if (Textures2D == null)
+            if (_textures2D == null)
             {
-                Textures2D = new Dictionary<string, Texture2D>();
+                _textures2D = new Dictionary<string, Texture2D>();
             }
-            if (!Textures2D.ContainsKey(textureName))
+            if (!_textures2D.ContainsKey(textureName))
             {
-                Textures2D.Add(textureName, ContentMgr.Load<Texture2D>(textureName));
+                _textures2D.Add(textureName, ContentMgr.Load<Texture2D>(textureName));
             }
         }
 
         public static void RemoveTexture2D(string textureName)
         {
-            if (Textures2D.ContainsKey(textureName))
+            if (_textures2D.ContainsKey(textureName))
             {
-                Textures2D.Remove(textureName);
+                _textures2D.Remove(textureName);
             }
         }
 
-        public static void AddScreen(GameScreen gameScreen)
+        private static void AddScreen(GameScreen gameScreen)
         {
-            if (ScreenList == null)
+            if (_screenList == null)
             {
-                ScreenList = new List<GameScreen>();
+                _screenList = new List<GameScreen>();
             }
-            ScreenList.Add(gameScreen);
+            _screenList.Add(gameScreen);
             gameScreen.Initialize();
             gameScreen.LoadAssets();
         }
 
-        public static void RemoveScreen(GameScreen gameScreen)
+        private static void RemoveScreen(GameScreen gameScreen)
         {
             if (gameScreen is PlayScreen play)
             {
-                var status = CURPG_Engine.Core.Persistance.SaveGame(play.world, play.player);
+                var status = CURPG_Engine.Core.Persistance.SaveGame(play.World, play.Player);
                 if (status == 0)
                 {
                     System.Windows.Forms.MessageBox.Show("Save Failed. Do you want to close?", "Error", System.Windows.Forms.MessageBoxButtons.RetryCancel);
@@ -196,20 +192,19 @@ namespace CURPG_Graphical_MonoGame_Windows
             }
 
             gameScreen.UnloadAssets();
-            ScreenList.Remove(gameScreen);
+            _screenList.Remove(gameScreen);
         }
 
         public static void ChangeScreens(GameScreen currentScreen, GameScreen targetScreen)
         {
             RemoveScreen(currentScreen);
             AddScreen(targetScreen);
-            return;
         }
 
         public static void ChangeScreens(string currentScreen, string targetScreen)
         {
-            RemoveScreen(Screens[currentScreen]);
-            AddScreen(Screens[targetScreen]);
+            RemoveScreen(_screens[currentScreen]);
+            AddScreen(_screens[targetScreen]);
         }
 
         /// <summary>
@@ -221,11 +216,11 @@ namespace CURPG_Graphical_MonoGame_Windows
         {
             base.OnExiting(sender, args);
 
-            foreach(GameScreen screen in ScreenList)
+            foreach(GameScreen screen in _screenList)
             {
                 if(screen is PlayScreen play)
                 {
-                    var status = CURPG_Engine.Core.Persistance.SaveGame(play.world, play.player);
+                    var status = CURPG_Engine.Core.Persistance.SaveGame(play.World, play.Player);
                     if (status == 0)
                     {
                         System.Windows.Forms.MessageBox.Show("Save Failed. Do you want to close?", "Error", System.Windows.Forms.MessageBoxButtons.RetryCancel);

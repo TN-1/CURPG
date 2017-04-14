@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Xml;
+// ReSharper disable UnusedMember.Global
 
 namespace CURPG_Engine.Inventory
 {
@@ -11,13 +14,14 @@ namespace CURPG_Engine.Inventory
     [Serializable]
     public class Inventory
     {
-        public Item[] Items;
-        public List<Item> ItemDB;
-        public int Capacity;
+        public readonly Item[] Items;
+        public List<Item> ItemDb;
+        private readonly int _capacity;
+
         public Inventory(int capacity)
         {
-            Capacity = capacity;
-            Items = new Item[Capacity];
+            _capacity = capacity;
+            Items = new Item[_capacity];
         }
 
         /// <summary>
@@ -28,7 +32,7 @@ namespace CURPG_Engine.Inventory
         {
             if (Items != null)
             {
-                for (int i = 0; i < Capacity; i++)
+                for (int i = 0; i < _capacity; i++)
                 {
                     if (Items[i] == null)
                         return i;
@@ -42,14 +46,9 @@ namespace CURPG_Engine.Inventory
         /// </summary>
         public void Clear()
         {
-            if (Items != null)
-            {
-                for (int i = 0; i < Capacity; i++)
-                {
-                    if (Items[i] != null)
-                        Items[i] = null;
-                }
-            }
+            if (Items == null) return;
+            for (var i = 0; i < _capacity; i++)
+                Items[i] = null;
         }
 
         /// <summary>
@@ -67,8 +66,8 @@ namespace CURPG_Engine.Inventory
         /// <param name="i">Item ID to add to inventory</param>
         public void AddItem(int i)
         {
-            foreach(Item item in ItemDB)
-                if(item.ID == i)
+            foreach(var item in ItemDb)
+                if(item.Id == i)
                     Items[FirstAvailSlot()] = item;
         }
 
@@ -78,41 +77,59 @@ namespace CURPG_Engine.Inventory
         /// <param name="path">Path to items.xml</param>
         public void BuildDatabase(string path)
         {
-            XmlDocument items = new XmlDocument();
-            List<Item> itemDB = new List<Item>();
-            XmlNodeList nodes;
+            var items = new XmlDocument();
+            var itemDb = new List<Item>();
             items.Load(path);
 
             //Go throught the XML file iterating through each of the nodes to make our items, Add them to a temp list
             //Then return the list to populate our actual itemDB.
 
-            nodes = items.DocumentElement.SelectNodes("/items/tools/item");
+            Debug.Assert(items.DocumentElement != null, "items.DocumentElement != null");
+            var nodes = items.DocumentElement.SelectNodes("/items/tools/item");
+            Debug.Assert(nodes != null, "nodes != null");
             foreach (XmlNode node in nodes)
             {
+                Debug.Assert(node.Attributes != null, "node.Attributes != null");
                 var id = Convert.ToInt32(node.Attributes.GetNamedItem("id").InnerText);
-                var name = node.SelectSingleNode("Name").InnerText;
-                var weight = Convert.ToInt32(node.SelectSingleNode("Weight").InnerText);
-                var entname = node.SelectSingleNode("EntityName").InnerText;
-                var terrmod = Convert.ToInt32(node.SelectSingleNode("TerrainMod").InnerText);
-                Tool tool = new Tool(id, name, weight, terrmod, entname);
-                itemDB.Add(tool);
+                var nameNode = node.SelectSingleNode("Name");
+                if (nameNode == null) continue;
+                var name = nameNode.InnerText;
+                var weightNode = node.SelectSingleNode("Weight");
+                if (weightNode == null) continue;
+                var weight = Convert.ToInt32(weightNode.InnerText);
+                var entName = node.SelectSingleNode("EntityName");
+                if (entName == null) continue;
+                var entname = entName.InnerText;
+                var terrMod = node.SelectSingleNode("TerrainMod");
+                if (terrMod == null) continue;
+                var terrmod = Convert.ToInt32(terrMod.InnerText);
+                var tool = new Tool(id, name, weight, terrmod, entname);
+                itemDb.Add(tool);
             }
-            nodes = null; //Gotta null this shit for some sweet GC action BB!
 
             nodes = items.DocumentElement.SelectNodes("/items/craftable/item");
+            Debug.Assert(nodes != null, "nodes != null");
             foreach (XmlNode node in nodes)
             {
+                Debug.Assert(node.Attributes != null, "node.Attributes != null");
                 var id = Convert.ToInt32(node.Attributes.GetNamedItem("id").InnerText);
-                var name = node.SelectSingleNode("Name").InnerText;
-                var weight = Convert.ToInt32(node.SelectSingleNode("Weight").InnerText);
-                var entname = node.SelectSingleNode("EntityName").InnerText;
-                var maxStack = Convert.ToInt32(node.SelectSingleNode("MaxStackHeight").InnerText);
-                Craftable craftable = new Craftable(id, name, entname, weight, maxStack);
-                itemDB.Add(craftable);
+                var nameNode = node.SelectSingleNode("Name");
+                if (nameNode == null) continue;
+                var name = nameNode.InnerText;
+                var weightNode = node.SelectSingleNode("Weight");
+                if (weightNode == null) continue;
+                var weight = Convert.ToInt32(weightNode.InnerText);
+                var entNode = node.SelectSingleNode("EntityName");
+                if (entNode == null) continue;
+                var entname = entNode.InnerText;
+                var stackNode = node.SelectSingleNode("MaxStackHeight");
+                if (stackNode == null) continue;
+                var maxStack = Convert.ToInt32(stackNode.InnerText);
+                var craftable = new Craftable(id, name, entname, weight, maxStack);
+                itemDb.Add(craftable);
             }
-            nodes = null;
 
-            ItemDB = itemDB;
+            ItemDb = itemDb;
         }
 
         /// <summary>
@@ -146,7 +163,8 @@ namespace CURPG_Engine.Inventory
             switch (s)
             {
                 case "tool":
-                    Tool tool = new Tool(id, name, weight, Convert.ToInt32(args[0]), args[1]);
+                    if (args == null) throw new Exception("Args cant be null");
+                    var tool = new Tool(id, name, weight, Convert.ToInt32(args[0]), args[1]);
                     return tool;
             }
 
@@ -155,12 +173,7 @@ namespace CURPG_Engine.Inventory
 
         public bool Contains(int id)
         {
-            foreach(Item item in Items)
-                if (item.ID == id)
-                    return true;
-                else
-                    return false;
-            return false;
+            return Items.Select(item => item.Id == id).FirstOrDefault();
         }
 
     }

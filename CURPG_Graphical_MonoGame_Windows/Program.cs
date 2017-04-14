@@ -1,10 +1,9 @@
-using CURPG_Graphical_MonoGame_Windows;
 using System;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace CURPG_Graphical
+namespace CURPG_Graphical_MonoGame_Windows
 {
 #if WINDOWS || XBOX
     static class Program
@@ -12,16 +11,18 @@ namespace CURPG_Graphical
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        static void Main(string[] args)
+        static void Main()
         {
             //Make sure required data files are in place
-            var fileName = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"DataFiles\Tiles.xml");
+            var loc = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+            if(loc == null) throw new Exception("Loc is null");
+            var fileName = Path.Combine(loc, @"DataFiles\Tiles.xml");
             if (!File.Exists(fileName))
             {
                 MessageBox.Show("DataFile is missing: \"Tiles.XML\" Progam terminating...");
                 return;
             }
-            fileName = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"DataFiles\Items.xml");
+            fileName = Path.Combine(loc, @"DataFiles\Items.xml");
             if (!File.Exists(fileName))
             {
                 MessageBox.Show("DataFile is missing: \"Items.XML\" Progam terminating...");

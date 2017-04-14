@@ -5,17 +5,14 @@
     /// </summary>
     public class Camera
     {
-        int X;
-        int Y;
-        System.Drawing.Rectangle ViewPort;
-        int MaxX;
-        int MaxY;
-        World World;
-        Player Player;
-        System.Drawing.Point PlayerCoord;
+        private int _x;
+        private int _y;
+        private System.Drawing.Rectangle _viewPort;
+        private readonly World _world;
+        private readonly Player _player;
+        private System.Drawing.Point _playerCoord;
 
-        public System.Drawing.Point playerCoord { get { return PlayerCoord; } }
-
+        public System.Drawing.Point PlayerCoord => _playerCoord;
         /// <summary>
         /// Constructs a camera object
         /// </summary>
@@ -26,13 +23,11 @@
         /// <param name="player">Player object to use</param>
         public Camera(int x, int y, System.Drawing.Rectangle viewPort, World world, Player player)
         {
-            X = x;
-            Y = y;
-            ViewPort = viewPort;
-            World = world;
-            Player = player;
-            MaxX = World.Grid.GetLength(0) - ViewPort.Width;
-            MaxY = World.Grid.GetLength(1) - ViewPort.Height;
+            _x = x;
+            _y = y;
+            _viewPort = viewPort;
+            _world = world;
+            _player = player;
         }
 
         /// <summary>
@@ -41,114 +36,115 @@
         /// <returns>World object with subset to draw</returns>
         public World GetDrawArea()
         {
-            World DrawArea = new World(1, ViewPort.Width + 1, ViewPort.Height + 1, World.TileSet, "DrawArea", World.TileSize);
-            bool ExtremeBound = false;
-            bool XL = false;
-            bool YL = false;
-            bool XH = false;
-            bool YH = false;
-            X = Player.locationX - (ViewPort.Width / 2);
-            Y = Player.locationY - (ViewPort.Height / 2);
-            var maxX = Player.locationX + (ViewPort.Width / 2);
-            var maxY = Player.locationY + (ViewPort.Height / 2);
+            World drawArea = new World(1, _viewPort.Width + 1, _viewPort.Height + 1, _world.TileSet, "DrawArea", _world.TileSize);
+            bool extremeBound = false;
+            bool xl = false;
+            bool yl = false;
+            bool xh = false;
+            bool yh = false;
+            _x = _player.LocationX - (_viewPort.Width / 2);
+            _y = _player.LocationY - (_viewPort.Height / 2);
+            var maxX = _player.LocationX + (_viewPort.Width / 2);
+            var maxY = _player.LocationY + (_viewPort.Height / 2);
             //Are we trying to draw outside the lower bounds of the map?
-            if (X <= 0)
+            if (_x <= 0)
             {
-                X = 0;
-                maxX = ViewPort.Width;
-                ExtremeBound = true;
-                XL = true;
+                _x = 0;
+                maxX = _viewPort.Width;
+                extremeBound = true;
+                xl = true;
             }
-            if(Y <= 0)
+            if(_y <= 0)
             {
-                Y = 0;
+                _y = 0;
                 //Y Is height dummy, Not width. CHECK YO VARIABLES FOOL!
-                maxY = ViewPort.Height;
-                ExtremeBound = true;
-                YL = true;
+                maxY = _viewPort.Height;
+                extremeBound = true;
+                yl = true;
             } 
             //Are we trying to draw outside the upper bounds of the map?
-            if(X >= World.Grid.GetLength(0) - ViewPort.Width)
+            if(_x >= _world.Grid.GetLength(0) - _viewPort.Width)
             {
-                maxX = World.Grid.GetLength(0) - 1;
-                X = (World.Grid.GetLength(0) - 1)- ViewPort.Width;
-                ExtremeBound = true;
-                XH = true;
+                maxX = _world.Grid.GetLength(0) - 1;
+                _x = (_world.Grid.GetLength(0) - 1)- _viewPort.Width;
+                extremeBound = true;
+                xh = true;
             }
-            if (Y >= World.Grid.GetLength(1) - ViewPort.Height)
+            if (_y >= _world.Grid.GetLength(1) - _viewPort.Height)
             {
-                maxY = World.Grid.GetLength(1) - 1;
-                Y = (World.Grid.GetLength(1) - 1) - ViewPort.Height;
-                ExtremeBound = true;
-                YH = true;
+                maxY = _world.Grid.GetLength(1) - 1;
+                _y = (_world.Grid.GetLength(1) - 1) - _viewPort.Height;
+                extremeBound = true;
+                yh = true;
             }
 
             //Figure out where to draw the player relative to the viewport.
-            if(!ExtremeBound)
+            if(!extremeBound)
             {
-                PlayerCoord.X = ViewPort.Width / 2;
-                PlayerCoord.Y = ViewPort.Height / 2;
+                _playerCoord.X = _viewPort.Width / 2;
+                _playerCoord.Y = _viewPort.Height / 2;
             }
-            else if(ExtremeBound)
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            else if(extremeBound)
             {
-                if(XL == true)
+                if(xl)
                 {
-                    PlayerCoord.X = Player.locationX;
-                    PlayerCoord.Y = ViewPort.Height / 2;
+                    _playerCoord.X = _player.LocationX;
+                    _playerCoord.Y = _viewPort.Height / 2;
                 }
-                if(YL == true)
+                if(yl)
                 {
-                    PlayerCoord.X = ViewPort.Width / 2;
-                    PlayerCoord.Y = Player.locationY;
+                    _playerCoord.X = _viewPort.Width / 2;
+                    _playerCoord.Y = _player.LocationY;
                 }
-                if (XH == true)
+                if (xh)
                 {
-                    PlayerCoord.X = Player.locationX - (World.Grid.GetLength(0) - ViewPort.Width);
-                    PlayerCoord.Y = ViewPort.Height / 2;
+                    _playerCoord.X = _player.LocationX - (_world.Grid.GetLength(0) - _viewPort.Width);
+                    _playerCoord.Y = _viewPort.Height / 2;
                 }
-                if (YH == true)
+                if (yh)
                 {
-                    PlayerCoord.X = ViewPort.Width / 2;
-                    PlayerCoord.Y = Player.locationY - (World.Grid.GetLength(1) - ViewPort.Height);
+                    _playerCoord.X = _viewPort.Width / 2;
+                    _playerCoord.Y = _player.LocationY - (_world.Grid.GetLength(1) - _viewPort.Height);
                 }
-                if (XL == true && YL == true)
+                if (xl && yl)
                 {
                     //Top Left
-                    PlayerCoord.X = Player.locationX;
-                    PlayerCoord.Y = Player.locationY;
+                    _playerCoord.X = _player.LocationX;
+                    _playerCoord.Y = _player.LocationY;
 
                 }
-                if (XL == true && YH == true)
+                if (xl && yh)
                 {
                     //Bottom Left
-                    PlayerCoord.X = Player.locationX;
-                    PlayerCoord.Y = Player.locationY - (World.Grid.GetLength(1) - ViewPort.Height);
+                    _playerCoord.X = _player.LocationX;
+                    _playerCoord.Y = _player.LocationY - (_world.Grid.GetLength(1) - _viewPort.Height);
                 }
-                if (XH == true && YL == true)
+                if (xh && yl)
                 {
                     //Top Right
-                    PlayerCoord.X = Player.locationX - (World.Grid.GetLength(0) - ViewPort.Width);
-                    PlayerCoord.Y = Player.locationY;
+                    _playerCoord.X = _player.LocationX - (_world.Grid.GetLength(0) - _viewPort.Width);
+                    _playerCoord.Y = _player.LocationY;
 
                 }
-                if (XH == true && YH == true)
+                if (xh && yh)
                 {
                     //Bottom Right
-                    PlayerCoord.X = Player.locationX - (World.Grid.GetLength(0) - ViewPort.Width);
-                    PlayerCoord.Y = Player.locationY - (World.Grid.GetLength(1) - ViewPort.Height);
+                    _playerCoord.X = _player.LocationX - (_world.Grid.GetLength(0) - _viewPort.Width);
+                    _playerCoord.Y = _player.LocationY - (_world.Grid.GetLength(1) - _viewPort.Height);
                 }
 
             }
 
             //Work out what to draw
-            for (int x = X; x <= maxX; x++)
+            for (var x = _x; x <= maxX; x++)
             {
-                for(int y = Y; y <= maxY; y++)
+                for(var y = _y; y <= maxY; y++)
                 {
-                    DrawArea.Grid[x - X, y - Y] = World.Grid[x, y];
+                    drawArea.Grid[x - _x, y - _y] = _world.Grid[x, y];
                 }
             }
-            return DrawArea;
+            return drawArea;
         }
     }
 }

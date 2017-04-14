@@ -1,5 +1,8 @@
 ﻿using CURPG_Engine.Inventory;
 using System;
+// ReSharper disable UnusedMember.Global
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable NotAccessedField.Global
 
 namespace CURPG_Engine.Core
 {
@@ -10,15 +13,15 @@ namespace CURPG_Engine.Core
     public class Player
     {
         //Values our player needs
-        public string name;
-        public int locationX;
-        public int locationY;
-        public char gender;
-        public int age;
-        public int weight;
-        public int height;
-        public int health = 100;
-        public Inventory.Inventory Inventory;
+        public string Name;
+        public int LocationX;
+        public int LocationY;
+        public char Gender;
+        public int Age;
+        public int Weight;
+        public int Height;
+        public int Health = 100;
+        public readonly Inventory.Inventory Inventory;
         public bool Testing;
 
         /// <summary>
@@ -29,16 +32,18 @@ namespace CURPG_Engine.Core
         /// <param name="age"></param>
         /// <param name="height"></param>
         /// <param name="weight"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         /// <returns></returns>
-        public Player(string Name, char Gender, int Age, int Height, int Weight, int x, int y)
+        public Player(string name, char gender, int age, int height, int weight, int x, int y)
         {
-            name = Name;
-            gender = Gender;
-            age = Age;
-            height = Height;
-            weight = Weight;
-            locationX = x;
-            locationY = y;
+            Name = name;
+            Gender = gender;
+            Age = age;
+            Height = height;
+            Weight = weight;
+            LocationX = x;
+            LocationY = y;
             Inventory = new Inventory.Inventory(64);
             Testing = false;
         }
@@ -51,60 +56,55 @@ namespace CURPG_Engine.Core
         /// <param name="world">Active world object</param>
         public void MovePlayer(int x, int y, World world)
         {
-            Random r = new Random();
-            var CurX = locationX;
-            var CurY = locationY;
-            var NewX = CurX + x;
-            var NewY = CurY + y;
+            var r = new Random();
+            var curX = LocationX;
+            var curY = LocationY;
+            var newX = curX + x;
+            var newY = curY + y;
 
-            if (NewX < 0 || NewY < 0 || NewX > world.Grid.GetLength(0) - 1 || NewY > world.Grid.GetLength(1) - 1)
+            if (newX < 0 || newY < 0 || newX > world.Grid.GetLength(0) - 1 || newY > world.Grid.GetLength(1) - 1)
             {
-                return;
             }
             else
             {
-                if (Testing == true)
+                if (Testing)
                 {
-                    locationX = NewX;
-                    locationY = NewY;
+                    LocationX = newX;
+                    LocationY = newY;
                 }
                 else
                 {
-                    switch (world.Grid[NewX, NewY].TerrainModifier)
+                    switch (world.Grid[newX, newY].TerrainModifier)
                     {
                         case 0:
                             //Flat ground
-                            locationX = NewX;
-                            locationY = NewY;
+                            LocationX = newX;
+                            LocationY = newY;
                             break;
                         case 1:
-                            foreach (Item item in Inventory.Items)
+                            foreach (var item in Inventory.Items)
                             {
-                                if (item is Tool tool)
+                                if (!(item is Tool tool) || tool.TerrainMod != 1) continue;
+                                LocationX = newX;
+                                LocationY = newY;
+                                world.ChangeTile(LocationX, LocationY, 24);
+                                Craftable logs = null;
+                                foreach (var check in Inventory.ItemDb)
+                                    if (check.Id == 1)
+                                        logs = (Craftable) check;
+                                if (logs == null) continue;
+                                logs.StackHeight = r.Next(1, 5);
+                                if (Inventory.Contains(1))
                                 {
-                                    if (tool.TerrainMod == 1)
-                                    {
-                                        locationX = NewX;
-                                        locationY = NewY;
-                                        world.ChangeTile(locationX, locationY, 24);
-                                        Craftable logs = null;
-                                        foreach(Item _item in Inventory.ItemDB)
-                                            if (_item.ID == 1)
-                                                logs = (Craftable)_item;
-                                        logs.StackHeight = r.Next(1, 5);
-                                        if (Inventory.Contains(1))
+                                    foreach (var log in Inventory.Items)
+                                        if (log.Id == 1)
                                         {
-                                            foreach (Item log in Inventory.Items)
-                                                if (log.ID == 1)
-                                                {
-                                                    Craftable exists = (Craftable)log;
-                                                    exists.AddQuantity(logs.StackHeight);
-                                                }
+                                            var exists = (Craftable) log;
+                                            exists.AddQuantity(logs.StackHeight);
                                         }
-                                        else
-                                            Inventory.AddItem(logs);
-                                    }
                                 }
+                                else
+                                    Inventory.AddItem(logs);
                             }
                             return;
                         case 2:
@@ -128,9 +128,8 @@ namespace CURPG_Engine.Core
         /// <param name="y">Desintation Y Coord</param>
         public void Teleport(int x, int y)
         {
-            locationX = x;
-            locationY = y;
-            return;
+            LocationX = x;
+            LocationY = y;
         }
 
         /// <summary>
@@ -139,7 +138,7 @@ namespace CURPG_Engine.Core
         /// <returns>x,y</returns>
         public string Location()
         {
-            var s = locationX + "," + locationY;
+            var s = LocationX + "," + LocationY;
             return s;
         }
     }
@@ -147,53 +146,46 @@ namespace CURPG_Engine.Core
     /// <summary>
     /// PlayerTools class. Includes the basic tools we need to interact with our player class.
     /// </summary>
-    public class PlayerTools
+    public static class PlayerTools
     {
         /// <summary>
         /// Generates a random player character
         /// </summary>
         /// <returns>Returns a randomised player class</returns>
-        static public Player RandomPlayer(int x, int y)
+        public static Player RandomPlayer(int x, int y)
         {
-            Random r = new Random();
-            string[] MaleNames = new string[10] { "Arron", "Anthony", "Bob", "Billy", "Charlie", "Scott", "Virgil", "Alan", "Gordon", "John" };
-            string[] FemaleNames = new string[10] { "Christine", "Jenny", "Tin-Tin", "Nicola", "Ashley", "Jennifer", "Abby", "Charlotte", "Addison", "Catherine" };
-            char gender;
+            var r = new Random();
+            var maleNames = new[] { "Arron", "Anthony", "Bob", "Billy", "Charlie", "Scott", "Virgil", "Alan", "Gordon", "John" };
+            var femaleNames = new[] { "Christine", "Jenny", "Tin-Tin", "Nicola", "Ashley", "Jennifer", "Abby", "Charlotte", "Addison", "Catherine" };
             string name;
-            int height;
-            int weight;
-            int age;
 
             //First we assign a random gender....
             var n = r.Next(0, 1);
-            if (n == 0)
-                gender = 'M';
-            else
-                gender = 'F';
+            var gender = n == 0 ? 'M' : 'F';
 
             //Now we need a name.
             if (gender == 'M')
             {
                 n = r.Next(0, 9);
-                name = MaleNames[n];
+                name = maleNames[n];
             }
             else
             {
                 n = r.Next(0, 9);
-                name = FemaleNames[n];
+                name = femaleNames[n];
             }
 
             //Age
             n = r.Next(15, 80);
-            age = n;
+            var age = n;
 
             //Weight
             n = r.Next(30, 150);
-            weight = n;
+            var weight = n;
 
             //Height
             n = r.Next(100, 250);
-            height = n;
+            var height = n;
 
             Player player = new Player(name, gender, age, height, weight, x, y);
             return player;
@@ -203,27 +195,23 @@ namespace CURPG_Engine.Core
         /// Finds a safe place to spawn our player
         /// </summary>
         /// <param name="world">Current world object</param>
-        /// <param name="X">Initial spawn X</param>
-        /// <param name="Y">Initial spawn Y</param>
+        /// <param name="x">Initial spawn X</param>
+        /// <param name="y">Initial spawn Y</param>
         /// <returns></returns>
-        static public System.Drawing.Point GetSpawn(World world, int X, int Y)
+        public static System.Drawing.Point GetSpawn(World world, int x, int y)
         {
             System.Drawing.Point pt;
-            for (int i = X + 5; i >= (X - 5); i--)
+            for (var i = x + 5; i >= (x - 5); i--)
             {
-                if (world.Grid[i, Y].TerrainModifier == 0)
-                {
-                    pt = new System.Drawing.Point(i, Y);
-                    return pt;
-                }
+                if (world.Grid[i, y].TerrainModifier != 0) continue;
+                pt = new System.Drawing.Point(i, y);
+                return pt;
             }
-            for (int i = Y + 5; i >= (Y - 5); i--)
+            for (var i = y + 5; i >= (y - 5); i--)
             {
-                if (world.Grid[X, i].TerrainModifier == 0)
-                {
-                    pt = new System.Drawing.Point(X, i);
-                    return pt;
-                }
+                if (world.Grid[x, i].TerrainModifier != 0) continue;
+                pt = new System.Drawing.Point(x, i);
+                return pt;
             }
             pt = new System.Drawing.Point(0, 0);
             return pt;

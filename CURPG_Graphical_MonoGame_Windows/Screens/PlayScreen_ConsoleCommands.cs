@@ -2,17 +2,18 @@
 using System.Reflection;
 using GeonBit.UI.Entities;
 using System.IO;
+// ReSharper disable UnusedMember.Global
 
 namespace CURPG_Graphical_MonoGame_Windows.Screens
 {
-    public partial class PlayScreen : GameScreen
+    public partial class PlayScreen
     {
         /// <summary>
         /// Clears the console
         /// </summary>
         public void Clear()
         {
-            ScreenManager.console.Clear();
+            ScreenManager.Console.Clear();
         }
 
         /// <summary>
@@ -20,10 +21,10 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
         /// </summary>
         public void Testing()
         {
-            if (!player.Testing)
-                player.Testing = true;
-            else if (player.Testing)
-                player.Testing = false;
+            if (!Player.Testing)
+                Player.Testing = true;
+            else if (Player.Testing)
+                Player.Testing = false;
         }
 
         /// <summary>
@@ -32,10 +33,10 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
         /// <param name="s">Strings[]</param>
         public void PrintStory(string[] s)
         {
-            foreach (String S in s)
+            foreach (String ss in s)
             {
-                Paragraph p = new Paragraph(S);
-                bottomPanel.AddChild(p);
+                Paragraph p = new Paragraph(ss);
+                _bottomPanel.AddChild(p);
             }
         }
 
@@ -44,7 +45,7 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
         /// </summary>
         public void StoryButtons(Button button)
         {
-            bottomPanel.AddChild(button);
+            _bottomPanel.AddChild(button);
         }
 
         /// <summary>
@@ -52,7 +53,7 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
         /// </summary>
         public void ClearStory()
         {
-            bottomPanel.ClearChildren();
+            _bottomPanel.ClearChildren();
         }
 
         /// <summary>
@@ -62,15 +63,18 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
         /// <param name="action">Method to call onClick</param>
         /// <param name="param">(Optional) Paramters for the previous method</param>
         /// <returns>Button object</returns>
-        public Button CreateButton(string label, string action, string[] param = null)
+        public Button CreateButton(string label, string action, object[] param = null)
         {
-            Button button = new Button(label);
-
-            button.OnClick = (Entity btn) => {
-                Type thisType = this.GetType();
-                MethodInfo theMethod = thisType.GetMethod(action);
-                theMethod.Invoke(this, param);
+            var button = new Button(label)
+            {
+                OnClick = btn =>
+                {
+                    var thisType = GetType();
+                    var theMethod = thisType.GetMethod(action);
+                    theMethod.Invoke(this, param);
+                }
             };
+
             return button;
         }
 
@@ -81,11 +85,13 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
         /// <returns>Indicator of success</returns>
         public string RunScript(string name)
         {
-            if (!File.Exists(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"Scripts\" + name)))
+            var loc = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+            if(loc == null) throw new Exception("Loc is null");
+            if (!File.Exists(Path.Combine(loc, @"Scripts\" + name)))
                 return ("File doesnt exist");
             try
             {
-                lua.DoFile(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"Scripts\" + name));
+                _lua.DoFile(Path.Combine(loc, @"Scripts\" + name));
             }
             catch (Exception e)
             {
