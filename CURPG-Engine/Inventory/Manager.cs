@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml;
 // ReSharper disable UnusedMember.Global
+// ReSharper disable FieldCanBeMadeReadOnly.Global
+// ReSharper disable FieldCanBeMadeReadOnly.Local
 
 namespace CURPG_Engine.Inventory
 {
@@ -14,29 +17,37 @@ namespace CURPG_Engine.Inventory
     [Serializable]
     public class Inventory
     {
-        public readonly Item[] Items;
+        public Item[] Items;
         public List<Item> ItemDb;
-        private readonly int _capacity;
 
         public Inventory(int capacity)
         {
-            _capacity = capacity;
-            Items = new Item[_capacity];
+            Items = new Item[capacity];
         }
+
+        private void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            PropertyChanged?.Invoke(this, e);
+        }
+
+        private void OnPropertyChanged(string propertyName)
+        {
+            OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
 
         /// <summary>
         /// Finds the index of the first available slot
         /// </summary>
         /// <returns>Index of first avail slot</returns>
-        int FirstAvailSlot()
+        private int FirstAvailSlot(Item[] array)
         {
-            if (Items != null)
+            for (var i = 0; i < array.Length; i++)
             {
-                for (int i = 0; i < _capacity; i++)
-                {
-                    if (Items[i] == null)
-                        return i;
-                }
+                if (array[i] == null)
+                    return i;
             }
             return -1;
         }
@@ -47,8 +58,9 @@ namespace CURPG_Engine.Inventory
         public void Clear()
         {
             if (Items == null) return;
-            for (var i = 0; i < _capacity; i++)
+            for (var i = 0; i < Items.Length; i++)
                 Items[i] = null;
+            OnPropertyChanged("Items");
         }
 
         /// <summary>
@@ -57,7 +69,8 @@ namespace CURPG_Engine.Inventory
         /// <param name="item">Item class of item to add</param>
         public void AddItem(Item item)
         {
-            Items[FirstAvailSlot()] = item;
+            Items[FirstAvailSlot(Items)] = item;
+            OnPropertyChanged("Items");
         }
 
         /// <summary>
@@ -66,9 +79,13 @@ namespace CURPG_Engine.Inventory
         /// <param name="i">Item ID to add to inventory</param>
         public void AddItem(int i)
         {
-            foreach(var item in ItemDb)
-                if(item.Id == i)
-                    Items[FirstAvailSlot()] = item;
+            var j = FirstAvailSlot(Items);
+            foreach (var item in ItemDb)
+            {
+                if (item.Id == i)
+                    Items[j] = item;
+            }
+            OnPropertyChanged("Items");
         }
 
         /// <summary>
@@ -176,5 +193,20 @@ namespace CURPG_Engine.Inventory
             return Items.Select(item => item.Id == id).FirstOrDefault();
         }
 
+        public void MakeActive(int index)
+        {
+            Item iitem = Items[0];
+            Item item = Items[index];
+            Items[index] = iitem;
+            Item[] temp = new Item[Items.Length];
+            temp[0] = item;
+            for (var i = 1; i <= (Items.Length - 1); i++)
+            {
+                if (Items[i] == null) continue;
+                temp[FirstAvailSlot(temp)] = Items[i];
+            }
+            Items = temp;
+            OnPropertyChanged("Items");
+        }
     }
 }

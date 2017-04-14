@@ -14,15 +14,15 @@ namespace CURPG_Graphical_MonoGame_Windows
     {
         public static GraphicsDeviceManager GraphicsDeviceMgr;
         public static SpriteBatch Sprites;
-        private static Dictionary<string, Texture2D> _textures2D;
-        private static Dictionary<string, SpriteFont> _fonts;
-        private static List<GameScreen> _screenList;
         public static ContentManager ContentMgr;
         public static ConsoleComponent Console;
         public static PythonInterpreter Interpreter;
         public static System.Drawing.Rectangle ScreenArea;
         private static Dictionary<string, GameScreen> _screens;
-
+        [NonSerialized] private static Dictionary<string, Texture2D> _textures2D;
+        [NonSerialized] private static Dictionary<string, SpriteFont> _fonts;
+        [NonSerialized] private static List<GameScreen> _screenList;
+        [NonSerialized] private KeyboardState _oldState;
 
         public ScreenManager()
         {
@@ -86,6 +86,8 @@ namespace CURPG_Graphical_MonoGame_Windows
 
         protected override void Update(GameTime gameTime)
         {
+            var newState = Keyboard.GetState();  // get the newest state
+
             try
             {
                 // TODO Remove temp code
@@ -93,6 +95,8 @@ namespace CURPG_Graphical_MonoGame_Windows
                 {
                     Exit();
                 }
+                if (_oldState.IsKeyUp(Keys.OemTilde) && newState.IsKeyDown(Keys.OemTilde))
+                    Console.ToggleOpenClose();
 
                 var startIndex = _screenList.Count - 1;
                 while (GameScreen.IsPopup && GameScreen.IsActive)
@@ -108,6 +112,7 @@ namespace CURPG_Graphical_MonoGame_Windows
             {
                 base.Update(gameTime);
             }
+            _oldState = newState;
         }
 
         protected override void Draw(GameTime gameTime)

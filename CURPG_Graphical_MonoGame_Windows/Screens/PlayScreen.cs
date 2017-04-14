@@ -12,18 +12,23 @@ using NLua;
 
 namespace CURPG_Graphical_MonoGame_Windows.Screens
 {
+    [Serializable]
     public partial class PlayScreen : GameScreen
     {
-        readonly Dictionary<string, Texture2D> _tileTextures = new Dictionary<string, Texture2D>();
+        [NonSerialized] private readonly Dictionary<string, Texture2D> _tileTextures = new Dictionary<string, Texture2D>();
         public World World;
         private List<Tile> _tileSet;
         public Player Player;
-        private KeyboardState _oldState;
-        System.Drawing.Rectangle _mapArea;
-        private Camera _camera;
-        private Panel _bottomPanel;
-        private Panel _rightPanel;
-        private readonly Lua _lua = new Lua();
+        [NonSerialized] private KeyboardState _oldState;
+        [NonSerialized] private System.Drawing.Rectangle _mapArea;
+        [NonSerialized] private Camera _camera;
+        [NonSerialized] private Panel _bottomPanel;
+        [NonSerialized] private Panel _rightPanel;
+        [NonSerialized] private PanelTabs _tabs;
+        [NonSerialized] private PanelTabs.TabData _invTab;
+        [NonSerialized] private PanelTabs.TabData _statTab;
+
+        [NonSerialized] private readonly Lua _lua = new Lua();
 
         public override void Initialize()
         {
@@ -35,13 +40,17 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
                 World = Persistance.LoadWorld();
                 Player = Persistance.LoadPlayer();
                 _tileSet = World.TileSet;
+                var loc = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+                if (loc == null) throw new Exception("Loc is null");
+                var itemsPath = Path.Combine(loc, @"DataFiles\Items.xml");
+                Player.Inventory.BuildDatabase(itemsPath);
 
                 if (World == null || Player == null)
                 {
-                    var loc = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+                    loc = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
                     if(loc == null) throw new Exception("Loc is null");
                     var tilesPath = Path.Combine(loc, @"DataFiles\Tiles.xml");
-                    var itemsPath = Path.Combine(loc, @"DataFiles\Items.xml");
+                    itemsPath = Path.Combine(loc, @"DataFiles\Items.xml");
                     _tileSet = WorldTools.TileSetBuilder(tilesPath);
                     World = WorldTools.GenerateWorld(0, 128, 128, _tileSet, "World", 24);
                     var pt = PlayerTools.GetSpawn(World, _mapArea.Width / 2, _mapArea.Height / 2);
@@ -81,7 +90,7 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
 
         public override void LoadAssets()
         {
-            foreach (Tile tile in _tileSet)
+            foreach (var tile in _tileSet)
             {
                 try
                 {
@@ -107,6 +116,8 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
         {
             var newState = Keyboard.GetState();  // get the newest state
 
+            Player.Inventory.PropertyChanged += Inventory_PropertyChanged;
+
             // handle the input
             if (_oldState.IsKeyUp(Keys.Left) && newState.IsKeyDown(Keys.Left))
             {
@@ -127,15 +138,16 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
                 Player.MovePlayer(0, 1, World);
             }
 
-            if (_oldState.IsKeyUp(Keys.OemTilde) && newState.IsKeyDown(Keys.OemTilde))
-                ScreenManager.Console.ToggleOpenClose();
-
-
             _oldState = newState;  // set the new state as the old state for next time
 
             UserInterface.Update(gameTime);
 
             base.Update(gameTime);
+        }
+
+        private void Inventory_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            DrawInv();
         }
 
         public override void Draw(GameTime gameTime)

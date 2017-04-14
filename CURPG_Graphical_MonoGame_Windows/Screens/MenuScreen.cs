@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace CURPG_Graphical_MonoGame_Windows.Screens
 {
-    class MenuScreen : GameScreen
+    internal class MenuScreen : GameScreen
     {
         private KeyboardState _oldState;
 
@@ -16,9 +16,6 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
         public override void Update(GameTime gameTime)
         {
             var newState = Keyboard.GetState();  // get the newest state
-
-            if (_oldState.IsKeyUp(Keys.OemTilde) && newState.IsKeyDown(Keys.OemTilde))
-                ScreenManager.Console.ToggleOpenClose();
 
             _oldState = newState;
 

@@ -82,9 +82,8 @@ namespace CURPG_Engine.Core
                             LocationY = newY;
                             break;
                         case 1:
-                            foreach (var item in Inventory.Items)
+                            if (Inventory.Items[0] is Tool tool && tool.TerrainMod == 1)
                             {
-                                if (!(item is Tool tool) || tool.TerrainMod != 1) continue;
                                 LocationX = newX;
                                 LocationY = newY;
                                 world.ChangeTile(LocationX, LocationY, 24);
@@ -92,21 +91,24 @@ namespace CURPG_Engine.Core
                                 foreach (var check in Inventory.ItemDb)
                                     if (check.Id == 1)
                                         logs = (Craftable) check;
-                                if (logs == null) continue;
-                                logs.StackHeight = r.Next(1, 5);
-                                if (Inventory.Contains(1))
+                                if (logs != null)
                                 {
-                                    foreach (var log in Inventory.Items)
-                                        if (log.Id == 1)
-                                        {
-                                            var exists = (Craftable) log;
-                                            exists.AddQuantity(logs.StackHeight);
-                                        }
+                                    logs.StackHeight = r.Next(1, 5);
+                                    if (Inventory.Contains(1))
+                                    {
+                                        foreach (var log in Inventory.Items)
+                                            if (log.Id == 1)
+                                            {
+                                                var exists = (Craftable) log;
+                                                exists.AddQuantity(logs.StackHeight);
+                                            }
+                                    }
+                                    else
+                                        Inventory.AddItem(logs);
                                 }
-                                else
-                                    Inventory.AddItem(logs);
+                                return;
                             }
-                            return;
+                            return; ;
                         case 2:
                             //Mountains
                             return;
