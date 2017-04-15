@@ -62,15 +62,16 @@ namespace CURPG_Engine.Inventory
                 StackHeight = quantity;
         }
 
-        public void AddQuantity(int quantity)
+        public bool AddQuantity(int quantity)
         {
-            if ((StackHeight + quantity) > _maxStackHeight)
+            if (StackHeight + quantity > _maxStackHeight)
             {
-                //Start another stack
+                return false;
             }
             else
             {
-                StackHeight =+ quantity;
+                StackHeight = StackHeight + quantity;
+                return true;
             }
         }
 

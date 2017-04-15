@@ -10,7 +10,7 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
 {
     partial class PlayScreen
     {
-
+        private Panel _panel;
         private void Ui()
         {
             UserInterface.Initialize(ScreenManager.ContentMgr, BuiltinThemes.hd);
@@ -61,9 +61,20 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
                         if(icn is IconI icnI)
                         Player.Inventory.MakeActive(icnI.Index);
                     },
-                    WhileMouseHover = (Entity icn) =>
+                    OnMouseEnter = (Entity icn) =>
                     {
-                        //TODO: Handle mouse hover events
+                        _panel = new Panel(new Vector2(100, 100), PanelSkin.Default, Anchor.TopRight);
+                        if (icn is IconI icni)
+                        {
+                            var items = Player.Inventory.Items[icni.Index];
+                            if (items is CURPG_Engine.Inventory.Craftable craftable)
+                                _panel.AddChild(new Paragraph(craftable.StackHeight.ToString()));
+                            UserInterface.AddEntity(_panel);
+                        }
+                    },
+                    OnMouseLeave = (Entity icn) =>
+                    {
+                        UserInterface.RemoveEntity(_panel);
                     }
                 };
                 //TODO: Finish off this.

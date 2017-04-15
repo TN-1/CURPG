@@ -84,31 +84,26 @@ namespace CURPG_Engine.Core
                         case 1:
                             if (Inventory.Items[0] is Tool tool && tool.TerrainMod == 1)
                             {
+                                var i = r.Next(1, 5);
                                 LocationX = newX;
                                 LocationY = newY;
                                 world.ChangeTile(LocationX, LocationY, 24);
-                                Craftable logs = null;
-                                foreach (var check in Inventory.ItemDb)
-                                    if (check.Id == 1)
-                                        logs = (Craftable) check;
-                                if (logs != null)
+                                foreach (var check in Inventory.Items)
                                 {
-                                    logs.StackHeight = r.Next(1, 5);
-                                    if (Inventory.Contains(1))
+                                    if (check is Craftable log && log.Id == 1)
                                     {
-                                        foreach (var log in Inventory.Items)
-                                            if (log.Id == 1)
-                                            {
-                                                var exists = (Craftable) log;
-                                                exists.AddQuantity(logs.StackHeight);
-                                            }
+                                        if (log.HowManyMore() >= i)
+                                        {
+                                            if(log.AddQuantity(i))
+                                                return;
+                                        }
                                     }
-                                    else
-                                        Inventory.AddItem(logs);
                                 }
-                                return;
+                                Craftable logs = (Craftable)Inventory.ItemDb[1];
+                                logs.StackHeight = i;
+                                Inventory.AddItem(logs);
                             }
-                            return; ;
+                            return;
                         case 2:
                             //Mountains
                             return;
