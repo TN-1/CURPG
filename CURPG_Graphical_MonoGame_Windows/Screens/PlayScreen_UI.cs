@@ -10,7 +10,7 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
 {
     partial class PlayScreen
     {
-        private Panel _panel;
+        [NonSerialized] private Panel _panel;
         private void Ui()
         {
             UserInterface.Initialize(ScreenManager.ContentMgr, BuiltinThemes.hd);
@@ -25,8 +25,7 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
             _invTab.panel.AddChild(new Header("Hello inventory!"));
             _statTab.panel.AddChild(new Header("Hello stats!"));
 
-            var stackTrace = new StackTrace();
-            if(stackTrace.GetFrame(1).GetMethod().Name != "DrawInv")
+            if(new StackTrace().GetFrame(1).GetMethod().Name != "DrawInv")
                 DrawInv();
 
             _rightPanel.AddChild(_tabs);
@@ -64,13 +63,11 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
                     OnMouseEnter = (Entity icn) =>
                     {
                         _panel = new Panel(new Vector2(100, 100), PanelSkin.Default, Anchor.TopRight);
-                        if (icn is IconI icni)
-                        {
-                            var items = Player.Inventory.Items[icni.Index];
-                            if (items is CURPG_Engine.Inventory.Craftable craftable)
-                                _panel.AddChild(new Paragraph(craftable.StackHeight.ToString()));
-                            UserInterface.AddEntity(_panel);
-                        }
+                        if (!(icn is IconI icni)) return;
+                        var items = Player.Inventory.Items[icni.Index];
+                        if (items is CURPG_Engine.Inventory.Craftable craftable)
+                            _panel.AddChild(new Paragraph(craftable.StackHeight.ToString()));
+                        UserInterface.AddEntity(_panel);
                     },
                     OnMouseLeave = (Entity icn) =>
                     {

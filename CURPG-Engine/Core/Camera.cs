@@ -1,4 +1,6 @@
-﻿namespace CURPG_Engine.Core
+﻿using System.Collections.Generic;
+
+namespace CURPG_Engine.Core
 {
     /// <summary>
     /// Camera allows for the drawing of a subset of the World class based on usbale screen area. TODO: Support minimap
@@ -7,12 +9,17 @@
     {
         private int _x;
         private int _y;
+        private int _maxX;
+        private int _maxY;
         private System.Drawing.Rectangle _viewPort;
         private readonly World _world;
         private readonly Player _player;
         private System.Drawing.Point _playerCoord;
+        private List<System.Drawing.Point> _npcCoord;
 
         public System.Drawing.Point PlayerCoord => _playerCoord;
+        public List<System.Drawing.Point> NpcCoord => _npcCoord;
+
         /// <summary>
         /// Constructs a camera object
         /// </summary>
@@ -28,6 +35,7 @@
             _viewPort = viewPort;
             _world = world;
             _player = player;
+            _npcCoord = new List<System.Drawing.Point>();
         }
 
         /// <summary>
@@ -44,13 +52,14 @@
             bool yh = false;
             _x = _player.LocationX - (_viewPort.Width / 2);
             _y = _player.LocationY - (_viewPort.Height / 2);
-            var maxX = _player.LocationX + (_viewPort.Width / 2);
-            var maxY = _player.LocationY + (_viewPort.Height / 2);
+            _maxX = _player.LocationX + (_viewPort.Width / 2);
+            _maxY = _player.LocationY + (_viewPort.Height / 2);
+
             //Are we trying to draw outside the lower bounds of the map?
             if (_x <= 0)
             {
                 _x = 0;
-                maxX = _viewPort.Width;
+                _maxX = _viewPort.Width;
                 extremeBound = true;
                 xl = true;
             }
@@ -58,21 +67,21 @@
             {
                 _y = 0;
                 //Y Is height dummy, Not width. CHECK YO VARIABLES FOOL!
-                maxY = _viewPort.Height;
+                _maxY = _viewPort.Height;
                 extremeBound = true;
                 yl = true;
             } 
             //Are we trying to draw outside the upper bounds of the map?
             if(_x >= _world.Grid.GetLength(0) - _viewPort.Width)
             {
-                maxX = _world.Grid.GetLength(0) - 1;
+                _maxX = _world.Grid.GetLength(0) - 1;
                 _x = (_world.Grid.GetLength(0) - 1)- _viewPort.Width;
                 extremeBound = true;
                 xh = true;
             }
             if (_y >= _world.Grid.GetLength(1) - _viewPort.Height)
             {
-                maxY = _world.Grid.GetLength(1) - 1;
+                _maxY = _world.Grid.GetLength(1) - 1;
                 _y = (_world.Grid.GetLength(1) - 1) - _viewPort.Height;
                 extremeBound = true;
                 yh = true;
@@ -137,14 +146,32 @@
             }
 
             //Work out what to draw
-            for (var x = _x; x <= maxX; x++)
+            for (var x = _x; x <= _maxX; x++)
             {
-                for(var y = _y; y <= maxY; y++)
+                for(var y = _y; y <= _maxY; y++)
                 {
                     drawArea.Grid[x - _x, y - _y] = _world.Grid[x, y];
                 }
             }
             return drawArea;
+        }
+
+        public void GetNpCs(List<Scriptables.Npc> npcs)
+        {
+            List<Scriptables.Npc> actives = new List<Scriptables.Npc>();
+            _npcCoord.Clear();
+
+            foreach (Scriptables.Npc npc in npcs)
+            {
+                if (npc.LocationX <= _maxX && npc.LocationX >= _x && npc.LocationY <= _maxY && npc.LocationY >= _y)
+                    actives.Add(npc);
+            }
+
+            foreach(Scriptables.Npc npc in actives)
+            {
+                _npcCoord.Add(new System.Drawing.Point(npc.LocationX, npc.LocationY));
+
+            }
         }
     }
 }

@@ -55,10 +55,13 @@
     <Compile Include="Core\Camera.cs" />
     <Compile Include="Core\Persistance.cs" />
     <Compile Include="Core\Player.cs" />
+    <Compile Include="Core\PlayerTools.cs" />
     <Compile Include="Core\World.cs" />
     <Compile Include="Inventory\Items.cs" />
-    <Compile Include="Inventory\Manager.cs" />
+    <Compile Include="Inventory\Inventory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scriptables\NPC.cs" />
+    <Compile Include="Scriptables\Quest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

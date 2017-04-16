@@ -1,5 +1,7 @@
 ﻿using CURPG_Engine.Inventory;
 using System;
+using System.ComponentModel;
+
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable NotAccessedField.Global
@@ -23,6 +25,7 @@ namespace CURPG_Engine.Core
         public int Health = 100;
         public readonly Inventory.Inventory Inventory;
         public bool Testing;
+        protected bool IsLocked = false;
 
         /// <summary>
         /// Constructs a player from user assigned values
@@ -54,8 +57,9 @@ namespace CURPG_Engine.Core
         /// <param name="x">New X Coord</param>
         /// <param name="y">New Y Coord</param>
         /// <param name="world">Active world object</param>
-        public void MovePlayer(int x, int y, World world)
+        public bool MovePlayer(int x, int y, World world)
         {
+            if (IsLocked) return false;
             var r = new Random();
             var curX = LocationX;
             var curY = LocationY;
@@ -95,7 +99,7 @@ namespace CURPG_Engine.Core
                                         if (log.HowManyMore() >= i)
                                         {
                                             if(log.AddQuantity(i))
-                                                return;
+                                                return true;
                                         }
                                     }
                                 }
@@ -103,19 +107,20 @@ namespace CURPG_Engine.Core
                                 logs.StackHeight = i;
                                 Inventory.AddItem(logs);
                             }
-                            return;
+                            break;
                         case 2:
                             //Mountains
-                            return;
+                            return true;
                         case 3:
                             //Water
-                            return;
+                            return true;
                         case 4:
                             //Buildings
-                            return;
+                            return true;
                     }
                 }
             }
+            return true;
         }
 
         /// <summary>
@@ -138,80 +143,7 @@ namespace CURPG_Engine.Core
             var s = LocationX + "," + LocationY;
             return s;
         }
-    }
 
-    /// <summary>
-    /// PlayerTools class. Includes the basic tools we need to interact with our player class.
-    /// </summary>
-    public static class PlayerTools
-    {
-        /// <summary>
-        /// Generates a random player character
-        /// </summary>
-        /// <returns>Returns a randomised player class</returns>
-        public static Player RandomPlayer(int x, int y)
-        {
-            var r = new Random();
-            var maleNames = new[] { "Arron", "Anthony", "Bob", "Billy", "Charlie", "Scott", "Virgil", "Alan", "Gordon", "John" };
-            var femaleNames = new[] { "Christine", "Jenny", "Tin-Tin", "Nicola", "Ashley", "Jennifer", "Abby", "Charlotte", "Addison", "Catherine" };
-            string name;
-
-            //First we assign a random gender....
-            var n = r.Next(0, 1);
-            var gender = n == 0 ? 'M' : 'F';
-
-            //Now we need a name.
-            if (gender == 'M')
-            {
-                n = r.Next(0, 9);
-                name = maleNames[n];
-            }
-            else
-            {
-                n = r.Next(0, 9);
-                name = femaleNames[n];
-            }
-
-            //Age
-            n = r.Next(15, 80);
-            var age = n;
-
-            //Weight
-            n = r.Next(30, 150);
-            var weight = n;
-
-            //Height
-            n = r.Next(100, 250);
-            var height = n;
-
-            Player player = new Player(name, gender, age, height, weight, x, y);
-            return player;
-        }
-
-        /// <summary>
-        /// Finds a safe place to spawn our player
-        /// </summary>
-        /// <param name="world">Current world object</param>
-        /// <param name="x">Initial spawn X</param>
-        /// <param name="y">Initial spawn Y</param>
-        /// <returns></returns>
-        public static System.Drawing.Point GetSpawn(World world, int x, int y)
-        {
-            System.Drawing.Point pt;
-            for (var i = x + 5; i >= (x - 5); i--)
-            {
-                if (world.Grid[i, y].TerrainModifier != 0) continue;
-                pt = new System.Drawing.Point(i, y);
-                return pt;
-            }
-            for (var i = y + 5; i >= (y - 5); i--)
-            {
-                if (world.Grid[x, i].TerrainModifier != 0) continue;
-                pt = new System.Drawing.Point(x, i);
-                return pt;
-            }
-            pt = new System.Drawing.Point(0, 0);
-            return pt;
-        }
+        public void SetLock(bool value) => IsLocked = value;
     }
 }
