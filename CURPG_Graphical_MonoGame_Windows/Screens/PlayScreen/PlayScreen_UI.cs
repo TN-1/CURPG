@@ -37,6 +37,11 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
 
         }
 
+        private void Inventory_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            DrawInv();
+        }
+
         // ReSharper disable once MemberCanBePrivate.Global
         public void DrawInv()
         {

@@ -2,6 +2,8 @@
 using System.Reflection;
 using GeonBit.UI.Entities;
 using System.IO;
+using CURPG_Engine.Scriptables;
+
 // ReSharper disable UnusedMember.Global
 
 namespace CURPG_Graphical_MonoGame_Windows.Screens
@@ -39,6 +41,13 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
                 _bottomPanel.AddChild(p);
             }
         }
+
+        public void PrintStory(string s)
+        {
+            Paragraph p = new Paragraph(s);
+            _bottomPanel.AddChild(p);
+        }
+
 
         /// <summary>
         /// Adds buttons to the story panel
@@ -99,5 +108,11 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
             }
             return ("Success");
         }
+
+        public void AddNpc(double index, string name, string gender, double age, double height, double weight, double x, double y, double maxx, double maxy)
+        {
+            _npcs.Add(new Npc((int)index, name, gender.ToCharArray()[0], (int)age, (int)height, (int)weight, (int)x, (int)y, (int)maxx, (int)maxy, World));
+        }
+
     }
 }

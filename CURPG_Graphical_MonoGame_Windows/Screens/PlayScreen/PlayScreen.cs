@@ -166,7 +166,7 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
             {
                 var x = Player.LocationX - npc.LocationX;
                 var y = Player.LocationY - npc.LocationY;
-                if (Enumerable.Range(-2, 4).Contains(x) && Enumerable.Range(-2, 4).Contains(y))
+                if (Enumerable.Range(-3, 6).Contains(x) && Enumerable.Range(-3, 6).Contains(y))
                 {
                     _lua.DoFile(Path.Combine(_exeLocation, "Scripts", "NPC", npc.Index.ToString(), "Dialogue.lua"));
                     _lua["Player"] = Player;
@@ -176,11 +176,6 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
                     greeting.Call();
                 }
             }
-        }
-
-        private void Inventory_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            DrawInv();
         }
 
         public override void Draw(GameTime gameTime)
@@ -219,11 +214,6 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
             UserInterface.Draw(ScreenManager.Sprites);
 
             base.Draw(gameTime);
-        }
-
-        public void AddNpc(double index, string name, string gender, double age, double height, double weight, double x, double y, double maxx, double maxy)
-        {
-            _npcs.Add(new Npc((int)index, name, gender.ToCharArray()[0], (int)age, (int)height, (int)weight, (int)x, (int)y, (int)maxx, (int)maxy, World));
         }
     }
 }
