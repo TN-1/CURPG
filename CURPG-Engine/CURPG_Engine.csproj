@@ -56,7 +56,9 @@
     <Compile Include="Core\Persistance.cs" />
     <Compile Include="Core\Player.cs" />
     <Compile Include="Core\PlayerTools.cs" />
+    <Compile Include="Core\Tile.cs" />
     <Compile Include="Core\World.cs" />
+    <Compile Include="Core\WorldTools.cs" />
     <Compile Include="Inventory\Items.cs" />
     <Compile Include="Inventory\Inventory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

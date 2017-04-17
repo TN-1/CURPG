@@ -18,12 +18,13 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
     public partial class PlayScreen : GameScreen
     {
         public World World;
-        private List<Tile> _tileSet;
         public Player Player;
-        [NonSerialized] private Dictionary<string, Texture2D> _tileTextures = new Dictionary<string, Texture2D>();
+        [NonSerialized] private List<Tile> _tileSet;
+        [NonSerialized] private readonly Dictionary<string, Texture2D> _tileTextures = new Dictionary<string, Texture2D>();
         [NonSerialized] private List<Npc> _npcs;
         [NonSerialized] private KeyboardState _oldState;
         [NonSerialized] private System.Drawing.Rectangle _mapArea;
+        [NonSerialized] private System.Drawing.Rectangle _miniMapArea;
         [NonSerialized] private Camera _camera;
         [NonSerialized] private Panel _bottomPanel;
         [NonSerialized] private Panel _rightPanel;
@@ -35,28 +36,29 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
         [NonSerialized] private readonly Lua _lua = new Lua();
         [NonSerialized] private Texture2D _playerTexture;
         [NonSerialized] private Texture2D _npcTexture;
-        [NonSerialized] private SpriteFont _consolefont;
+        [NonSerialized] private Texture2D _pixelTexture;
 
         public override void Initialize()
         {
-            if (_exeLocation == null) throw new Exception("_exeLocation is nill");
+            if (_exeLocation == null) throw new Exception("_exeLocation is null");
             _mapArea.Height = (int)Math.Ceiling((ScreenManager.ScreenArea.Height * .7) / 24);
             _mapArea.Width = (int)Math.Ceiling((ScreenManager.ScreenArea.Width * .5) / 24);
+            _miniMapArea.Height = (int)(ScreenManager.ScreenArea.Height - (Math.Floor((ScreenManager.ScreenArea.Height * .7) / 24) * 24));
+            _miniMapArea.Width = (int)(ScreenManager.ScreenArea.Height * .3 - 16);
+            var tilesPath = Path.Combine(_exeLocation, @"DataFiles\Tiles.xml");
+            var itemsPath = Path.Combine(_exeLocation, @"DataFiles\Items.xml");
 
             if (Persistance.CanLoad())
             {
                 World = Persistance.LoadWorld();
                 Player = Persistance.LoadPlayer();
-                _tileSet = World.TileSet;
-                var itemsPath = Path.Combine(_exeLocation, @"DataFiles\Items.xml");
+                _tileSet = WorldTools.TileSetBuilder(tilesPath);
                 Player.Inventory.BuildDatabase(itemsPath);
 
                 if (World == null || Player == null)
                 {
-                    var tilesPath = Path.Combine(_exeLocation, @"DataFiles\Tiles.xml");
-                    itemsPath = Path.Combine(_exeLocation, @"DataFiles\Items.xml");
                     _tileSet = WorldTools.TileSetBuilder(tilesPath);
-                    World = WorldTools.GenerateWorld(0, 128, 128, _tileSet, "World", 24);
+                    World = WorldTools.GenerateWorld(0, 500, 500, _tileSet, "World", 24);
                     var pt = PlayerTools.GetSpawn(World, _mapArea.Width / 2, _mapArea.Height / 2);
                     Player = PlayerTools.RandomPlayer(pt.X, pt.Y);
                     Player.Inventory.BuildDatabase(itemsPath);
@@ -64,16 +66,14 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
             }
             else
             {
-                var tilesPath = Path.Combine(_exeLocation, @"DataFiles\Tiles.xml");
-                var itemsPath = Path.Combine(_exeLocation, @"DataFiles\Items.xml");
                 _tileSet = WorldTools.TileSetBuilder(tilesPath);
-                World = WorldTools.GenerateWorld(0, 128, 128, _tileSet, "World", 24);
+                World = WorldTools.GenerateWorld(0, 500, 500, _tileSet, "World", 24);
                 var pt = PlayerTools.GetSpawn(World, _mapArea.Width / 2, _mapArea.Height / 2);
                 Player = PlayerTools.RandomPlayer(pt.X, pt.Y);
                 Player.Inventory.BuildDatabase(itemsPath);
             }
 
-            _camera = new Camera(0, 0, _mapArea, World, Player);
+            _camera = new Camera(0, 0, _mapArea, _miniMapArea, World, Player);
             _npcs = new List<Npc>();
             Ui();
 
@@ -97,7 +97,10 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
         {
             _playerTexture = new Texture2D(ScreenManager.GraphicsDeviceMgr.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             _npcTexture = new Texture2D(ScreenManager.GraphicsDeviceMgr.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            _consolefont = ScreenManager.ContentMgr.Load<SpriteFont>("DevConsoleFont");
+            _pixelTexture = new Texture2D(ScreenManager.GraphicsDeviceMgr.GraphicsDevice, 1, 1);
+            _playerTexture.SetData(new[] { Color.Red });
+            _npcTexture.SetData(new[] { Color.HotPink });
+            _pixelTexture.SetData(new[] {Color.White});
 
             foreach (var tile in _tileSet)
             {
@@ -189,6 +192,7 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
         {
             _camera.GetNpCs(_npcs);
             var drawArea = _camera.GetDrawArea();
+            var miniMap = _camera.GetMiniMap();
             var pt = _camera.PlayerCoord;
             var npcpt = _camera.NpcCoord;
 
@@ -198,21 +202,30 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
             {
                 for (var j = 0; j < _mapArea.Height; j++)
                 {
-                    ScreenManager.Sprites.Draw(_tileTextures[drawArea.Grid[i, j].EntityName], new Rectangle(i * World.TileSize, j * World.TileSize, World.TileSize, World.TileSize), Color.White);
+                    ScreenManager.Sprites.Draw(_tileTextures[drawArea.Grid[i, j].EntityName],
+                        new Rectangle(i * World.TileSize, j * World.TileSize, World.TileSize, World.TileSize),
+                        Color.White);
                 }
             }
 
+            for (var i = 0; i < _miniMapArea.Width; i++)
+            {
+                for (var j = 0; j < _miniMapArea.Height; j++)
+                {
+                    ScreenManager.Sprites.Draw(_pixelTexture,
+                        new Vector2(i, (float) (ScreenManager.ScreenArea.Height * .7 + j)), miniMap[i, j]);
+                }
+            }
 
-            _playerTexture.SetData(new[] { Color.Red });
-            _npcTexture.SetData(new[] { Color.HotPink });
-
-            ScreenManager.Sprites.Draw(_playerTexture, new Rectangle(pt.X * World.TileSize, pt.Y * World.TileSize, World.TileSize, World.TileSize), Color.Red);
-            if(npcpt != null)
+            ScreenManager.Sprites.Draw(_playerTexture,
+                new Rectangle(pt.X * World.TileSize, pt.Y * World.TileSize, World.TileSize, World.TileSize), Color.Red);
+            if (npcpt != null)
                 foreach (var npt in npcpt)
                 {
-                    ScreenManager.Sprites.Draw(_npcTexture, new Rectangle(npt.X * World.TileSize, npt.Y * World.TileSize, World.TileSize, World.TileSize), Color.HotPink);
+                    ScreenManager.Sprites.Draw(_npcTexture,
+                        new Rectangle(npt.X * World.TileSize, npt.Y * World.TileSize, World.TileSize, World.TileSize),
+                        Color.HotPink);
                 }
-            ScreenManager.Sprites.DrawString(_consolefont, "Minimap goes here :)", new Vector2(20, ScreenManager.ScreenArea.Height - 100), Color.Black);
 
             ScreenManager.Sprites.End();
 
