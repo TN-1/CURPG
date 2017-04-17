@@ -17,10 +17,10 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
     [Serializable]
     public partial class PlayScreen : GameScreen
     {
-        [NonSerialized] private readonly Dictionary<string, Texture2D> _tileTextures = new Dictionary<string, Texture2D>();
         public World World;
         private List<Tile> _tileSet;
         public Player Player;
+        [NonSerialized] private Dictionary<string, Texture2D> _tileTextures = new Dictionary<string, Texture2D>();
         [NonSerialized] private List<Npc> _npcs;
         [NonSerialized] private KeyboardState _oldState;
         [NonSerialized] private System.Drawing.Rectangle _mapArea;
@@ -33,6 +33,9 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
         [NonSerialized] private float _timeSinceLastUpdate;
         [NonSerialized] private readonly string _exeLocation = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
         [NonSerialized] private readonly Lua _lua = new Lua();
+        [NonSerialized] private Texture2D _playerTexture;
+        [NonSerialized] private Texture2D _npcTexture;
+        [NonSerialized] private SpriteFont _consolefont;
 
         public override void Initialize()
         {
@@ -84,13 +87,18 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
             //Setup lua luanet.load_assembly("CURPG_Engine.Scriptables")
             _lua.LoadCLRPackage();
             _lua["this"] = this;
-            _lua["state"] = 0;
             _lua.DoFile(Path.Combine(_exeLocation, "Scripts", "DefineNPCs.lua"));
             base.Initialize();
+
+            Player.Inventory.PropertyChanged += Inventory_PropertyChanged;
         }
 
         public override void LoadAssets()
         {
+            _playerTexture = new Texture2D(ScreenManager.GraphicsDeviceMgr.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+            _npcTexture = new Texture2D(ScreenManager.GraphicsDeviceMgr.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+            _consolefont = ScreenManager.ContentMgr.Load<SpriteFont>("DevConsoleFont");
+
             foreach (var tile in _tileSet)
             {
                 try
@@ -117,7 +125,6 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
         {
             var newState = Keyboard.GetState();  // get the newest state
 
-            Player.Inventory.PropertyChanged += Inventory_PropertyChanged;
             _timeSinceLastUpdate += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             if (_timeSinceLastUpdate > 2f)
@@ -195,19 +202,17 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
                 }
             }
 
-            var playerTexture = new Texture2D(ScreenManager.GraphicsDeviceMgr.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            var npcTexture = new Texture2D(ScreenManager.GraphicsDeviceMgr.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
 
-            playerTexture.SetData(new[] { Color.Red });
-            npcTexture.SetData(new[] { Color.HotPink });
+            _playerTexture.SetData(new[] { Color.Red });
+            _npcTexture.SetData(new[] { Color.HotPink });
 
-            ScreenManager.Sprites.Draw(playerTexture, new Rectangle(pt.X * World.TileSize, pt.Y * World.TileSize, World.TileSize, World.TileSize), Color.Red);
+            ScreenManager.Sprites.Draw(_playerTexture, new Rectangle(pt.X * World.TileSize, pt.Y * World.TileSize, World.TileSize, World.TileSize), Color.Red);
             if(npcpt != null)
                 foreach (var npt in npcpt)
                 {
-                    ScreenManager.Sprites.Draw(npcTexture, new Rectangle(npt.X * World.TileSize, npt.Y * World.TileSize, World.TileSize, World.TileSize), Color.HotPink);
+                    ScreenManager.Sprites.Draw(_npcTexture, new Rectangle(npt.X * World.TileSize, npt.Y * World.TileSize, World.TileSize, World.TileSize), Color.HotPink);
                 }
-            ScreenManager.Sprites.DrawString(ScreenManager.ContentMgr.Load<SpriteFont>("DevConsoleFont"), "Minimap goes here :)", new Vector2(20, ScreenManager.ScreenArea.Height - 100), Color.Black);
+            ScreenManager.Sprites.DrawString(_consolefont, "Minimap goes here :)", new Vector2(20, ScreenManager.ScreenArea.Height - 100), Color.Black);
 
             ScreenManager.Sprites.End();
 

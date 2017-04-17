@@ -11,10 +11,12 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
     partial class PlayScreen
     {
         [NonSerialized] private Panel _panel;
+        [NonSerialized] private Dictionary<string, IconType> _icons;
+
         private void Ui()
         {
             UserInterface.Initialize(ScreenManager.ContentMgr, BuiltinThemes.hd);
-
+            _icons = new Dictionary<string, IconType> { { "axe", IconType.Axe }, { "log", IconType.Apple } };
             //Right Panel
             _rightPanel = new Panel(new Vector2(Convert.ToInt32((ScreenManager.ScreenArea.Width * .5) - 16), Convert.ToInt32(ScreenManager.ScreenArea.Height - 70)), PanelSkin.Default, Anchor.TopRight, new Vector2(0, 70));
             _tabs = new PanelTabs();
@@ -53,12 +55,11 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
             var rowSize = (float)Math.Floor(width / 65);
             _invTab.panel.ClearChildren();
 
-            var icons = new Dictionary<string, IconType> {{"axe", IconType.Axe}, {"log", IconType.Apple}};
             for (var i = 0; i < Player.Inventory.Items.Length; i++)
             {
                 var item = Player.Inventory.Items[i];
                 if (item == null) continue;
-                var icon = new IconI(i, icons[item.EntityName], Anchor.TopLeft, 1.2f, true, new Vector2(10, 10))
+                var icon = new IconI(i, _icons[item.EntityName], Anchor.TopLeft, 1.2f, true, new Vector2(10, 10))
                 {
                     OnClick = (Entity icn) =>
                     {
