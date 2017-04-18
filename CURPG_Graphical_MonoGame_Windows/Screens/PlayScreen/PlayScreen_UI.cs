@@ -18,7 +18,7 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
             UserInterface.Initialize(ScreenManager.ContentMgr, BuiltinThemes.hd);
             _icons = new Dictionary<string, IconType> { { "axe", IconType.Axe }, { "log", IconType.Apple } };
             //Right Panel
-            _rightPanel = new Panel(new Vector2(Convert.ToInt32((ScreenManager.ScreenArea.Width * .5) - 16), Convert.ToInt32(ScreenManager.ScreenArea.Height - 70)), PanelSkin.Default, Anchor.TopRight, new Vector2(0, 70));
+            _rightPanel = new Panel(new Vector2(Convert.ToInt32((ScreenManager.ScreenArea.Width * .3) - 16), Convert.ToInt32(ScreenManager.ScreenArea.Height - 70)), PanelSkin.Default, Anchor.TopRight, new Vector2(0, 70));
             _tabs = new PanelTabs();
             _invTab = _tabs.AddTab("Inventory");
             _statTab = _tabs.AddTab("Skills");
@@ -34,7 +34,7 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
             UserInterface.AddEntity(_rightPanel);
 
             //Bottom Panel
-            _bottomPanel = new Panel(new Vector2(Convert.ToInt32((ScreenManager.ScreenArea.Width * .5) + (16 - Convert.ToInt32((ScreenManager.ScreenArea.Height * .3) - 16))), Convert.ToInt32((ScreenManager.ScreenArea.Height * .3) - 16)), PanelSkin.Default, Anchor.BottomRight, new Vector2(Convert.ToInt32((ScreenManager.ScreenArea.Width * .5) - 16), 0));
+            _bottomPanel = new Panel(new Vector2(Convert.ToInt32((ScreenManager.ScreenArea.Width * .7) + (16 - Convert.ToInt32((ScreenManager.ScreenArea.Height * .3) - 16))), Convert.ToInt32((ScreenManager.ScreenArea.Height * .3) - 16)), PanelSkin.Default, Anchor.BottomRight, new Vector2(Convert.ToInt32((ScreenManager.ScreenArea.Width * .3) - 16), 0));
             UserInterface.AddEntity(_bottomPanel);
 
         }

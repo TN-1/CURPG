@@ -42,7 +42,7 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
         {
             if (_exeLocation == null) throw new Exception("_exeLocation is null");
             _mapArea.Height = (int)Math.Ceiling((ScreenManager.ScreenArea.Height * .7) / 24);
-            _mapArea.Width = (int)Math.Ceiling((ScreenManager.ScreenArea.Width * .5) / 24);
+            _mapArea.Width = (int)Math.Ceiling((ScreenManager.ScreenArea.Width * .7) / 24);
             _miniMapArea.Height = (int)(ScreenManager.ScreenArea.Height - (Math.Floor((ScreenManager.ScreenArea.Height * .7) / 24) * 24));
             _miniMapArea.Width = (int)(ScreenManager.ScreenArea.Height * .3 - 16);
             var tilesPath = Path.Combine(_exeLocation, @"DataFiles\Tiles.xml");
