@@ -39,8 +39,9 @@
       <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.6.0.1625\lib\net40\MonoGame.Framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SimplexNoise">
-      <HintPath>C:\Users\hamis\Downloads\SimplexNoise-master\SimplexNoise-master\SimplexNoise\bin\Debug\SimplexNoise.dll</HintPath>
+    <Reference Include="SimplexNoise, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\libs\SimplexNoise\SimplexNoise.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
