@@ -7,5 +7,5 @@ Quake Console may throw an error, If it does so, Remove the references to MonoGa
   
 # Dependancies  
 https://www.microsoft.com/en-au/download/details.aspx?id=40784  
-https://www.microsoft.com/en-au/download/details.aspx?id=35
-http://www.monogame.net/2017/03/01/monogame-3-6/
+https://www.microsoft.com/en-au/download/details.aspx?id=35  
+http://www.monogame.net/2017/03/01/monogame-3-6/   
