@@ -69,7 +69,6 @@ namespace CURPG_Graphical_MonoGame_Windows
 
             // Load any full game assets here
             AddScreen(_screens["Play"]);
-            _fonts.Add("DevConFont", Content.Load<SpriteFont>("DevConsoleFont"));
         }
 
         protected override void UnloadContent()
