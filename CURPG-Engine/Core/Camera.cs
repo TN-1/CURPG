@@ -193,6 +193,11 @@ namespace CURPG_Engine.Core
                 yM = (_world.Grid.GetLength(1) - 1) - _miniViewPort.Height;
             }
 
+            xM = xM / 2;
+            maXm = maXm / 2;
+            yM = yM / 2;
+            maxYm = maxYm / 2;
+
             for (var x = xM; x <= maXm; x++)
             {
                 for (var y = yM; y <= maxYm; y++)

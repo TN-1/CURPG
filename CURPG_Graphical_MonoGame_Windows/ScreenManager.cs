@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using CURPG_Graphical_MonoGame_Windows.Screens;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;

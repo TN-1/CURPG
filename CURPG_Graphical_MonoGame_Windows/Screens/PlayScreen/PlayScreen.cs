@@ -97,7 +97,7 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
         {
             _playerTexture = new Texture2D(ScreenManager.GraphicsDeviceMgr.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             _npcTexture = new Texture2D(ScreenManager.GraphicsDeviceMgr.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            _pixelTexture = new Texture2D(ScreenManager.GraphicsDeviceMgr.GraphicsDevice, 1, 1);
+            _pixelTexture = new Texture2D(ScreenManager.GraphicsDeviceMgr.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             _playerTexture.SetData(new[] { Color.Red });
             _npcTexture.SetData(new[] { Color.HotPink });
             _pixelTexture.SetData(new[] {Color.White});
@@ -213,7 +213,7 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
                 for (var j = 0; j < _miniMapArea.Height; j++)
                 {
                     ScreenManager.Sprites.Draw(_pixelTexture,
-                        new Vector2(i, (float) (ScreenManager.ScreenArea.Height * .7 + j)), miniMap[i, j]);
+                        new Rectangle(i * 2, _mapArea.Height * 24 + j * 2, 2, 2), miniMap[i, j]);
                 }
             }
 
