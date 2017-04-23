@@ -114,5 +114,9 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
             _npcs.Add(new Npc((int)index, name, gender.ToCharArray()[0], (int)age, (int)height, (int)weight, (int)x, (int)y, (int)maxx, (int)maxy, World));
         }
 
+        public void SetMapZoom(int i)
+        {
+            _miniMapZoom = i;
+        }
     }
 }

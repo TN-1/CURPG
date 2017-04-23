@@ -17,10 +17,13 @@ namespace CURPG_Engine.Core
         private readonly World _world;
         private readonly Player _player;
         private System.Drawing.Point _playerCoord;
+        private System.Drawing.Point _miniPlayerCoord;
         private List<System.Drawing.Point> _npcCoord;
-
+        private List<System.Drawing.Point> _miniNpcCoord;
         public System.Drawing.Point PlayerCoord => _playerCoord;
+        public System.Drawing.Point MiniPlayerCoord => _miniPlayerCoord;
         public List<System.Drawing.Point> NpcCoord => _npcCoord;
+        public List<System.Drawing.Point> MiniNPCCoord => _miniNpcCoord;
 
         /// <summary>
         /// Constructs a camera object
@@ -40,6 +43,7 @@ namespace CURPG_Engine.Core
             _world = world;
             _player = player;
             _npcCoord = new List<System.Drawing.Point>();
+            _miniNpcCoord = new List<System.Drawing.Point>();
         }
 
         /// <summary>
@@ -158,45 +162,113 @@ namespace CURPG_Engine.Core
             return drawArea;
         }
 
-        public Color[,] GetMiniMap()
+        public Color[,] GetMiniMap(int zoom, List<Scriptables.Npc> npcs)
         {
             if (_miniViewPort.Width > _world.Grid.GetLength(0) || _miniViewPort.Height > _world.Grid.GetLength(1))
                 throw new System.Exception("Well, Oops. Minimap is bigger than the map...");
 
             Color[,] color = new Color[_miniViewPort.Width + 1, _miniViewPort.Height + 1];
-            var xM = _player.LocationX - (_miniViewPort.Width / 2);
-            var yM = _player.LocationY - (_miniViewPort.Height / 2);
-            var maXm = _player.LocationX + (_miniViewPort.Width / 2);
-            var maxYm = _player.LocationY + (_miniViewPort.Height / 2);
+            var xM = _player.LocationX - (_miniViewPort.Width / zoom);
+            var yM = _player.LocationY - (_miniViewPort.Height / zoom);
+            var maXm = _player.LocationX + (_miniViewPort.Width / zoom);
+            var maxYm = _player.LocationY + (_miniViewPort.Height / zoom);
+            var extremeBound = false;
+            var xl = false;
+            var yl = false;
+            var xh = false;
+            var yh = false;
 
             //Are we trying to draw outside the lower bounds of the map?
             if (xM <= 0)
             {
                 xM = 0;
                 maXm = _miniViewPort.Width;
+                extremeBound = true;
+                xl = true;
             }
             if (yM <= 0)
             {
                 yM = 0;
                 //Y Is height dummy, Not width. CHECK YO VARIABLES FOOL!
                 maxYm = _miniViewPort.Height;
+                extremeBound = true;
+                yl = true;
             }
             //Are we trying to draw outside the upper bounds of the map?
             if (xM >= _world.Grid.GetLength(0) - _miniViewPort.Width)
             {
                 maXm = _world.Grid.GetLength(0) - 1;
                 xM = (_world.Grid.GetLength(0) - 1) - _miniViewPort.Width;
+                extremeBound = true;
+                xh = true;
             }
             if (yM >= _world.Grid.GetLength(1) - _miniViewPort.Height)
             {
                 maxYm = _world.Grid.GetLength(1) - 1;
                 yM = (_world.Grid.GetLength(1) - 1) - _miniViewPort.Height;
+                extremeBound = true;
+                yh = true;
             }
 
-            xM = xM / 2;
-            maXm = maXm / 2;
-            yM = yM / 2;
-            maxYm = maxYm / 2;
+            //Figure out where to draw the player relative to the viewport.
+            if (!extremeBound)
+            {
+                _miniPlayerCoord.X = _miniViewPort.Width / 2;
+                _miniPlayerCoord.Y = _miniViewPort.Height / 2;
+            }
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            else if (extremeBound)
+            {
+                if (xl)
+                {
+                    _miniPlayerCoord.X = _player.LocationX;
+                    _miniPlayerCoord.Y = _viewPort.Height / 2;
+                }
+                if (yl)
+                {
+                    _miniPlayerCoord.X = _viewPort.Width / 2;
+                    _miniPlayerCoord.Y = _player.LocationY;
+                }
+                if (xh)
+                {
+                    _miniPlayerCoord.X = _player.LocationX - (_world.Grid.GetLength(0) - _viewPort.Width);
+                    _miniPlayerCoord.Y = _miniViewPort.Height / 2;
+                }
+                if (yh)
+                {
+                    _miniPlayerCoord.X = _miniViewPort.Width / 2;
+                    _miniPlayerCoord.Y = _player.LocationY - (_world.Grid.GetLength(1) - _viewPort.Height);
+                }
+                if (xl && yl)
+                {
+                    //Top Left
+                    _miniPlayerCoord.X = _player.LocationX;
+                    _miniPlayerCoord.Y = _player.LocationY;
+                }
+                if (xl && yh)
+                {
+                    //Bottom Left
+                    _miniPlayerCoord.X = _player.LocationX;
+                    _miniPlayerCoord.Y = _player.LocationY - (_world.Grid.GetLength(1) - _miniViewPort.Height);
+                }
+                if (xh && yl)
+                {
+                    //Top Right
+                    _miniPlayerCoord.X = _player.LocationX - (_world.Grid.GetLength(0) - _miniViewPort.Width);
+                    _miniPlayerCoord.Y = _player.LocationY;
+                }
+                if (xh && yh)
+                {
+                    //Bottom Right
+                    _miniPlayerCoord.X = _player.LocationX - (_world.Grid.GetLength(0) - _miniViewPort.Width);
+                    _miniPlayerCoord.Y = _player.LocationY - (_world.Grid.GetLength(1) - _miniViewPort.Height);
+                }
+            }
+
+            xM = xM / zoom;
+            maXm = maXm / zoom;
+            yM = yM / zoom;
+            maxYm = maxYm / zoom;
 
             for (var x = xM; x <= maXm; x++)
             {
@@ -206,22 +278,37 @@ namespace CURPG_Engine.Core
                 }
             }
 
+            var actives = new List<Scriptables.Npc>();
+            _miniNpcCoord.Clear();
+
+            foreach (var npc in npcs)
+            {
+                if (npc.LocationX <= maXm && npc.LocationX >= xM && npc.LocationY <= maxYm && npc.LocationY >= yM)
+                    actives.Add(npc);
+            }
+
+            foreach (var npc in actives)
+            {
+                _miniNpcCoord.Add(new System.Drawing.Point(npc.LocationX, npc.LocationY));
+
+            }
+
             return color;
         }
 
         public void GetNpCs(List<Scriptables.Npc> npcs)
         {
             //BUG: NPC follows screen when scrolled to extremes
-            List<Scriptables.Npc> actives = new List<Scriptables.Npc>();
+            var actives = new List<Scriptables.Npc>();
             _npcCoord.Clear();
 
-            foreach (Scriptables.Npc npc in npcs)
+            foreach (var npc in npcs)
             {
                 if (npc.LocationX <= _maxX && npc.LocationX >= _x && npc.LocationY <= _maxY && npc.LocationY >= _y)
                     actives.Add(npc);
             }
 
-            foreach(Scriptables.Npc npc in actives)
+            foreach(var npc in actives)
             {
                 _npcCoord.Add(new System.Drawing.Point(npc.LocationX, npc.LocationY));
 

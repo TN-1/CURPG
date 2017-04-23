@@ -190,7 +190,7 @@ Sample entry
   <tile>
     <id>25</id>
     <entityName>Trees</entityName>
-    <tileColor>Green</tileColor>
+    <tileColor>DarkGreen</tileColor>
     <tileName>Trees</tileName>
     <terrainMod>1</terrainMod>
   </tile>

@@ -1,6 +1,5 @@
 ﻿using CURPG_Engine.Inventory;
 using System;
-using System.ComponentModel;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
@@ -25,7 +24,7 @@ namespace CURPG_Engine.Core
         public int Health = 100;
         public readonly Inventory.Inventory Inventory;
         public bool Testing;
-        protected bool IsLocked = false;
+        protected bool IsLocked;
 
         /// <summary>
         /// Constructs a player from user assigned values

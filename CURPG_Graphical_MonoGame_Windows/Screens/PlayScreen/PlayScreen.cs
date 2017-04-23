@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using CURPG_Engine.Core;
 using CURPG_Engine.Scriptables;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using GeonBit.UI;
@@ -39,10 +40,14 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
         [NonSerialized] private Texture2D _pixelTexture;
         [NonSerialized] private Texture2D _debugTexture;
         [NonSerialized] private SpriteFont _debugFont;
-        [NonSerialized] private bool _debug = false;
-        [NonSerialized] private int frameRate = 0;
-        [NonSerialized] private int frameCounter = 0;
-        [NonSerialized] private TimeSpan elapsedTime = TimeSpan.Zero;
+        [NonSerialized] private bool _debug;
+        [NonSerialized] private int _frameRate;
+        [NonSerialized] private int _frameCounter;
+        [NonSerialized] private int _miniMapZoom = 4;
+        [NonSerialized] private TimeSpan _elapsedTime = TimeSpan.Zero;
+        [NonSerialized] private readonly Process _currentProc = Process.GetCurrentProcess();
+
+
 
 
         public override void Initialize()
@@ -140,7 +145,7 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
             var newState = Keyboard.GetState();  // get the newest state
 
             _timeSinceLastUpdate += (float)gameTime.ElapsedGameTime.TotalSeconds;
-            elapsedTime += gameTime.ElapsedGameTime;
+            _elapsedTime += gameTime.ElapsedGameTime;
 
             if (_timeSinceLastUpdate > 2f)
             {
@@ -150,11 +155,11 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
                 }
                 _timeSinceLastUpdate = 0f;
             }
-            if (elapsedTime > TimeSpan.FromSeconds(1))
+            if (_elapsedTime > TimeSpan.FromSeconds(1))
             {
-                elapsedTime -= TimeSpan.FromSeconds(1);
-                frameRate = frameCounter;
-                frameCounter = 0;
+                _elapsedTime -= TimeSpan.FromSeconds(1);
+                _frameRate = _frameCounter;
+                _frameCounter = 0;
             }
 
 
@@ -223,12 +228,14 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
 
         public override void Draw(GameTime gameTime)
         {
-            frameCounter++;
+            _frameCounter++;
             _camera.GetNpCs(_npcs);
             var drawArea = _camera.GetDrawArea();
-            var miniMap = _camera.GetMiniMap();
+            var miniMap = _camera.GetMiniMap(_miniMapZoom, _npcs);
             var pt = _camera.PlayerCoord;
             var npcpt = _camera.NpcCoord;
+            var mpt = _camera.MiniPlayerCoord;
+            var mnpcpt = _camera.MiniNPCCoord;
 
             ScreenManager.Sprites.Begin();
 
@@ -247,9 +254,12 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
                 for (var j = 0; j < _miniMapArea.Height; j++)
                 {
                     ScreenManager.Sprites.Draw(_pixelTexture,
-                        new Rectangle(i * 2, _mapArea.Height * 24 + j * 2, 2, 2), miniMap[i, j]);
+                        new Rectangle(i * _miniMapZoom, _mapArea.Height * 24 + j * _miniMapZoom, _miniMapZoom, _miniMapZoom), miniMap[i, j]);
                 }
             }
+
+            ScreenManager.Sprites.Draw(_playerTexture,
+                new Rectangle(mpt.X * _miniMapZoom, mpt.Y * _miniMapZoom + _mapArea.Height * 24, _miniMapZoom, _miniMapZoom), Color.Red);
 
             ScreenManager.Sprites.Draw(_playerTexture,
                 new Rectangle(pt.X * World.TileSize, pt.Y * World.TileSize, World.TileSize, World.TileSize), Color.Red);
@@ -262,15 +272,26 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
                         Color.HotPink);
                 }
 
+            if (mnpcpt != null)
+                foreach (var npt in mnpcpt)
+                {
+                    ScreenManager.Sprites.Draw(_npcTexture,
+                        new Rectangle(npt.X * _miniMapZoom, _mapArea.Height * 24 + npt.Y * _miniMapZoom, _miniMapZoom, _miniMapZoom),
+                        Color.HotPink);
+                }
+
             if (_debug)
             {
+                string s;
+                _currentProc.Refresh();
                 ScreenManager.Sprites.Draw(_debugTexture,
                     new Rectangle(0, 0, _mapArea.Width * 24, (int) (ScreenManager.ScreenArea.Height * .3)),
                     Color.Black * .7f);
-                ScreenManager.Sprites.DrawString(_debugFont, "FPS: " + frameRate, new Vector2(20,20), Color.White);
-                var s = "PL: " + Player.LocationX + ", " + Player.LocationY;
+                ScreenManager.Sprites.DrawString(_debugFont, "FPS: " + _frameRate, new Vector2(20,20), Color.White);
+                s = "PL: " + Player.LocationX + ", " + Player.LocationY;
                 ScreenManager.Sprites.DrawString(_debugFont, s, new Vector2(20, 40), Color.White);
-                s = "NCount: " + npcpt.Count;
+                if(npcpt != null) s = "NCount: " + npcpt.Count;
+                else s = "NCount: null";
                 ScreenManager.Sprites.DrawString(_debugFont, s, new Vector2(20, 60), Color.White);
                 s = "Testing: " + Player.Testing;
                 ScreenManager.Sprites.DrawString(_debugFont, s, new Vector2(20, 80), Color.White);
@@ -278,7 +299,15 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
                 ScreenManager.Sprites.DrawString(_debugFont, s, new Vector2(20, 100), Color.White);
                 s = "TS: " + World.TileSize;
                 ScreenManager.Sprites.DrawString(_debugFont, s, new Vector2(20, 120), Color.White);
+                s = "MZ: " + _miniMapZoom;
+                ScreenManager.Sprites.DrawString(_debugFont, s, new Vector2(20, 140), Color.White);
+                s = "CURRMEM: " + GC.GetTotalMemory(false) / 1024f / 1024f + "MB"; 
+                ScreenManager.Sprites.DrawString(_debugFont, s, new Vector2(20, 160), Color.White);
+                s = "ALLOCMEM: " + _currentProc.PrivateMemorySize64 / 1024f / 1024f + "MB"; 
+                ScreenManager.Sprites.DrawString(_debugFont, s, new Vector2(20, 180), Color.White);
+
             }
+
             ScreenManager.Sprites.End();
 
             UserInterface.Draw(ScreenManager.Sprites);
