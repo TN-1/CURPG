@@ -69,9 +69,6 @@ namespace CURPG_Graphical_MonoGame_Windows
             Sprites = new SpriteBatch(GraphicsDevice);
 
             // Load any full game assets here
-            _textures2D.Add("debugBox",
-                new Texture2D(GraphicsDeviceMgr.GraphicsDevice, ScreenArea.Width, (int)(ScreenArea.Height * .3), false, SurfaceFormat.Color));
-            _textures2D["debugBox"].SetData<Color>(new[] {Color.Black});
             AddScreen(_screens["Play"]);
             _fonts.Add("DevConFont", Content.Load<SpriteFont>("DevConsoleFont"));
         }
@@ -134,15 +131,6 @@ namespace CURPG_Graphical_MonoGame_Windows
             {
                 _screenList[i].Draw(gameTime);
             }
-
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("First line of text");
-            sb.AppendLine("Second line of text");
-
-            Sprites.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
-            Sprites.Draw(_textures2D["debugBox"], new Vector2(0,0), Color.Black * .5f); //draw window first
-            Sprites.DrawString(_fonts["DevConFont"], sb.ToString(), new Vector2(20, 20), Color.YellowGreen); //draw text second
-            Sprites.End();
 
             base.Draw(gameTime);
         }

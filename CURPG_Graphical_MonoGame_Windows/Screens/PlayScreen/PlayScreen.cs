@@ -219,6 +219,7 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
 
             ScreenManager.Sprites.Draw(_playerTexture,
                 new Rectangle(pt.X * World.TileSize, pt.Y * World.TileSize, World.TileSize, World.TileSize), Color.Red);
+
             if (npcpt != null)
                 foreach (var npt in npcpt)
                 {
