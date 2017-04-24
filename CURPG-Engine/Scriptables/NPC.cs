@@ -10,13 +10,13 @@ namespace CURPG_Engine.Scriptables
 {
     public class Npc : Player
     {
-        public int Index;
+        public readonly int Index;
         private int _maxX;
         private int _maxY;
         private int _lowX;
         private int _lowY;
-        private World _world;
         private int _step;
+        private World _world;
         private List<Point> _path;
         private bool[,] _map;
         private PathFinder _pathFinder;
@@ -53,28 +53,29 @@ namespace CURPG_Engine.Scriptables
                 }
             }
 
-            _startLocation = new Point(_lowX, _lowY);
-            _endLocation = new Point(_maxX, _maxY);
-            _searchParameters = new SearchParameters(_startLocation, _endLocation, _map);
-            _pathFinder = new PathFinder(_searchParameters);
-            _path = _pathFinder.FindPath();
+            FindPath();
         }
 
         public void Update()
         {
             if (_step == _path.Count)
-            {
-                var r = new Random();
-                _step = 0;
-                _startLocation = new Point(LocationX, LocationY);
-                _endLocation = PlayerTools.GetSpawn(_world, r.Next(0,20), r.Next(0,20));
-                _searchParameters = new SearchParameters(_startLocation, _endLocation, _map);
-                _pathFinder = new PathFinder(_searchParameters);
-                _path = _pathFinder.FindPath();
-            }
+                FindPath();
+
             LocationX = _path[_step].X;
             LocationY = _path[_step].Y;
             _step++;
+        }
+
+        private void FindPath()
+        {
+            var r = new Random();
+            _step = 0;
+            _startLocation = new Point(LocationX, LocationY);
+            _endLocation = PlayerTools.GetSpawn(_world, r.Next(_lowX, _maxX), r.Next(_lowY, _maxY));
+            _searchParameters = new SearchParameters(_startLocation, _endLocation, _map);
+            _pathFinder = new PathFinder(_searchParameters);
+            _path = _pathFinder.FindPath();
+
         }
     }
 }

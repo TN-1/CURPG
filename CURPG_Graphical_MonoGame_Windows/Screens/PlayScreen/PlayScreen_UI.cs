@@ -48,6 +48,7 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
         public void DrawInv()
         {
             //BUG: Optimise this!
+            //BUG: Sometimes the on exit event fires for the wrong entity.
             if (_rightPanel == null)
                 Ui();
 

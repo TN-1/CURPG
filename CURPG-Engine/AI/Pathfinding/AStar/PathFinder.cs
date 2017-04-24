@@ -31,6 +31,7 @@ namespace CURPG_Engine.AI.Pathfinding.AStar
         /// <returns>A List of Points representing the path. If no path was found, the returned list is empty.</returns>
         public List<Point> FindPath()
         {
+            //BUG: Breaks if not path is found. Should be fixed by using GetSpawn(). Will monitor
             // The start node is the first entry in the 'open' list
             var path = new List<Point>();
             var success = Search(startNode);

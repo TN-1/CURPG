@@ -47,9 +47,6 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
         [NonSerialized] private TimeSpan _elapsedTime = TimeSpan.Zero;
         [NonSerialized] private readonly Process _currentProc = Process.GetCurrentProcess();
 
-
-
-
         public override void Initialize()
         {
             if (_exeLocation == null) throw new Exception("_exeLocation is null");
@@ -85,7 +82,6 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
                 Player.Inventory.BuildDatabase(itemsPath);
             }
 
-            _camera = new Camera(0, 0, _mapArea, _miniMapArea, World, Player);
             _npcs = new List<Npc>();
             Ui();
 
@@ -100,8 +96,10 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
             _lua.LoadCLRPackage();
             _lua["this"] = this;
             _lua.DoFile(Path.Combine(_exeLocation, "Scripts", "DefineNPCs.lua"));
-            base.Initialize();
 
+            _camera = new Camera(0, 0, _mapArea, _miniMapArea, World, Player, _npcs);
+
+            base.Initialize();
             Player.Inventory.PropertyChanged += Inventory_PropertyChanged;
         }
 
@@ -229,9 +227,8 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
         public override void Draw(GameTime gameTime)
         {
             _frameCounter++;
-            _camera.GetNpCs(_npcs);
             var drawArea = _camera.GetDrawArea();
-            var miniMap = _camera.GetMiniMap(_miniMapZoom, _npcs);
+            var miniMap = _camera.GetMiniMap(_miniMapZoom);
             var pt = _camera.PlayerCoord;
             var npcpt = _camera.NpcCoord;
             var mpt = _camera.MiniPlayerCoord;

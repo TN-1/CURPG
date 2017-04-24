@@ -24,6 +24,8 @@ namespace CURPG_Engine.Core
         public System.Drawing.Point MiniPlayerCoord => _miniPlayerCoord;
         public List<System.Drawing.Point> NpcCoord => _npcCoord;
         public List<System.Drawing.Point> MiniNPCCoord => _miniNpcCoord;
+        private List<Scriptables.Npc> _npcs;
+        private List<Scriptables.Npc> _activeNpcs;
 
         /// <summary>
         /// Constructs a camera object
@@ -34,7 +36,7 @@ namespace CURPG_Engine.Core
         /// <param name="miniViewPort">Size of minimap area</param>
         /// <param name="world">World object to draw</param>
         /// <param name="player">Player object to use</param>
-        public Camera(int x, int y, System.Drawing.Rectangle viewPort, System.Drawing.Rectangle miniViewPort, World world, Player player)
+        public Camera(int x, int y, System.Drawing.Rectangle viewPort, System.Drawing.Rectangle miniViewPort, World world, Player player, List<Scriptables.Npc> npcs)
         {
             _x = x;
             _y = y;
@@ -44,6 +46,8 @@ namespace CURPG_Engine.Core
             _player = player;
             _npcCoord = new List<System.Drawing.Point>();
             _miniNpcCoord = new List<System.Drawing.Point>();
+            _npcs = npcs;
+            _activeNpcs = new List<Scriptables.Npc>();
         }
 
         /// <summary>
@@ -62,6 +66,14 @@ namespace CURPG_Engine.Core
             _y = _player.LocationY - (_viewPort.Height / 2);
             _maxX = _player.LocationX + (_viewPort.Width / 2);
             _maxY = _player.LocationY + (_viewPort.Height / 2);
+            _activeNpcs.Clear();
+            _npcCoord.Clear();
+
+            foreach (var npc in _npcs)
+            {
+                if (npc.LocationX <= _maxX && npc.LocationX >= _x && npc.LocationY <= _maxY && npc.LocationY >= _y)
+                    _activeNpcs.Add(npc);
+            }
 
             //Are we trying to draw outside the lower bounds of the map?
             if (_x <= 0)
@@ -100,19 +112,35 @@ namespace CURPG_Engine.Core
             {
                 _playerCoord.X = _viewPort.Width / 2;
                 _playerCoord.Y = _viewPort.Height / 2;
+                foreach (var npc in _activeNpcs)
+                {
+                    _npcCoord.Add(new System.Drawing.Point(npc.LocationX - _x, npc.LocationY - _y));
+
+                }
             }
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            //TODO: Finish off NPC coord calc.
             else if(extremeBound)
             {
                 if(xl)
                 {
                     _playerCoord.X = _player.LocationX;
                     _playerCoord.Y = _viewPort.Height / 2;
+                    foreach (var npc in _activeNpcs)
+                    {
+                        _npcCoord.Add(new System.Drawing.Point(npc.LocationX, npc.LocationY - _y));
+
+                    }
                 }
-                if(yl)
+                if (yl)
                 {
                     _playerCoord.X = _viewPort.Width / 2;
                     _playerCoord.Y = _player.LocationY;
+                    foreach (var npc in _activeNpcs)
+                    {
+                        _npcCoord.Add(new System.Drawing.Point(npc.LocationX - _x, npc.LocationY));
+
+                    }
                 }
                 if (xh)
                 {
@@ -129,6 +157,11 @@ namespace CURPG_Engine.Core
                     //Top Left
                     _playerCoord.X = _player.LocationX;
                     _playerCoord.Y = _player.LocationY;
+                    foreach (var npc in _activeNpcs)
+                    {
+                        _npcCoord.Add(new System.Drawing.Point(npc.LocationX, npc.LocationY));
+
+                    }
                 }
                 if (xl && yh)
                 {
@@ -162,7 +195,7 @@ namespace CURPG_Engine.Core
             return drawArea;
         }
 
-        public Color[,] GetMiniMap(int zoom, List<Scriptables.Npc> npcs)
+        public Color[,] GetMiniMap(int zoom)
         {
             if (_miniViewPort.Width > _world.Grid.GetLength(0) || _miniViewPort.Height > _world.Grid.GetLength(1))
                 throw new System.Exception("Well, Oops. Minimap is bigger than the map...");
@@ -281,7 +314,7 @@ namespace CURPG_Engine.Core
             var actives = new List<Scriptables.Npc>();
             _miniNpcCoord.Clear();
 
-            foreach (var npc in npcs)
+            foreach (var npc in _npcs)
             {
                 if (npc.LocationX <= maXm && npc.LocationX >= xM && npc.LocationY <= maxYm && npc.LocationY >= yM)
                     actives.Add(npc);
@@ -294,25 +327,6 @@ namespace CURPG_Engine.Core
             }
 
             return color;
-        }
-
-        public void GetNpCs(List<Scriptables.Npc> npcs)
-        {
-            //BUG: NPC follows screen when scrolled to extremes
-            var actives = new List<Scriptables.Npc>();
-            _npcCoord.Clear();
-
-            foreach (var npc in npcs)
-            {
-                if (npc.LocationX <= _maxX && npc.LocationX >= _x && npc.LocationY <= _maxY && npc.LocationY >= _y)
-                    actives.Add(npc);
-            }
-
-            foreach(var npc in actives)
-            {
-                _npcCoord.Add(new System.Drawing.Point(npc.LocationX, npc.LocationY));
-
-            }
         }
     }
 }
