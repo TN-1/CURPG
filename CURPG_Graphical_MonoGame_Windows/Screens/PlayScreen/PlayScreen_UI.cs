@@ -18,7 +18,7 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
             UserInterface.Initialize(ScreenManager.ContentMgr, BuiltinThemes.hd);
             _icons = new Dictionary<string, IconType> { { "axe", IconType.Axe }, { "log", IconType.Apple } };
             //Right Panel
-            _rightPanel = new Panel(new Vector2(Convert.ToInt32(ScreenManager.ScreenArea.Width * .3), Convert.ToInt32(ScreenManager.ScreenArea.Height)), PanelSkin.Default, Anchor.TopRight);
+            _rightPanel = new Panel(new Vector2(0.3f, 0f), PanelSkin.Default, Anchor.TopRight);
             _tabs = new PanelTabs();
             _invTab = _tabs.AddTab("Inventory");
             _statTab = _tabs.AddTab("Skills");
@@ -48,11 +48,10 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
         public void DrawInv()
         {
             //BUG: Optimise this!
-            //BUG: Icon fills panel, RonenNess/GeonBit.UI/issues/29
             if (_rightPanel == null)
                 Ui();
 
-            var width = _rightPanel.Size.X;
+            var width = _rightPanel.Size.X * ScreenManager.ScreenArea.Width;
             var rowSize = (float)Math.Floor(width / 65);
             _invTab.panel.ClearChildren();
 
@@ -113,6 +112,8 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
             {
                 SpaceAfter = Vector2.One * BackgroundSize;
             }
+
+            Size = new Vector2(50, 50);
 
             // update default style
             UpdateStyle(DefaultStyle);
