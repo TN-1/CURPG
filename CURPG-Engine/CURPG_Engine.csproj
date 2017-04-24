@@ -53,6 +53,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AI\Pathfinding\AStar\Node.cs" />
+    <Compile Include="AI\Pathfinding\AStar\NodeState.cs" />
+    <Compile Include="AI\Pathfinding\AStar\PathFinder.cs" />
+    <Compile Include="AI\Pathfinding\AStar\SearchParameters.cs" />
     <Compile Include="Core\Camera.cs" />
     <Compile Include="Core\Persistance.cs" />
     <Compile Include="Core\Player.cs" />
@@ -69,6 +73,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

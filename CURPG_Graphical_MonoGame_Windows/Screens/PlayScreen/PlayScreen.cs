@@ -147,7 +147,7 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
             _timeSinceLastUpdate += (float)gameTime.ElapsedGameTime.TotalSeconds;
             _elapsedTime += gameTime.ElapsedGameTime;
 
-            if (_timeSinceLastUpdate > 2f)
+            if (_timeSinceLastUpdate > 1f)
             {
                 foreach (Npc npc in _npcs)
                 {

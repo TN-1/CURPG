@@ -1,5 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using CURPG_Engine.Core;
+using System.Drawing;
+using CURPG_Engine.AI.Pathfinding.AStar;
+// ReSharper disable PrivateFieldCanBeConvertedToLocalVariable
+// ReSharper disable FieldCanBeMadeReadOnly.Local
 
 namespace CURPG_Engine.Scriptables
 {
@@ -11,8 +16,16 @@ namespace CURPG_Engine.Scriptables
         private int _lowX;
         private int _lowY;
         private World _world;
+        private int _step;
+        private List<Point> _path;
+        private bool[,] _map;
+        private PathFinder _pathFinder;
+        private SearchParameters _searchParameters;
+        private Point _startLocation;
+        private Point _endLocation;
 
-        public Npc(int index, string name, char gender, int age, int height, int weight, int x, int y, int maxx, int maxy, World world) : base(name, gender, age, height, weight, x, y)
+        public Npc(int index, string name, char gender, int age, int height, int weight, int x, int y, int maxx,
+            int maxy, World world) : base(name, gender, age, height, weight, x, y)
         {
             Index = index;
             Name = name;
@@ -27,30 +40,41 @@ namespace CURPG_Engine.Scriptables
             _maxX = maxx;
             _maxY = maxy;
             _world = world;
+            _map = new bool[_world.Grid.GetLength(0), _world.Grid.GetLength(1)];
+
+            for (var i = 0; i < _world.Grid.GetLength(0); i++)
+            {
+                for (var j = 0; j < _world.Grid.GetLength(1); j++)
+                {
+                    if (_world.Grid[i, j].TerrainModifier == 0)
+                        _map[i, j] = true;
+                    else
+                        _map[i, j] = false;
+                }
+            }
+
+            _startLocation = new Point(_lowX, _lowY);
+            _endLocation = new Point(_maxX, _maxY);
+            _searchParameters = new SearchParameters(_startLocation, _endLocation, _map);
+            _pathFinder = new PathFinder(_searchParameters);
+            _path = _pathFinder.FindPath();
         }
 
         public void Update()
         {
-            Random r = new Random();
-            switch (r.Next(0, 3))
+            if (_step == _path.Count)
             {
-                case 0:
-                    if (LocationX + 1 <= _maxX)
-                        MovePlayer(1, 0, _world);
-                    break;
-                case 1:
-                    if (LocationY + 1 <= _maxY)
-                        MovePlayer(0, 1, _world);
-                    break;
-                case 2:
-                    if (LocationX - 1 >= _lowX)
-                        MovePlayer(-1, 0, _world);
-                    break;
-                case 3:
-                    if (LocationY - 1 >= _lowY)
-                        MovePlayer(0, -1, _world);
-                    break;
+                var r = new Random();
+                _step = 0;
+                _startLocation = new Point(LocationX, LocationY);
+                _endLocation = PlayerTools.GetSpawn(_world, r.Next(0,20), r.Next(0,20));
+                _searchParameters = new SearchParameters(_startLocation, _endLocation, _map);
+                _pathFinder = new PathFinder(_searchParameters);
+                _path = _pathFinder.FindPath();
             }
+            LocationX = _path[_step].X;
+            LocationY = _path[_step].Y;
+            _step++;
         }
     }
 }
