@@ -13,7 +13,7 @@ using GeonBit.UI.Entities;
 using NLua;
 using System.Linq;
 
-namespace CURPG_Graphical_MonoGame_Windows.Screens
+namespace CURPG_Windows.Screens
 {
     [Serializable]
     public partial class PlayScreen : GameScreen
@@ -195,7 +195,14 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
                     return;
                 }
             }
-
+            if (_oldState.IsKeyUp(Keys.F4) && newState.IsKeyDown(Keys.F4))
+            {
+                if (_debug)
+                {
+                    using (var viewer = new CURPG_MapViewer.Game1(World))
+                        viewer.Run();
+                }
+            }
 
             _oldState = newState;  // set the new state as the old state for next time
 
@@ -309,7 +316,8 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
                 ScreenManager.Sprites.DrawString(_debugFont, s, new Vector2(20, 160), Color.White);
                 s = "ALLOCMEM: " + _currentProc.PrivateMemorySize64 / 1024f / 1024f + "MB"; 
                 ScreenManager.Sprites.DrawString(_debugFont, s, new Vector2(20, 180), Color.White);
-
+                s = "[F4] Map Viewer";
+                ScreenManager.Sprites.DrawString(_debugFont, s, new Vector2(20, 280), Color.White);
             }
 
             ScreenManager.Sprites.End();

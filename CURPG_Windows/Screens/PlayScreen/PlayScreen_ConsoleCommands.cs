@@ -6,7 +6,7 @@ using CURPG_Engine.Scriptables;
 
 // ReSharper disable UnusedMember.Global
 
-namespace CURPG_Graphical_MonoGame_Windows.Screens
+namespace CURPG_Windows.Screens
 {
     public partial class PlayScreen
     {

@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 // ReSharper disable ConvertToConstant.Global
 // ReSharper disable FieldCanBeMadeReadOnly.Global
 
-namespace CURPG_Graphical_MonoGame_Windows.Screens
+namespace CURPG_Windows.Screens
 {
     [Serializable]
     public class GameScreen

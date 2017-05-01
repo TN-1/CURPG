@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace CURPG_Graphical_MonoGame_Windows.Screens
+namespace CURPG_Windows.Screens
 {
     internal class MenuScreen : GameScreen
     {

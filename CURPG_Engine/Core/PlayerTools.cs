@@ -60,7 +60,7 @@ namespace CURPG_Engine.Core
         public static System.Drawing.Point GetSpawn(World world, int x, int y)
         {
             //TODO: Rework this
-            System.Drawing.Point pt;
+            var pt = new System.Drawing.Point(0, 0);
             for (var i = x + 5; i >= (x - 5); i--)
             {
                 if (world.Grid[i, y].TerrainModifier != 0) continue;
@@ -73,7 +73,6 @@ namespace CURPG_Engine.Core
                 pt = new System.Drawing.Point(x, i);
                 return pt;
             }
-            pt = new System.Drawing.Point(0, 0);
             return pt;
         }
     }

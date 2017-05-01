@@ -3,7 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace CURPG_Graphical_MonoGame_Windows
+namespace CURPG_Windows
 {
 #if WINDOWS || XBOX
     static class Program

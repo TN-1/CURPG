@@ -517,6 +517,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Icon.ico" />
+    <MonoGameContentReference Include="Content\CURPG_MapViewer.Content.mgcb" />
     <None Include="Content\DevConsoleFont.spritefont" />
     <None Include="Content\GeonBit.UI\themes\lowres\fonts\Bold.spritefont" />
     <None Include="Content\GeonBit.UI\themes\lowres\fonts\Italic.spritefont" />
@@ -527,7 +528,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <MonoGameContentReference Include="Content\Content.mgcb" />
+    <MonoGameContentReference Include="Content\CURPG_Windows.Content.mgcb" />
     <None Include="app.manifest">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -544,9 +545,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CURPG-Engine\CURPG_Engine.csproj">
+    <ProjectReference Include="..\CURPG_Engine\CURPG_Engine.csproj">
       <Project>{b63eb4b1-b5b6-488a-905c-8b65234a5484}</Project>
       <Name>CURPG_Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CURPG_MapViewer\CURPG_MapViewer.csproj">
+      <Project>{829bb353-5ad8-494c-9859-866264200f7a}</Project>
+      <Name>CURPG_MapViewer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

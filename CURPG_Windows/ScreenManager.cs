@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using CURPG_Graphical_MonoGame_Windows.Screens;
+using CURPG_Windows.Screens;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Input;
 using QuakeConsole;
 // ReSharper disable UnusedMember.Global
 
-namespace CURPG_Graphical_MonoGame_Windows
+namespace CURPG_Windows
 {
     public class ScreenManager : Game
     {

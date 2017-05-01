@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using GeonBit.UI.DataTypes;
 using System.Diagnostics;
 
-namespace CURPG_Graphical_MonoGame_Windows.Screens
+namespace CURPG_Windows.Screens
 {
     partial class PlayScreen
     {

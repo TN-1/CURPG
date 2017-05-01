@@ -60,7 +60,11 @@ namespace CURPG_Engine.Scriptables
         {
             if (_step == _path.Count)
                 FindPath();
-
+            if (_path.Count == 0)
+            {
+                FindPath();
+                return;
+            }
             LocationX = _path[_step].X;
             LocationY = _path[_step].Y;
             _step++;

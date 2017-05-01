@@ -18,6 +18,7 @@ namespace CURPG_Engine.Core
         private readonly Player _player;
         private System.Drawing.Point _playerCoord;
         private System.Drawing.Point _miniPlayerCoord;
+        private System.Drawing.Point _pt;
         private List<System.Drawing.Point> _npcCoord;
         private List<System.Drawing.Point> _miniNpcCoord;
         public System.Drawing.Point PlayerCoord => _playerCoord;
@@ -48,6 +49,14 @@ namespace CURPG_Engine.Core
             _miniNpcCoord = new List<System.Drawing.Point>();
             _npcs = npcs;
             _activeNpcs = new List<Scriptables.Npc>();
+        }
+        public Camera(int x, int y, System.Drawing.Rectangle viewPort, World world, System.Drawing.Point pt)
+        {
+            _x = x;
+            _y = y;
+            _viewPort = viewPort;
+            _world = world;
+            _pt = pt;
         }
 
         /// <summary>
@@ -218,6 +227,51 @@ namespace CURPG_Engine.Core
             }
             return drawArea;
         }
+
+        public World GetViewerDrawArea(System.Drawing.Point pt)
+        {
+            _pt = pt;
+            var drawArea = new World(1, _viewPort.Width + 1, _viewPort.Height + 1, _world.TileSet, "DrawArea", _world.TileSize);
+            _x = _pt.X - (_viewPort.Width / 2);
+            _y = _pt.Y - (_viewPort.Height / 2);
+            _maxX = _pt.X + (_viewPort.Width / 2);
+            _maxY = _pt.Y + (_viewPort.Height / 2);
+
+            //Are we trying to draw outside the lower bounds of the map?
+            if (_x <= 0)
+            {
+                _x = 0;
+                _maxX = _viewPort.Width;
+            }
+            if (_y <= 0)
+            {
+                _y = 0;
+                //Y Is height dummy, Not width. CHECK YO VARIABLES FOOL!
+                _maxY = _viewPort.Height;
+            }
+            //Are we trying to draw outside the upper bounds of the map?
+            if (_x >= _world.Grid.GetLength(0) - _viewPort.Width)
+            {
+                _maxX = _world.Grid.GetLength(0) - 1;
+                _x = (_world.Grid.GetLength(0) - 1) - _viewPort.Width;
+            }
+            if (_y >= _world.Grid.GetLength(1) - _viewPort.Height)
+            {
+                _maxY = _world.Grid.GetLength(1) - 1;
+                _y = (_world.Grid.GetLength(1) - 1) - _viewPort.Height;
+            }
+
+            //Work out what to draw
+            for (var x = _x; x <= _maxX; x++)
+            {
+                for (var y = _y; y <= _maxY; y++)
+                {
+                    drawArea.Grid[x - _x, y - _y] = _world.Grid[x, y];
+                }
+            }
+            return drawArea;
+        }
+
 
         public Color[,] GetMiniMap(int zoom)
         {
