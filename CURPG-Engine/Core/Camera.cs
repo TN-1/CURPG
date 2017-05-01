@@ -120,9 +120,9 @@ namespace CURPG_Engine.Core
             }
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             //TODO: Finish off NPC coord calc.
-            else if(extremeBound)
+            else if (extremeBound)
             {
-                if(xl)
+                if (xl)
                 {
                     _playerCoord.X = _player.LocationX;
                     _playerCoord.Y = _viewPort.Height / 2;
@@ -146,11 +146,21 @@ namespace CURPG_Engine.Core
                 {
                     _playerCoord.X = _player.LocationX - (_world.Grid.GetLength(0) - _viewPort.Width);
                     _playerCoord.Y = _viewPort.Height / 2;
+                    foreach (var npc in _activeNpcs)
+                    {
+                        _npcCoord.Add(new System.Drawing.Point(npc.LocationX - _x, npc.LocationY - _y));
+
+                    }
                 }
                 if (yh)
                 {
                     _playerCoord.X = _viewPort.Width / 2;
                     _playerCoord.Y = _player.LocationY - (_world.Grid.GetLength(1) - _viewPort.Height);
+                    foreach (var npc in _activeNpcs)
+                    {
+                        _npcCoord.Add(new System.Drawing.Point(npc.LocationX - _x, npc.LocationY - _y));
+
+                    }
                 }
                 if (xl && yl)
                 {
@@ -168,20 +178,34 @@ namespace CURPG_Engine.Core
                     //Bottom Left
                     _playerCoord.X = _player.LocationX;
                     _playerCoord.Y = _player.LocationY - (_world.Grid.GetLength(1) - _viewPort.Height);
+                    foreach (var npc in _activeNpcs)
+                    {
+                        _npcCoord.Add(new System.Drawing.Point(npc.LocationX, npc.LocationY - _y));
+
+                    }
                 }
                 if (xh && yl)
                 {
                     //Top Right
                     _playerCoord.X = _player.LocationX - (_world.Grid.GetLength(0) - _viewPort.Width);
                     _playerCoord.Y = _player.LocationY;
+                    foreach (var npc in _activeNpcs)
+                    {
+                        _npcCoord.Add(new System.Drawing.Point(npc.LocationX - _x, npc.LocationY));
+
+                    }
                 }
                 if (xh && yh)
                 {
                     //Bottom Right
                     _playerCoord.X = _player.LocationX - (_world.Grid.GetLength(0) - _viewPort.Width);
                     _playerCoord.Y = _player.LocationY - (_world.Grid.GetLength(1) - _viewPort.Height);
-                }
+                    foreach (var npc in _activeNpcs)
+                    {
+                        _npcCoord.Add(new System.Drawing.Point(npc.LocationX - _x, npc.LocationY - _y));
 
+                    }
+                }
             }
 
             //Work out what to draw

@@ -81,7 +81,6 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
                 Player = PlayerTools.RandomPlayer(pt.X, pt.Y);
                 Player.Inventory.BuildDatabase(itemsPath);
             }
-
             _npcs = new List<Npc>();
             Ui();
 
@@ -214,7 +213,15 @@ namespace CURPG_Graphical_MonoGame_Windows.Screens
                 var y = Player.LocationY - npc.LocationY;
                 if (Enumerable.Range(-3, 6).Contains(x) && Enumerable.Range(-3, 6).Contains(y))
                 {
-                    _lua.DoFile(Path.Combine(_exeLocation, "Scripts", "NPC", npc.Index.ToString(), "Dialogue.lua"));
+                    try
+                    {
+                        _lua.DoFile(Path.Combine(_exeLocation, "Scripts", "NPC", npc.Index.ToString(), "Dialogue.lua"));
+                    }
+                    catch (Exception e)
+                    {
+                        //Add to debug log
+                        return;
+                    }
                     _lua["Player"] = Player;
                     _lua["NPC"] = npc;
                     var greeting = _lua["Greeting"] as LuaFunction;

@@ -59,6 +59,7 @@ namespace CURPG_Engine.Core
         /// <returns></returns>
         public static System.Drawing.Point GetSpawn(World world, int x, int y)
         {
+            //TODO: Rework this
             System.Drawing.Point pt;
             for (var i = x + 5; i >= (x - 5); i--)
             {
