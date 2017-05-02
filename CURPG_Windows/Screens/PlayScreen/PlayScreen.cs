@@ -13,6 +13,7 @@ using GeonBit.UI.Entities;
 using NLua;
 using System.Linq;
 
+// ReSharper disable once CheckNamespace
 namespace CURPG_Windows.Screens
 {
     [Serializable]
@@ -183,17 +184,7 @@ namespace CURPG_Windows.Screens
             }
             if (_oldState.IsKeyUp(Keys.F3) && newState.IsKeyDown(Keys.F3))
             {
-                //TODO: Make activation more reliable
-                if (_debug)
-                {
-                    _debug = false;
-                    return;
-                }
-                if (!_debug)
-                {
-                    _debug = true;
-                    return;
-                }
+                _debug = !_debug;
             }
             if (_oldState.IsKeyUp(Keys.F4) && newState.IsKeyDown(Keys.F4))
             {
@@ -201,6 +192,7 @@ namespace CURPG_Windows.Screens
                 {
                     using (var viewer = new CURPG_MapViewer.Game1(World))
                         viewer.Run();
+                    World.TileSize = 24;
                 }
             }
 
@@ -224,9 +216,9 @@ namespace CURPG_Windows.Screens
                     {
                         _lua.DoFile(Path.Combine(_exeLocation, "Scripts", "NPC", npc.Index.ToString(), "Dialogue.lua"));
                     }
-                    catch (Exception e)
+                    catch
                     {
-                        //Add to debug log
+                        //TODO: Add to debug log
                         return;
                     }
                     _lua["Player"] = Player;
@@ -293,13 +285,12 @@ namespace CURPG_Windows.Screens
 
             if (_debug)
             {
-                string s;
                 _currentProc.Refresh();
                 ScreenManager.Sprites.Draw(_debugTexture,
                     new Rectangle(0, 0, _mapArea.Width * 24, (int) (ScreenManager.ScreenArea.Height * .3)),
                     Color.Black * .7f);
                 ScreenManager.Sprites.DrawString(_debugFont, "FPS: " + _frameRate, new Vector2(20,20), Color.White);
-                s = "PL: " + Player.LocationX + ", " + Player.LocationY;
+                var s = "PL: " + Player.LocationX + ", " + Player.LocationY;
                 ScreenManager.Sprites.DrawString(_debugFont, s, new Vector2(20, 40), Color.White);
                 if(npcpt != null) s = "NCount: " + npcpt.Count;
                 else s = "NCount: null";

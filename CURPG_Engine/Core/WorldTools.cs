@@ -58,6 +58,7 @@ namespace CURPG_Engine.Core
             {
                 for (var j = 0; j < world.Grid.GetLength(1); j++)
                 {
+                    //BUG: USING THIS IS WHAT FUCKS UP THE A-STAR! REWORK
                     if (noiseValues[i, j] <= 25)
                         world.Grid[i, j] = world.TileSet[20];
                     if (noiseValues[i, j] > 25 && noiseValues[i, j] <= 65)
@@ -70,6 +71,7 @@ namespace CURPG_Engine.Core
                         world.Grid[i, j] = world.TileSet[25];
                     if (noiseValues[i, j] > 200)
                         world.Grid[i, j] = world.TileSet[21];
+                    world.Grid[i, j].NoiseVal = noiseValues[i, j];
                 }
             }
             return world;

@@ -14,10 +14,10 @@ namespace CURPG_Engine.Core
     {
         public readonly int Index;
         public readonly Tile[,] Grid;
-        public List<Tile> TileSet;
+        public readonly List<Tile> TileSet;
         // ReSharper disable once NotAccessedField.Global
         private string _name;
-        public readonly int TileSize;
+        public int TileSize;
         
         /// <summary>
         /// Builds our world

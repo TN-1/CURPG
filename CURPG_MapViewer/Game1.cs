@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using CURPG_Engine.Core;
+// ReSharper disable NotAccessedField.Local
 
 namespace CURPG_MapViewer
 {
@@ -12,19 +13,20 @@ namespace CURPG_MapViewer
     /// </summary>
     public class Game1 : Game
     {
-        // ReSharper disable once NotAccessedField.Local
+        private readonly Dictionary<string, Texture2D> _tileTextures = new Dictionary<string, Texture2D>();
+        private readonly World _world;
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        private readonly World _world;
         private List<Tile> _tileset;
         private Camera _camera;
         private System.Drawing.Rectangle _mapArea;
         private System.Drawing.Rectangle _screenArea;
         private System.Drawing.Point _pt;
-        private readonly Dictionary<string, Texture2D> _tileTextures = new Dictionary<string, Texture2D>();
         private KeyboardState _oldState;
         private Texture2D _debugTexture;
+        private Texture2D _pixelTexture;
         private SpriteFont _debugFont;
+        private bool _hm;
 
         public Game1(World world)
         {
@@ -32,7 +34,7 @@ namespace CURPG_MapViewer
             _screenArea = System.Windows.Forms.Screen.GetWorkingArea(pt);
             _graphics = new GraphicsDeviceManager(this)
             {
-                IsFullScreen = false,
+                IsFullScreen = true,
                 PreferredBackBufferHeight = _screenArea.Height,
                 PreferredBackBufferWidth = _screenArea.Width
             };
@@ -54,8 +56,8 @@ namespace CURPG_MapViewer
             if (_world == null)
                 throw new NotImplementedException();
 
-            _mapArea.Height = (int)Math.Ceiling(_screenArea.Height / 24f);
-            _mapArea.Width = (int)Math.Ceiling(_screenArea.Width / 24f);
+            _mapArea.Height = (int)Math.Ceiling(_screenArea.Height / (float)_world.TileSize);
+            _mapArea.Width = (int)Math.Ceiling(_screenArea.Width / (float)_world.TileSize);
 
             _pt = new System.Drawing.Point(_mapArea.Width / 2, _mapArea.Height / 2);
             _camera = new Camera(0, 0, _mapArea, _world, _pt);
@@ -92,7 +94,9 @@ namespace CURPG_MapViewer
             }
 
             _debugTexture = new Texture2D(GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+            _pixelTexture = new Texture2D(GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             _debugTexture.SetData(new[] { Color.Black });
+            _pixelTexture.SetData(new[] { Color.White });
             _debugFont = Content.Load<SpriteFont>("Arial");
         }
 
@@ -126,11 +130,29 @@ namespace CURPG_MapViewer
             if (_oldState.IsKeyUp(Keys.Down) && newState.IsKeyDown(Keys.Down))
                 _pt = new System.Drawing.Point(_pt.X, _pt.Y + 1);
             if (_oldState.IsKeyUp(Keys.PageDown) && newState.IsKeyDown(Keys.PageDown))
-                throw new NotImplementedException();
+            {
+                _world.TileSize = _world.TileSize - 2;
+                _mapArea.Height = (int)Math.Ceiling(_screenArea.Height / (float)_world.TileSize);
+                _mapArea.Width = (int)Math.Ceiling(_screenArea.Width / (float)_world.TileSize);
+                if (_mapArea.Height > _world.Grid.GetLength(0) || _mapArea.Width > _world.Grid.GetLength(1))
+                {
+                    _world.TileSize = _world.TileSize + 2;
+                    _mapArea.Height = (int) Math.Ceiling(_screenArea.Height / (float) _world.TileSize);
+                    _mapArea.Width = (int) Math.Ceiling(_screenArea.Width / (float) _world.TileSize);
+                }
+            }
             if (_oldState.IsKeyUp(Keys.PageUp) && newState.IsKeyDown(Keys.PageUp))
-                throw new NotImplementedException();
+            {
+                _world.TileSize = _world.TileSize + 2;
+                _mapArea.Height = (int)Math.Ceiling(_screenArea.Height / (float)_world.TileSize);
+                _mapArea.Width = (int)Math.Ceiling(_screenArea.Width / (float)_world.TileSize);
+            }
+            if (_oldState.IsKeyUp(Keys.F5) && newState.IsKeyDown(Keys.F5))
+            {
+                _hm = !_hm;
+            }
 
-            _oldState = newState;
+                _oldState = newState;
             base.Update(gameTime);
         }
 
@@ -144,22 +166,74 @@ namespace CURPG_MapViewer
             var drawArea = _camera.GetViewerDrawArea(_pt);
 
             _spriteBatch.Begin();
-            for (var i = 0; i < _mapArea.Width; i++)
-            {
-                for (var j = 0; j < _mapArea.Height; j++)
+
+            if(!_hm)
+                for (var i = 0; i < _mapArea.Width; i++)
                 {
-                    _spriteBatch.Draw(_tileTextures[drawArea.Grid[i, j].EntityName],
-                        new Rectangle(i * _world.TileSize, j * _world.TileSize, _world.TileSize, _world.TileSize),
-                        Color.White);
+                    for (var j = 0; j < _mapArea.Height; j++)
+                    {
+                        if (_world.TileSize == 24)
+                            _spriteBatch.Draw(_tileTextures[drawArea.Grid[i, j].EntityName],
+                                new Rectangle(i * _world.TileSize, j * _world.TileSize, _world.TileSize, _world.TileSize),
+                                Color.White);
+                        else
+                            _spriteBatch.Draw(_pixelTexture,
+                                new Rectangle(i * _world.TileSize, j * _world.TileSize, _world.TileSize, _world.TileSize),
+                                _world.Grid[i, j].TileColor);
+                    }
                 }
-            }
+            else
+                for (var i = 0; i < _mapArea.Width; i++)
+                {
+                    for (var j = 0; j < _mapArea.Height; j++)
+                    {
+                        double v = _world.Grid[i,j].NoiseVal / 2.54;
+                        v = v / 100;
+                        var c = ColorFromHsv(0, 0, v);
+                        _spriteBatch.Draw(_pixelTexture,
+                            new Rectangle(i * _world.TileSize, j * _world.TileSize, _world.TileSize, _world.TileSize),
+                            new Color(c.R, c.G, c.B));
+                    }
+                }
+
 
             _spriteBatch.Draw(_debugTexture, new Rectangle(0, 0, _screenArea.Width, 60), Color.Black * .7f);
-            _spriteBatch.DrawString(_debugFont, "Move: [Arrow Keys]     Zoom Out: [PGDN]    Zoom In: [PGUP]", new Vector2(20, 20), Color.White);
+            _spriteBatch.DrawString(_debugFont,
+                $"Move: [Arrow Keys]     Zoom Out: [PGDN]    Zoom In: [PGUP]    HMView: [F5]     TS: {_world.TileSize}", 
+                new Vector2(20, 20), Color.White);
 
             _spriteBatch.End();
 
             base.Draw(gameTime);
         }
+
+        private static System.Drawing.Color ColorFromHsv(double hue, double saturation, double value)
+        {
+            var hi = Convert.ToInt32(Math.Floor(hue / 60)) % 6;
+            var f = hue / 60 - Math.Floor(hue / 60);
+
+            value = value * 255;
+            var v = Convert.ToInt32(value);
+            var p = Convert.ToInt32(value * (1 - saturation));
+            var q = Convert.ToInt32(value * (1 - f * saturation));
+            var t = Convert.ToInt32(value * (1 - (1 - f) * saturation));
+
+            switch (hi)
+            {
+                case 0:
+                    return System.Drawing.Color.FromArgb(255, v, t, p);
+                case 1:
+                    return System.Drawing.Color.FromArgb(255, q, v, p);
+                case 2:
+                    return System.Drawing.Color.FromArgb(255, p, v, t);
+                case 3:
+                    return System.Drawing.Color.FromArgb(255, p, q, v);
+                case 4:
+                    return System.Drawing.Color.FromArgb(255, t, p, v);
+                default:
+                    return System.Drawing.Color.FromArgb(255, v, p, q);
+            }
+        }
+
     }
 }

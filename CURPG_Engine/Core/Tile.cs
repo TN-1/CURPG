@@ -15,6 +15,7 @@ namespace CURPG_Engine.Core
         private string _tileColor;
         private string _tileName;
         public readonly int TerrainModifier;
+        public float NoiseVal;
 
         /// <summary>
         /// Builds our tile objects
