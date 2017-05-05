@@ -68,7 +68,7 @@ namespace CURPG_Windows.Screens
                 if (World == null || Player == null)
                 {
                     _tileSet = WorldTools.TileSetBuilder(tilesPath);
-                    World = WorldTools.GenerateWorld(0, 500, 500, _tileSet, "World", 24);
+                    World = WorldTools.GenerateWorld(0, 500, 500, _tileSet, "World", 24, tilesPath);
                     var pt = PlayerTools.GetSpawn(World, _mapArea.Width / 2, _mapArea.Height / 2);
                     Player = PlayerTools.RandomPlayer(pt.X, pt.Y);
                     Player.Inventory.BuildDatabase(itemsPath);
@@ -77,7 +77,7 @@ namespace CURPG_Windows.Screens
             else
             {
                 _tileSet = WorldTools.TileSetBuilder(tilesPath);
-                World = WorldTools.GenerateWorld(0, 500, 500, _tileSet, "World", 24);
+                World = WorldTools.GenerateWorld(0, 500, 500, _tileSet, "World", 24, tilesPath);
                 var pt = PlayerTools.GetSpawn(World, _mapArea.Width / 2, _mapArea.Height / 2);
                 Player = PlayerTools.RandomPlayer(pt.X, pt.Y);
                 Player.Inventory.BuildDatabase(itemsPath);

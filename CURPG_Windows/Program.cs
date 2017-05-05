@@ -1,7 +1,9 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using CURPG_Engine.Core;
 
 namespace CURPG_Windows
 {
@@ -31,6 +33,7 @@ namespace CURPG_Windows
             //Well thats a good sign, isnt it? Now we can enter the game
             using (ScreenManager manager = new ScreenManager())
             {
+                Logger.Info("Starting...", "CURPG_Windows");
                 manager.Run();
             }
         }

@@ -11,6 +11,7 @@ namespace CURPG_Engine.Core
     /// </summary>
     public static class WorldTools
     {
+
         /// <summary>
         /// Generates a random world
         /// </summary>
@@ -21,11 +22,17 @@ namespace CURPG_Engine.Core
         /// <param name="name">World name</param>
         /// <param name="tilesize">Tilesize</param>
         /// <returns></returns>
-        public static World GenerateWorld(int worldIndex, int gridX, int gridY, List<Tile> tileSet, string name, int tilesize)
+        public static World GenerateWorld(int worldIndex, int gridX, int gridY, List<Tile> tileSet, string name, int tilesize, string tilePath)
         {
+            Logger.Info("Start World Gen", "CURPG_Engine");
             float[,] noiseValues;
             var a = 0;
             var world = new World(worldIndex, gridX, gridY, tileSet, name, tilesize);
+
+            var tiles = new XmlDocument();
+            tiles.Load(tilePath);
+            Debug.Assert(tiles.DocumentElement != null, "tiles.DocumentElement != null");
+            var nodes = tiles.DocumentElement.SelectNodes("/tiles/tile");
 
             //Generate noise map
             start:
@@ -58,19 +65,18 @@ namespace CURPG_Engine.Core
             {
                 for (var j = 0; j < world.Grid.GetLength(1); j++)
                 {
-                    //BUG: USING THIS IS WHAT FUCKS UP THE A-STAR! REWORK
                     if (noiseValues[i, j] <= 25)
-                        world.Grid[i, j] = world.TileSet[20];
+                        world.Grid[i, j] = NewTile(nodes, 20);
                     if (noiseValues[i, j] > 25 && noiseValues[i, j] <= 65)
-                        world.Grid[i, j] = world.TileSet[19];
+                        world.Grid[i, j] = NewTile(nodes, 19);
                     if (noiseValues[i, j] > 65 && noiseValues[i, j] <= 100)
-                        world.Grid[i, j] = world.TileSet[17];
+                        world.Grid[i, j] = NewTile(nodes, 17);
                     if (noiseValues[i, j] > 100 && noiseValues[i, j] <= 150)
-                        world.Grid[i, j] = world.TileSet[24];
+                        world.Grid[i, j] = NewTile(nodes, 24);
                     if (noiseValues[i, j] > 150 && noiseValues[i, j] <= 200)
-                        world.Grid[i, j] = world.TileSet[25];
+                        world.Grid[i, j] = NewTile(nodes, 25);
                     if (noiseValues[i, j] > 200)
-                        world.Grid[i, j] = world.TileSet[21];
+                        world.Grid[i, j] = NewTile(nodes, 21);
                     world.Grid[i, j].NoiseVal = noiseValues[i, j];
                 }
             }
@@ -114,6 +120,35 @@ namespace CURPG_Engine.Core
             }
             return tileset;
         }
+
+        private static Tile NewTile(XmlNodeList nodes, int tileId)
+        {
+            Debug.Assert(nodes != null, "nodes != null");
+            foreach (XmlNode node in nodes)
+            {
+                var idNode = node.SelectSingleNode("id");
+                if (idNode == null) continue;
+                var index = Convert.ToInt32(idNode.InnerText);
+                if (index != tileId) continue;
+                var entityNameNode = node.SelectSingleNode("entityName");
+                if (entityNameNode == null) continue;
+                var entityName = entityNameNode.InnerText;
+                var tileColorNode = node.SelectSingleNode("tileColor");
+                if (tileColorNode == null) continue;
+                var tileColor = tileColorNode.InnerText;
+                var tileNameNode = node.SelectSingleNode("tileName");
+                if (tileNameNode == null) continue;
+                var tileName = tileNameNode.InnerText;
+                var terrModNode = node.SelectSingleNode("terrainMod");
+                if (terrModNode == null) continue;
+                var terrmod = Convert.ToInt32(terrModNode.InnerText);
+
+                var tile = new Tile(index, entityName, ValidColor(tileColor), tileName, terrmod);
+                return tile;
+            }
+            return null;
+        }
+
 
         /// <summary>
         /// Comverts a string to a valid color
