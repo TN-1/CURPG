@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Xml;
 using Microsoft.Xna.Framework;
@@ -82,6 +83,74 @@ namespace CURPG_Engine.Core
             }
             return world;
         }
+
+        public static World GenerateWorld(int worldIndex, int gridX, int gridY, List<Tile> tileSet, string name, int tilesize, string tilePath, IProgress<int> progress)
+        {
+            Logger.Info("Start World Gen", "CURPG_Engine");
+            float[,] noiseValues;
+            var a = 0;
+            var z = 0;
+            var world = new World(worldIndex, gridX, gridY, tileSet, name, tilesize);
+
+            var tiles = new XmlDocument();
+            tiles.Load(tilePath);
+            Debug.Assert(tiles.DocumentElement != null, "tiles.DocumentElement != null");
+            var nodes = tiles.DocumentElement.SelectNodes("/tiles/tile");
+
+            //Generate noise map
+            start:
+            try
+            {
+                var r = new Random();
+                Simplex.Noise.Seed = r.Next(0, 999999999);
+                noiseValues = Simplex.Noise.Calc2D(gridX * 10, gridY * 10, 0.065f);
+                var point = r.Next(0, gridX * 8);
+                var noise = new float[gridX, gridY];
+
+                for (var i = point; i < (gridX + point); i++)
+                {
+                    for (var j = point; j < (gridY + point); j++)
+                    {
+                        noise[(i - point), (j - point)] = noiseValues[i, j];
+                        z++;
+                        progress.Report(z);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("World Generation failed. Attempt #" + a);
+                Debug.WriteLine("Exception: " + e);
+                a++;
+                z = 0;
+                goto start;
+            }
+
+            //Process noise map into game map
+            for (var i = 0; i < world.Grid.GetLength(0); i++)
+            {
+                for (var j = 0; j < world.Grid.GetLength(1); j++)
+                {
+                    if (noiseValues[i, j] <= 25)
+                        world.Grid[i, j] = NewTile(nodes, 20);
+                    if (noiseValues[i, j] > 25 && noiseValues[i, j] <= 65)
+                        world.Grid[i, j] = NewTile(nodes, 19);
+                    if (noiseValues[i, j] > 65 && noiseValues[i, j] <= 100)
+                        world.Grid[i, j] = NewTile(nodes, 17);
+                    if (noiseValues[i, j] > 100 && noiseValues[i, j] <= 150)
+                        world.Grid[i, j] = NewTile(nodes, 24);
+                    if (noiseValues[i, j] > 150 && noiseValues[i, j] <= 200)
+                        world.Grid[i, j] = NewTile(nodes, 25);
+                    if (noiseValues[i, j] > 200)
+                        world.Grid[i, j] = NewTile(nodes, 21);
+                    world.Grid[i, j].NoiseVal = noiseValues[i, j];
+                    z++;
+                    progress.Report(z);
+                }
+            }
+            return world;
+        }
+
 
         /// <summary>
         /// Build our tileset from an XML definition

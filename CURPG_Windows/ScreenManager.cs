@@ -51,7 +51,7 @@ namespace CURPG_Windows
 
             Interpreter.AddVariable("base", this);
 
-            _screens = new Dictionary<string, GameScreen> {{"Menu", new MenuScreen()}, {"Play", new PlayScreen()}};
+            _screens = new Dictionary<string, GameScreen> {{"Menu", new MenuScreen()}, {"Play", new PlayScreen()}, {"Load", new LoadScreen()}};
         }
 
         protected override void Initialize()
@@ -68,7 +68,7 @@ namespace CURPG_Windows
             Sprites = new SpriteBatch(GraphicsDevice);
 
             // Load any full game assets here
-            AddScreen(_screens["Play"]);
+            AddScreen(_screens["Load"]);
         }
 
         protected override void UnloadContent()
