@@ -79,7 +79,6 @@ namespace CURPG_Engine.Scriptables
             _searchParameters = new SearchParameters(_startLocation, _endLocation, _map);
             _pathFinder = new PathFinder(_searchParameters);
             _path = _pathFinder.FindPath();
-
         }
     }
 }

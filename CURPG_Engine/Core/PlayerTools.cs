@@ -46,7 +46,7 @@ namespace CURPG_Engine.Core
             n = r.Next(100, 250);
             var height = n;
 
-            Player player = new Player(name, gender, age, height, weight, x, y);
+            var player = new Player(name, gender, age, height, weight, x, y);
             return player;
         }
 
@@ -59,21 +59,20 @@ namespace CURPG_Engine.Core
         /// <returns></returns>
         public static System.Drawing.Point GetSpawn(World world, int x, int y)
         {
-            //TODO: Rework this
-            var pt = new System.Drawing.Point(0, 0);
-            for (var i = x + 5; i >= (x - 5); i--)
+            for (var h = 0; h < 20; h++)
             {
-                if (world.Grid[i, y].TerrainModifier != 0) continue;
-                pt = new System.Drawing.Point(i, y);
-                return pt;
+                for (var i = x - h; i < x + h; i++)
+                {
+                    if (i < 0 || i > world.Grid.GetLength(0)) continue;
+                    for (var j = y - h; j < y + h; j++)
+                    {
+                        if (j < 0 || j > world.Grid.GetLength(1)) continue;
+                        if (world.Grid[i, j].TerrainModifier != 0) continue;
+                        return new System.Drawing.Point(i, j);
+                    }
+                }
             }
-            for (var i = y + 5; i >= (y - 5); i--)
-            {
-                if (world.Grid[x, i].TerrainModifier != 0) continue;
-                pt = new System.Drawing.Point(x, i);
-                return pt;
-            }
-            return pt;
+            return new System.Drawing.Point(-1);
         }
     }
 }
