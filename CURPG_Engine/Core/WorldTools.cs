@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Xml;
 using Microsoft.Xna.Framework;
@@ -12,7 +11,6 @@ namespace CURPG_Engine.Core
     /// </summary>
     public static class WorldTools
     {
-
         /// <summary>
         /// Generates a random world
         /// </summary>
@@ -22,12 +20,12 @@ namespace CURPG_Engine.Core
         /// <param name="tileSet">Tileset for our map</param>
         /// <param name="name">World name</param>
         /// <param name="tilesize">Tilesize</param>
+        /// <param name="tilePath"></param>
         /// <returns></returns>
         public static World GenerateWorld(int worldIndex, int gridX, int gridY, List<Tile> tileSet, string name, int tilesize, string tilePath)
         {
-            Logger.Info("Start World Gen", "CURPG_Engine");
+            Logger.Info("Start Generation", "CURPG_Engine.Core.WorldTools.GenerateWorld()");
             float[,] noiseValues;
-            var a = 0;
             var world = new World(worldIndex, gridX, gridY, tileSet, name, tilesize);
 
             var tiles = new XmlDocument();
@@ -55,9 +53,7 @@ namespace CURPG_Engine.Core
             }
             catch(Exception e)
             {
-                Debug.WriteLine("World Generation failed. Attempt #" + a);
-                Debug.WriteLine("Exception: " + e);
-                a++;
+                Logger.Error(e, "CURPG_Engine.Core.WorldTools.GenerateWorld()");
                 goto start;
             }
 
@@ -88,7 +84,6 @@ namespace CURPG_Engine.Core
         {
             Logger.Info("Start World Gen", "CURPG_Engine");
             float[,] noiseValues;
-            var a = 0;
             var z = 0;
             var world = new World(worldIndex, gridX, gridY, tileSet, name, tilesize);
 
@@ -119,9 +114,7 @@ namespace CURPG_Engine.Core
             }
             catch (Exception e)
             {
-                Debug.WriteLine("World Generation failed. Attempt #" + a);
-                Debug.WriteLine("Exception: " + e);
-                a++;
+                Logger.Error(e, "CURPG_Engine.Core.WorldTools.GenerateWorld()");
                 z = 0;
                 goto start;
             }

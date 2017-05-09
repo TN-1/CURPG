@@ -14,13 +14,13 @@ namespace CURPG_Engine.Core
     public class Player
     {
         //Values our player needs
-        public string Name;
+        protected string Name;
         public int LocationX;
         public int LocationY;
-        public char Gender;
-        public int Age;
-        public int Weight;
-        public int Height;
+        protected char Gender;
+        protected int Age;
+        protected int Weight;
+        protected int Height;
         public int Health = 100;
         public readonly Inventory.Inventory Inventory;
         public bool Testing;

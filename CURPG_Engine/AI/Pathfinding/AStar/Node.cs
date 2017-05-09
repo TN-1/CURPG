@@ -15,12 +15,12 @@ namespace CURPG_Engine.AI.Pathfinding.AStar
         /// <summary>
         /// The node's location in the grid
         /// </summary>
-        public Point Location { get; private set; }
+        public Point Location { get; }
 
         /// <summary>
         /// True when the node may be traversed, otherwise false
         /// </summary>
-        public bool IsWalkable { get; set; }
+        public bool IsWalkable { get; }
         
         /// <summary>
         /// Cost from start to here
@@ -30,7 +30,7 @@ namespace CURPG_Engine.AI.Pathfinding.AStar
         /// <summary>
         /// Estimated cost from here to end
         /// </summary>
-        public float H { get; private set; }
+        private float H { get; }
 
         /// <summary>
         /// Flags whether the node is open, closed or untested by the PathFinder

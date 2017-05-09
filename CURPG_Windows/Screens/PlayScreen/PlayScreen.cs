@@ -219,9 +219,9 @@ namespace CURPG_Windows.Screens
                     {
                         _lua.DoFile(Path.Combine(_exeLocation, "Scripts", "NPC", npc.Index.ToString(), "Dialogue.lua"));
                     }
-                    catch
+                    catch(Exception e)
                     {
-                        //TODO: Add to debug log
+                        Logger.Error(e, "CURPG_Windows.Screens.PlayScreen.CheckForNpcInteraction()");
                         return;
                     }
                     _lua["Player"] = Player;

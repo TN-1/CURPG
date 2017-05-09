@@ -91,7 +91,6 @@ namespace CURPG_Windows
 
             try
             {
-                // TODO Remove temp code
                 if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 {
                     Exit();
@@ -190,7 +189,7 @@ namespace CURPG_Windows
         {
             if (gameScreen is PlayScreen play)
             {
-                var status = CURPG_Engine.Core.Persistance.SaveGame(play.World, play.Player);
+                var status = Persistance.SaveGame(play.World, play.Player);
                 if (status == 0)
                 {
                     System.Windows.Forms.MessageBox.Show("Save Failed. Do you want to close?", "Error", System.Windows.Forms.MessageBoxButtons.RetryCancel);
@@ -226,7 +225,7 @@ namespace CURPG_Windows
             {
                 if(screen is PlayScreen play)
                 {
-                    var status = CURPG_Engine.Core.Persistance.SaveGame(play.World, play.Player);
+                    var status = Persistance.SaveGame(play.World, play.Player);
                     if (status == 0)
                     {
                         System.Windows.Forms.MessageBox.Show("Save Failed. Do you want to close?", "Error", System.Windows.Forms.MessageBoxButtons.RetryCancel);

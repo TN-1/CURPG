@@ -38,8 +38,7 @@ namespace CURPG_Engine.Core
             }
             catch(Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("Save failed");
-                System.Diagnostics.Debug.WriteLine("Exception: " + e);
+                Logger.Error(e, "CURPG_Engine.Core.Persistence.SaveGame()");
                 return 0;
             }
         }
@@ -75,8 +74,7 @@ namespace CURPG_Engine.Core
             }
             catch(Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("World Load failed");
-                System.Diagnostics.Debug.WriteLine("Exception: " + e);
+                Logger.Error(e, "CURPG_Engine.Core.Persistance.LoadWorld()");
                 return null;
             }
         }
@@ -100,8 +98,7 @@ namespace CURPG_Engine.Core
             }
             catch(Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("Player Load failed");
-                System.Diagnostics.Debug.WriteLine("Exception: " + e);
+                Logger.Error(e, "CURPG_Engine.Core.Persistance.LoadPlayer()");
                 return null;
             }
         }

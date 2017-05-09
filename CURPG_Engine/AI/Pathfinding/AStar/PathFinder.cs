@@ -8,9 +8,9 @@ namespace CURPG_Engine.AI.Pathfinding.AStar
         private int _width;
         private int _height;
         private Node[,] _nodes;
-        private Node startNode;
-        private Node endNode;
-        private SearchParameters searchParameters;
+        private readonly Node _startNode;
+        private readonly Node _endNode;
+        private readonly SearchParameters _searchParameters;
 
         /// <summary>
         /// Create a new instance of PathFinder
@@ -18,11 +18,11 @@ namespace CURPG_Engine.AI.Pathfinding.AStar
         /// <param name="searchParameters"></param>
         public PathFinder(SearchParameters searchParameters)
         {
-            this.searchParameters = searchParameters;
+            _searchParameters = searchParameters;
             InitializeNodes(searchParameters.Map);
-            startNode = _nodes[searchParameters.StartLocation.X, searchParameters.StartLocation.Y];
-            startNode.State = NodeState.Open;
-            endNode = _nodes[searchParameters.EndLocation.X, searchParameters.EndLocation.Y];
+            _startNode = _nodes[searchParameters.StartLocation.X, searchParameters.StartLocation.Y];
+            _startNode.State = NodeState.Open;
+            _endNode = _nodes[searchParameters.EndLocation.X, searchParameters.EndLocation.Y];
         }
 
         /// <summary>
@@ -34,10 +34,10 @@ namespace CURPG_Engine.AI.Pathfinding.AStar
             //BUG: Breaks if not path is found. Should be fixed by using GetSpawn(). Will monitor
             // The start node is the first entry in the 'open' list
             var path = new List<Point>();
-            var success = Search(startNode);
+            var success = Search(_startNode);
             if (!success) return path;
             // If a path was found, follow the parents from the end node to build a list of locations
-            var node = endNode;
+            var node = _endNode;
             while (node.ParentNode != null)
             {
                 path.Add(node.Location);
@@ -63,7 +63,7 @@ namespace CURPG_Engine.AI.Pathfinding.AStar
             {
                 for (var x = 0; x < _width; x++)
                 {
-                    _nodes[x, y] = new Node(x, y, map[x, y], searchParameters.EndLocation);
+                    _nodes[x, y] = new Node(x, y, map[x, y], _searchParameters.EndLocation);
                 }
             }
         }
@@ -84,7 +84,7 @@ namespace CURPG_Engine.AI.Pathfinding.AStar
             foreach (var nextNode in nextNodes)
             {
                 // Check whether the end node has been reached
-                if (nextNode.Location == endNode.Location)
+                if (nextNode.Location == _endNode.Location)
                 {
                     return true;
                 }

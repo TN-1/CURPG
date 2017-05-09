@@ -7,11 +7,11 @@ namespace CURPG_Engine.AI.Pathfinding.AStar
     /// </summary>
     public class SearchParameters
     {
-        public Point StartLocation { get; set; }
+        public Point StartLocation { get; }
 
-        public Point EndLocation { get; set; }
+        public Point EndLocation { get; }
         
-        public bool[,] Map { get; set; }
+        public bool[,] Map { get; }
 
         public SearchParameters(Point startLocation, Point endLocation, bool[,] map)
         {

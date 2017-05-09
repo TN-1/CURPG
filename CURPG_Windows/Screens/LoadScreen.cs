@@ -2,7 +2,6 @@
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 using CURPG_Engine.Core;
 using GeonBit.UI;
@@ -21,6 +20,7 @@ namespace CURPG_Windows.Screens
         public override void Initialize()
         {
             UserInterface.Initialize(ScreenManager.ContentMgr, BuiltinThemes.hd);
+            UserInterface.ShowCursor = false;
 
             var tilesPath = Path.Combine(_exeLocation, @"DataFiles\Tiles.xml");
             var tileSet = WorldTools.TileSetBuilder(tilesPath);

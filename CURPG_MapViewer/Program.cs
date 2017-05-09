@@ -1,5 +1,4 @@
 ﻿using System;
-using CURPG_Engine;
 
 namespace CURPG_MapViewer
 {
@@ -15,8 +14,7 @@ namespace CURPG_MapViewer
         [STAThread]
         public static void Main()
         {
-            CURPG_Engine.Core.World world = null;
-            using (var game = new Game1(world))
+            using (var game = new Game1(null))
                 game.Run();
         }
     }

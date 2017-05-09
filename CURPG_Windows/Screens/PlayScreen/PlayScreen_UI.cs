@@ -96,7 +96,7 @@ namespace CURPG_Windows.Screens
 
     class IconI : Icon
     {
-        public int Index;
+        public readonly int Index;
 
         public IconI(int index, IconType icon, Anchor anchor = Anchor.Auto, float scale = 1, bool background = false, Vector2? offset = default(Vector2?)) : base(icon, anchor, scale, background, offset)
         {

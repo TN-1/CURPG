@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+// ReSharper disable FieldCanBeMadeReadOnly.Local
 
 namespace CURPG_Engine.Core
 {
@@ -37,6 +38,7 @@ namespace CURPG_Engine.Core
         /// <param name="miniViewPort">Size of minimap area</param>
         /// <param name="world">World object to draw</param>
         /// <param name="player">Player object to use</param>
+        /// <param name="npcs">List of NPCs in the world</param>
         public Camera(int x, int y, System.Drawing.Rectangle viewPort, System.Drawing.Rectangle miniViewPort, World world, Player player, List<Scriptables.Npc> npcs)
         {
             _x = x;
@@ -128,7 +130,6 @@ namespace CURPG_Engine.Core
                 }
             }
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            //TODO: Finish off NPC coord calc.
             else if (extremeBound)
             {
                 if (xl)

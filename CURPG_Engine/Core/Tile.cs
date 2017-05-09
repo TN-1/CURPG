@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using Color = Microsoft.Xna.Framework.Color;
+// ReSharper disable NotAccessedField.Local
 
 namespace CURPG_Engine.Core
 {
