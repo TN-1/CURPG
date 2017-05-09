@@ -2,10 +2,13 @@
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 using CURPG_Engine.Core;
 using GeonBit.UI;
 using GeonBit.UI.Entities;
+using Panel = GeonBit.UI.Entities.Panel;
+using ProgressBar = GeonBit.UI.Entities.ProgressBar;
 
 namespace CURPG_Windows.Screens
 {
@@ -13,6 +16,8 @@ namespace CURPG_Windows.Screens
     {
         private readonly string _exeLocation = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
         private Task<World> _result;
+        private Panel _panel;
+
         public override void Initialize()
         {
             UserInterface.Initialize(ScreenManager.ContentMgr, BuiltinThemes.hd);
@@ -20,12 +25,12 @@ namespace CURPG_Windows.Screens
             var tilesPath = Path.Combine(_exeLocation, @"DataFiles\Tiles.xml");
             var tileSet = WorldTools.TileSetBuilder(tilesPath);
 
-            var panel = new Panel(new Vector2(ScreenManager.ScreenArea.Width, ScreenManager.ScreenArea.Height));
-            UserInterface.AddEntity(panel);
+            _panel = new Panel(new Vector2(ScreenManager.ScreenArea.Width, ScreenManager.ScreenArea.Height));
+            UserInterface.AddEntity(_panel);
 
             // add title and text
-            panel.AddChild(new Header("Loading..."));
-            panel.AddChild(new HorizontalLine());
+            _panel.AddChild(new Header("Loading..."));
+            _panel.AddChild(new HorizontalLine());
 
             var prog = new ProgressBar
             {
@@ -34,7 +39,7 @@ namespace CURPG_Windows.Screens
                 Draggable = false,
                 StepsCount = 500000
             };
-            panel.AddChild(prog);
+            _panel.AddChild(prog);
 
             var progressHandler = new Progress<int>(value =>
             {
@@ -54,8 +59,11 @@ namespace CURPG_Windows.Screens
         public override void Update(GameTime gameTime)
         {
             if (_result.IsCompleted)
-                if(_result.Result != null)
-                    System.Windows.Forms.MessageBox.Show("Completed!");
+                if (_result.Result != null)
+                {
+                    ScreenManager.WorldTrans = _result.Result;
+                    ScreenManager.ChangeScreens("Load", "Play");
+                }
 
             base.Update(gameTime);
         }

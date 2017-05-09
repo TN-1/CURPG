@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CURPG_Engine.Core;
 using CURPG_Windows.Screens;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -23,6 +24,7 @@ namespace CURPG_Windows
         [NonSerialized] private static Dictionary<string, SpriteFont> _fonts;
         [NonSerialized] private static List<GameScreen> _screenList;
         [NonSerialized] private KeyboardState _oldState;
+        [NonSerialized] public static World WorldTrans;
 
         public ScreenManager()
         {
