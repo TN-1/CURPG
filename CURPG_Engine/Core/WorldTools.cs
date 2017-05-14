@@ -108,7 +108,6 @@ namespace CURPG_Engine.Core
                     {
                         noise[(i - point), (j - point)] = noiseValues[i, j];
                         z++;
-                        progress.Report(z);
                     }
                 }
             }

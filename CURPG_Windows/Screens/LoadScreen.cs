@@ -16,6 +16,7 @@ namespace CURPG_Windows.Screens
         private readonly string _exeLocation = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
         private Task<World> _result;
         private Panel _panel;
+        private ProgressBar _prog;
 
         public override void Initialize()
         {
@@ -32,18 +33,19 @@ namespace CURPG_Windows.Screens
             _panel.AddChild(new Header("Loading..."));
             _panel.AddChild(new HorizontalLine());
 
-            var prog = new ProgressBar
+            _prog = new ProgressBar
             {
                 Min = 0,
                 Max = 500000,
                 Draggable = false,
                 StepsCount = 500000
             };
-            _panel.AddChild(prog);
+            _panel.AddChild(_prog);
 
             var progressHandler = new Progress<int>(value =>
             {
-                prog.Value = value;
+                if(value > 250000)
+                    _prog.Value = value;
             });
             var progress = (IProgress<int>) progressHandler;
 
@@ -65,6 +67,12 @@ namespace CURPG_Windows.Screens
                     ScreenManager.ChangeScreens("Load", "Play");
                 }
 
+            //TODO: Unhack this and actually fix it :)
+            if (_prog.Value < 250000)
+                _prog.Value = _prog.Value + 500;
+
+            UserInterface.Update(gameTime);
+
             base.Update(gameTime);
         }
 
@@ -72,10 +80,8 @@ namespace CURPG_Windows.Screens
         {
             ScreenManager.GraphicsDeviceMgr.GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // GeonBit.UI: draw UI using the spriteBatch you created above
             UserInterface.Draw(ScreenManager.Sprites);
 
-            // call base draw function
             base.Draw(gameTime);
 
         }

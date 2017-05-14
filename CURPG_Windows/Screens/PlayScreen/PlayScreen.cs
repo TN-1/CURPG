@@ -165,37 +165,40 @@ namespace CURPG_Windows.Screens
 
 
             // handle the input
-            if (_oldState.IsKeyUp(Keys.Left) && newState.IsKeyDown(Keys.Left))
+            if (!ScreenManager.Console.IsVisible)
             {
-                if(Player.MovePlayer(-1, 0, World))
-                    CheckForNpcInteraction();
-            }
-            if (_oldState.IsKeyUp(Keys.Right) && newState.IsKeyDown(Keys.Right))
-            {
-                if(Player.MovePlayer(1, 0, World))
-                    CheckForNpcInteraction();
-            }
-            if (_oldState.IsKeyUp(Keys.Up) && newState.IsKeyDown(Keys.Up))
-            {
-                if(Player.MovePlayer(0, -1, World))
-                    CheckForNpcInteraction();
-            }
-            if (_oldState.IsKeyUp(Keys.Down) && newState.IsKeyDown(Keys.Down))
-            {
-                if(Player.MovePlayer(0, 1, World))
-                    CheckForNpcInteraction();
-            }
-            if (_oldState.IsKeyUp(Keys.F3) && newState.IsKeyDown(Keys.F3))
-            {
-                _debug = !_debug;
-            }
-            if (_oldState.IsKeyUp(Keys.F4) && newState.IsKeyDown(Keys.F4))
-            {
-                if (_debug)
+                if (_oldState.IsKeyUp(Keys.Left) && newState.IsKeyDown(Keys.Left))
                 {
-                    using (var viewer = new CURPG_MapViewer.Game1(World))
-                        viewer.Run();
-                    World.TileSize = 24;
+                    if (Player.MovePlayer(-1, 0, World))
+                        CheckForNpcInteraction();
+                }
+                if (_oldState.IsKeyUp(Keys.Right) && newState.IsKeyDown(Keys.Right))
+                {
+                    if (Player.MovePlayer(1, 0, World))
+                        CheckForNpcInteraction();
+                }
+                if (_oldState.IsKeyUp(Keys.Up) && newState.IsKeyDown(Keys.Up))
+                {
+                    if (Player.MovePlayer(0, -1, World))
+                        CheckForNpcInteraction();
+                }
+                if (_oldState.IsKeyUp(Keys.Down) && newState.IsKeyDown(Keys.Down))
+                {
+                    if (Player.MovePlayer(0, 1, World))
+                        CheckForNpcInteraction();
+                }
+                if (_oldState.IsKeyUp(Keys.F3) && newState.IsKeyDown(Keys.F3))
+                {
+                    _debug = !_debug;
+                }
+                if (_oldState.IsKeyUp(Keys.F4) && newState.IsKeyDown(Keys.F4))
+                {
+                    if (_debug)
+                    {
+                        using (var viewer = new CURPG_MapViewer.Game1(World))
+                            viewer.Run();
+                        World.TileSize = 24;
+                    }
                 }
             }
 

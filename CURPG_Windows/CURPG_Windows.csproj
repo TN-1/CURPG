@@ -123,6 +123,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Scripts\test.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="app.config" />
     <None Include="Content\Arial.spritefont" />
     <Content Include="Content\GeonBit.UI\themes\hd\effects\disabled.fx" />

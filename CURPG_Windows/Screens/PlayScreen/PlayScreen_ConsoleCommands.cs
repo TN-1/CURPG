@@ -90,23 +90,41 @@ namespace CURPG_Windows.Screens
         /// <summary>
         /// Run a lua script
         /// </summary>
-        /// <param name="name">Name of script inc .lua in Scripts folder</param>
+        /// <param name="name">Name of script inc extension in Scripts folder</param>
         /// <returns>Indicator of success</returns>
         public string RunScript(string name)
         {
             var loc = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
             if(loc == null) throw new Exception("Loc is null");
-            if (!File.Exists(Path.Combine(loc, @"Scripts\" + name)))
-                return ("File doesnt exist");
-            try
+            var file = Path.Combine(loc, @"Scripts\" + name);
+            if (!File.Exists(file))
+                return "File doesnt exist";
+            switch (Path.GetExtension(file))
             {
-                _lua.DoFile(Path.Combine(loc, @"Scripts\" + name));
+                case ".lua":
+                    try
+                    {
+                        _lua.DoFile(file);
+                    }
+                    catch (Exception e)
+                    {
+                        return "Failed: " + e;
+                    }
+                    return "Success";
+                case ".py":
+                    //BUG: Broken(Poss in interpreter)
+                    try
+                    {
+                        ScreenManager.Interpreter.RunScript(file);
+                    }
+                    catch (Exception e)
+                    {
+                        return "Failed: " + e;
+                    }
+                    return "Success";
             }
-            catch (Exception e)
-            {
-                return ("Failed: " + e);
-            }
-            return ("Success");
+
+            return "Not vaild script file";
         }
 
         public void AddNpc(double index, string name, string gender, double age, double height, double weight, double x, double y, double maxx, double maxy)
