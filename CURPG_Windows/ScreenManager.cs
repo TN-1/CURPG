@@ -19,6 +19,7 @@ namespace CURPG_Windows
         public static ConsoleComponent Console;
         public static PythonInterpreter Interpreter;
         public static System.Drawing.Rectangle ScreenArea;
+        public static Game Game;
         private static Dictionary<string, GameScreen> _screens;
         [NonSerialized] private static Dictionary<string, Texture2D> _textures2D;
         [NonSerialized] private static Dictionary<string, SpriteFont> _fonts;
@@ -54,6 +55,8 @@ namespace CURPG_Windows
             Interpreter.AddVariable("base", this);
 
             _screens = new Dictionary<string, GameScreen> {{"Menu", new MenuScreen()}, {"Play", new PlayScreen()}, {"Load", new LoadScreen()}};
+
+            Game = this;
         }
 
         protected override void Initialize()
@@ -91,7 +94,7 @@ namespace CURPG_Windows
 
             try
             {
-                if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+                if (Keyboard.GetState().IsKeyDown(Keys.F12))
                 {
                     Exit();
                 }

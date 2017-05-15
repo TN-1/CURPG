@@ -42,6 +42,7 @@ namespace CURPG_Windows.Screens
         [NonSerialized] private Texture2D _debugTexture;
         [NonSerialized] private SpriteFont _debugFont;
         [NonSerialized] private bool _debug;
+        [NonSerialized] private bool _gameState = true;
         [NonSerialized] private int _frameRate;
         [NonSerialized] private int _frameCounter;
         [NonSerialized] private int _miniMapZoom = 4;
@@ -102,8 +103,8 @@ namespace CURPG_Windows.Screens
 
             _camera = new Camera(0, 0, _mapArea, _miniMapArea, World, Player, _npcs);
 
-            base.Initialize();
             Player.Inventory.PropertyChanged += Inventory_PropertyChanged;
+            base.Initialize();
         }
 
         public override void LoadAssets()
@@ -143,69 +144,85 @@ namespace CURPG_Windows.Screens
 
         public override void Update(GameTime gameTime)
         {
-            var newState = Keyboard.GetState();  // get the newest state
+            var newState = Keyboard.GetState(); // get the newest state
 
-            _timeSinceLastUpdate += (float)gameTime.ElapsedGameTime.TotalSeconds;
-            _elapsedTime += gameTime.ElapsedGameTime;
-
-            if (_timeSinceLastUpdate > 1f)
+            if (_gameState)
             {
-                foreach (Npc npc in _npcs)
-                {
-                    npc.Update();
-                }
-                _timeSinceLastUpdate = 0f;
-            }
-            if (_elapsedTime > TimeSpan.FromSeconds(1))
-            {
-                _elapsedTime -= TimeSpan.FromSeconds(1);
-                _frameRate = _frameCounter;
-                _frameCounter = 0;
-            }
+                //Game not paused
+                _timeSinceLastUpdate += (float) gameTime.ElapsedGameTime.TotalSeconds;
+                _elapsedTime += gameTime.ElapsedGameTime;
 
-
-            // handle the input
-            if (!ScreenManager.Console.IsVisible)
-            {
-                if (_oldState.IsKeyUp(Keys.Left) && newState.IsKeyDown(Keys.Left))
+                if (_timeSinceLastUpdate > 1f)
                 {
-                    if (Player.MovePlayer(-1, 0, World))
-                        CheckForNpcInteraction();
-                }
-                if (_oldState.IsKeyUp(Keys.Right) && newState.IsKeyDown(Keys.Right))
-                {
-                    if (Player.MovePlayer(1, 0, World))
-                        CheckForNpcInteraction();
-                }
-                if (_oldState.IsKeyUp(Keys.Up) && newState.IsKeyDown(Keys.Up))
-                {
-                    if (Player.MovePlayer(0, -1, World))
-                        CheckForNpcInteraction();
-                }
-                if (_oldState.IsKeyUp(Keys.Down) && newState.IsKeyDown(Keys.Down))
-                {
-                    if (Player.MovePlayer(0, 1, World))
-                        CheckForNpcInteraction();
-                }
-                if (_oldState.IsKeyUp(Keys.F3) && newState.IsKeyDown(Keys.F3))
-                {
-                    _debug = !_debug;
-                }
-                if (_oldState.IsKeyUp(Keys.F4) && newState.IsKeyDown(Keys.F4))
-                {
-                    if (_debug)
+                    foreach (Npc npc in _npcs)
                     {
-                        using (var viewer = new CURPG_MapViewer.Game1(World))
-                            viewer.Run();
-                        World.TileSize = 24;
+                        npc.Update();
                     }
+                    _timeSinceLastUpdate = 0f;
+                }
+                if (_elapsedTime > TimeSpan.FromSeconds(1))
+                {
+                    _elapsedTime -= TimeSpan.FromSeconds(1);
+                    _frameRate = _frameCounter;
+                    _frameCounter = 0;
+                }
+
+                // handle the input
+                if (!ScreenManager.Console.IsVisible)
+                {
+                    if (_oldState.IsKeyUp(Keys.Left) && newState.IsKeyDown(Keys.Left))
+                    {
+                        if (Player.MovePlayer(-1, 0, World))
+                            CheckForNpcInteraction();
+                    }
+                    if (_oldState.IsKeyUp(Keys.Right) && newState.IsKeyDown(Keys.Right))
+                    {
+                        if (Player.MovePlayer(1, 0, World))
+                            CheckForNpcInteraction();
+                    }
+                    if (_oldState.IsKeyUp(Keys.Up) && newState.IsKeyDown(Keys.Up))
+                    {
+                        if (Player.MovePlayer(0, -1, World))
+                            CheckForNpcInteraction();
+                    }
+                    if (_oldState.IsKeyUp(Keys.Down) && newState.IsKeyDown(Keys.Down))
+                    {
+                        if (Player.MovePlayer(0, 1, World))
+                            CheckForNpcInteraction();
+                    }
+                    if (_oldState.IsKeyUp(Keys.F3) && newState.IsKeyDown(Keys.F3))
+                    {
+                        _debug = !_debug;
+                    }
+                    if (_oldState.IsKeyUp(Keys.F4) && newState.IsKeyDown(Keys.F4))
+                    {
+                        if (_debug)
+                        {
+                            using (var viewer = new CURPG_MapViewer.Game1(World))
+                                viewer.Run();
+                            World.TileSize = 24;
+                        }
+                    }
+                    if (_oldState.IsKeyUp(Keys.Escape) && newState.IsKeyDown(Keys.Escape))
+                    {
+                        _gameState = !_gameState;
+                        DrawPause();
+                    }
+                }
+            }
+            else
+            {
+                //Paused
+                if (_oldState.IsKeyUp(Keys.Escape) && newState.IsKeyDown(Keys.Escape))
+                {
+                    RemovePause();
+                    _gameState = !_gameState;
                 }
             }
 
             _oldState = newState;  // set the new state as the old state for next time
 
             UserInterface.Update(gameTime);
-
             base.Update(gameTime);
         }
 

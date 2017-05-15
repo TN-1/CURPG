@@ -11,11 +11,13 @@ namespace CURPG_Windows.Screens
     partial class PlayScreen
     {
         [NonSerialized] private Panel _panel;
+        [NonSerialized] private Panel _pausePanel;
         [NonSerialized] private Dictionary<string, IconType> _icons;
 
         private void Ui()
         {
             UserInterface.Initialize(ScreenManager.ContentMgr, BuiltinThemes.hd);
+            UserInterface.ShowCursor = true;
             _icons = new Dictionary<string, IconType> { { "axe", IconType.Axe }, { "log", IconType.Apple } };
             //Right Panel
             _rightPanel = new Panel(new Vector2(0.3f, 0f), PanelSkin.Default, Anchor.TopRight);
@@ -92,9 +94,30 @@ namespace CURPG_Windows.Screens
                 _invTab.panel.AddChild(icon);
             }
         }
+
+        private void DrawPause()
+        {
+            _pausePanel = new Panel(new Vector2(500, 500));
+            var quitButton = new Button("Quit", ButtonSkin.Default, Anchor.BottomCenter)
+            {
+                OnClick = (Entity btn) =>
+                {
+                    ScreenManager.Game.Exit();
+                }
+            };
+            _pausePanel.AddChild(new Header("Paused"));
+            _pausePanel.AddChild(new HorizontalLine());
+            _pausePanel.AddChild(quitButton);
+            UserInterface.AddEntity(_pausePanel);
+        }
+
+        private void RemovePause()
+        {
+            UserInterface.RemoveEntity(_pausePanel);
+        }
     }
 
-    class IconI : Icon
+    internal class IconI : Icon
     {
         public readonly int Index;
 
