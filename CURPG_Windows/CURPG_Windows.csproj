@@ -513,13 +513,13 @@
     <Content Include="Content\GeonBit.UI\themes\lowres\textures\slider_fancy_md.xml" />
     <Content Include="Content\GeonBit.UI\themes\lowres\textures\white_texture.png" />
     <Content Include="Content\GeonBit.UI\themes\lowres\ThemeData.xml" />
-    <Content Include="DataFiles\Items.xml">
+    <EmbeddedResource Include="DataFiles\Items.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DataFiles\Tiles.xml">
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataFiles\Tiles.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </EmbeddedResource>
     <Content Include="Icon.ico" />
     <MonoGameContentReference Include="Content\CURPG_MapViewer.Content.mgcb" />
     <None Include="Content\DevConsoleFont.spritefont" />

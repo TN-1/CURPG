@@ -26,8 +26,9 @@ namespace CURPG_Windows
         [NonSerialized] private static List<GameScreen> _screenList;
         [NonSerialized] private KeyboardState _oldState;
         [NonSerialized] public static World WorldTrans;
+        [NonSerialized] public static string[] flags;
 
-        public ScreenManager()
+        public ScreenManager(string[] Flags)
         {
             var pt = new System.Drawing.Point(0, 0);
             ScreenArea = System.Windows.Forms.Screen.GetWorkingArea(pt);
@@ -57,6 +58,7 @@ namespace CURPG_Windows
             _screens = new Dictionary<string, GameScreen> {{"Menu", new MenuScreen()}, {"Play", new PlayScreen()}, {"Load", new LoadScreen()}};
 
             Game = this;
+            flags = Flags;
         }
 
         protected override void Initialize()
@@ -64,6 +66,17 @@ namespace CURPG_Windows
             _textures2D = new Dictionary<string, Texture2D>();
             _fonts = new Dictionary<string, SpriteFont>();
 
+            foreach (var s in flags)
+            {
+                if (s.Contains("--screen-size"))
+                {
+                    var values = s.Split('-');
+                    GraphicsDeviceMgr.IsFullScreen = false;
+                    GraphicsDeviceMgr.PreferredBackBufferWidth = Convert.ToInt32(values[2]);
+                    GraphicsDeviceMgr.PreferredBackBufferHeight = Convert.ToInt32(values[4]);
+                    //TODO: Fix these values based on what the array actually is!
+                }
+            }
             base.Initialize();
         }
 

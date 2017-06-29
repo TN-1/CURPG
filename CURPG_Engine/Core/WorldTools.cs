@@ -149,7 +149,7 @@ namespace CURPG_Engine.Core
         /// </summary>
         /// <param name="tilepath">Path to XML</param>
         /// <returns>A list of tiles</returns>
-        public static List<Tile> TileSetBuilder(string tilepath)
+        public static List<Tile> TileSetBuilder(string tilepath, string tiledata)
         {
             var tiles = new XmlDocument();
             tiles.Load(tilepath);

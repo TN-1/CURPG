@@ -51,21 +51,39 @@ namespace CURPG_Windows.Screens
 
         public override void Initialize()
         {
-            if (_exeLocation == null) throw new Exception("_exeLocation is null");
+            string tilesPath = null;
+            string itemsPath = null;
+            string tilesData = null;
+            string itemsData = null;
+
+            if (_exeLocation == null)
+            {
+                Logger.Error("_exeLocation is null", "PlaySceen.Initilize()");
+                throw new Exception("_exeLocation is null");
+            }
+
             _mapArea.Height = (int)Math.Ceiling((ScreenManager.ScreenArea.Height * .7) / 24);
             _mapArea.Width = (int)Math.Ceiling((ScreenManager.ScreenArea.Width * .7) / 24);
             _miniMapArea.Height = (int)(ScreenManager.ScreenArea.Height - (Math.Floor((ScreenManager.ScreenArea.Height * .7) / 24) * 24));
             _miniMapArea.Width = (int)(ScreenManager.ScreenArea.Height * .3 - 16);
-            var tilesPath = Path.Combine(_exeLocation, @"DataFiles\Tiles.xml");
-            var itemsPath = Path.Combine(_exeLocation, @"DataFiles\Items.xml");
+
+            foreach (var s in ScreenManager.flags)
+                if (s.Contains("--use-external-data"))
+                {
+                    tilesPath = Path.Combine(_exeLocation, @"DataFiles\Tiles.xml");
+                    itemsPath = Path.Combine(_exeLocation, @"DataFiles\Items.xml");
+                }
+
+            tilesData = GetResourceFile("Tiles.xml");
+            itemsData = GetResourceFile("Items.xml");
 
             if (ScreenManager.WorldTrans != null)
             {
-                _tileSet = WorldTools.TileSetBuilder(tilesPath);
+                _tileSet = WorldTools.TileSetBuilder(tilesPath, tilesData);
                 World = ScreenManager.WorldTrans;
                 var pt = PlayerTools.GetSpawn(World, _mapArea.Width / 2, _mapArea.Height / 2);
                 Player = PlayerTools.RandomPlayer(pt.X, pt.Y);
-                Player.Inventory.BuildDatabase(itemsPath);
+                Player.Inventory.BuildDatabase(itemsPath, itemsData);
             }
             else
             {
@@ -73,16 +91,16 @@ namespace CURPG_Windows.Screens
                 {
                     World = Persistance.LoadWorld();
                     Player = Persistance.LoadPlayer();
-                    _tileSet = WorldTools.TileSetBuilder(tilesPath);
-                    Player.Inventory.BuildDatabase(itemsPath);
+                    _tileSet = WorldTools.TileSetBuilder(tilesPath, tilesData);
+                    Player.Inventory.BuildDatabase(itemsPath, itemsData);
 
                     if (World == null || Player == null)
                     {
-                        _tileSet = WorldTools.TileSetBuilder(tilesPath);
-                        World = WorldTools.GenerateWorld(0, 500, 500, _tileSet, "World", 24, tilesPath);
+                        _tileSet = WorldTools.TileSetBuilder(tilesPath, tilesData);
+                        World = WorldTools.GenerateWorld(0, 500, 500, _tileSet, "World", 24, _tileSet);
                         var pt = PlayerTools.GetSpawn(World, _mapArea.Width / 2, _mapArea.Height / 2);
                         Player = PlayerTools.RandomPlayer(pt.X, pt.Y);
-                        Player.Inventory.BuildDatabase(itemsPath);
+                        Player.Inventory.BuildDatabase(itemsPath, itemsData);
                     }
                 }
             }
@@ -339,6 +357,15 @@ namespace CURPG_Windows.Screens
             UserInterface.Draw(ScreenManager.Sprites);
 
             base.Draw(gameTime);
+        }
+
+        private string GetResourceFile(string path)
+        {
+            string result = string.Empty;
+            using (Stream stream = this.GetType().Assembly.GetManifestResourceStream("assembly.folder." + path))
+                using (StreamReader sr = new StreamReader(stream))
+                    result = sr.ReadToEnd();
+            return result;
         }
     }
 }
