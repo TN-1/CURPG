@@ -36,8 +36,6 @@ namespace CURPG_Windows
                 manager.Run();
             }
         }
-
-
     }
 #endif
 }

@@ -19,12 +19,30 @@
       <EntityName>axe</EntityName>
       <TerrainMod>1</TerrainMod>
     </item>
+    <item id ="2">
+      <Name>Pickaxe</Name>
+      <Weight>1</Weight>
+      <EntityName>pickaxe</EntityName>
+      <TerrainMod>2</TerrainMod>
+    </item>
+    <item id ="3">
+      <Name>Climbing Harness</Name>
+      <Weight>1</Weight>
+      <EntityName>climbharn</EntityName>
+      <TerrainMod>3</TerrainMod>
+    </item>
   </tools>
   <craftable>
     <item id ="1">
       <Name>Log</Name>
       <Weight>1</Weight>
       <EntityName>log</EntityName>
+      <MaxStackHeight>32</MaxStackHeight>
+    </item>
+    <item id ="4">
+      <Name>Stone</Name>
+      <Weight>1</Weight>
+      <EntityName>stone</EntityName>
       <MaxStackHeight>32</MaxStackHeight>
     </item>
   </craftable>

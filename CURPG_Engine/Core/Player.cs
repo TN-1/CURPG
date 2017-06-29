@@ -85,7 +85,8 @@ namespace CURPG_Engine.Core
                             LocationY = newY;
                             break;
                         case 1:
-                            if (Inventory.Items[0] is Tool tool && tool.TerrainMod == 1)
+                            //Axe, cut trees
+                            if (Inventory.Items[0] is Tool tool1 && tool1.TerrainMod == 1)
                             {
                                 var i = r.Next(1, 5);
                                 LocationX = newX;
@@ -108,13 +109,46 @@ namespace CURPG_Engine.Core
                             }
                             break;
                         case 2:
-                            //Mountains
+                            //Mountains, Mine
+                            if (Inventory.Items[0] is Tool tool2 && tool2.TerrainMod == 2)
+                            {
+                                var i = r.Next(1, 5);
+                                LocationX = newX;
+                                LocationY = newY;
+                                world.ChangeTile(LocationX, LocationY, 24);
+                                foreach (var check in Inventory.Items)
+                                {
+                                    if (check is Craftable stone && stone.Id == 4)
+                                    {
+                                        if (stone.HowManyMore() >= i)
+                                        {
+                                            if (stone.AddQuantity(i))
+                                                return true;
+                                        }
+                                    }
+                                }
+                                Craftable stones = (Craftable)Inventory.ItemDb[4];
+                                stones.StackHeight = i;
+                                Inventory.AddItem(stones);
+                            }
                             return true;
                         case 3:
-                            //Water
+                            //Mountains, Climb
+                            if (Inventory.Items[0] is Tool tool3 && tool3.TerrainMod == 3)
+                            {
+                                //Add skill check here
+                                LocationX = newX;
+                                LocationY = newY;
+                            }
                             return true;
                         case 4:
-                            //Buildings
+                            //Water, Swim
+                            return true;
+                        case 5:
+                            //Water, Boat;
+                            return true;
+                        case 6:
+                            //Buildings, Penetrate
                             return true;
                     }
                 }

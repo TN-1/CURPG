@@ -18,7 +18,7 @@ namespace CURPG_Windows.Screens
         {
             UserInterface.Initialize(ScreenManager.ContentMgr, BuiltinThemes.hd);
             UserInterface.ShowCursor = true;
-            _icons = new Dictionary<string, IconType> { { "axe", IconType.Axe }, { "log", IconType.Apple } };
+            _icons = new Dictionary<string, IconType> { { "axe", IconType.Axe }, { "log", IconType.Apple }, { "pickaxe", IconType.Shovel }, { "climbharn", IconType.Bone }, { "stone", IconType.SilverShard } };
             //Right Panel
             _rightPanel = new Panel(new Vector2(0.3f, 0f), PanelSkin.Default, Anchor.TopRight);
             _tabs = new PanelTabs();
